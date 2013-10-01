@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+
+            InitDataObjects();
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+                
+            });
+
+            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(3) a').click(null, function (event) {
+
+                var html = "";
+                html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;">Propulsion Damage Modifiers</div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
+
+                html += '<div class="ui-widget-header ui-corner-top"  style="padding: 5px; margin-top:10px">Structure Damage Modifiers</div><div id="structure_modifiers"></div>';
+                $("#left-tabs-1").html(html);
+
+                LoadDataObject(StructureModifiers, function () {
+                    LoadDataObject(PropulsionModifiers, function () {
+                        DrawGrid(PropulsionModifiers, "propulsion_modifiers",null, 600);
+                        DrawGrid(StructureModifiers, "structure_modifiers", null, 600);
+                    });
+                });
+            });
+
+
+            LoadAllObjects(function () {
+                null
+            });
+
+            //attach click events to each tab
+            //for (var i = 0; i < Objects.length; i++) {
+            //    $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
+            //        var DataObject = event.data;
+            //        DataObject.LoadLeftGridFunction();
+            //    });
+            //}
+
+            //SelectedObject.LoadLeftGridFunction();
+        });
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td style="text-align:center;">
+            <div class="menuLink ui-accordion-header ui-helper-reset ui-state-default ui-accordion-header-active ui-accordion-icons" style="padding: 5px;">
+                <a href="design.php" style="margin-right:40px">Tank Designer<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+               
+                <a href="stats.php" style="margin-right:40px">Warzone2100 datababe<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+                <a href="weapons.php" style="margin-right:40px">Weapons Guide<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+            </div>
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Weapon Guide</a></li>
+                    <li><a href="#left-tabs-1">Weapons List</a></li>
+                    <li><a href="#left-tabs-1">Weapon detail</a></li>
+                    <li><a href="#left-tabs-1">Damage Modifiers</a></li>
+                    <li><a href="#left-tabs-1">Best Weapons</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+    <div id="modifiers_container" style="display:none">
+
+    </div>
+
+        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

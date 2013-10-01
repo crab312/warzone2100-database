@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+            
+            InitDataObjects();
+
+            Weapons.tab_index = 0;
+            Bodies.tab_index = 1;
+            Propulsion.tab_index = 2;
+            Structures.tab_index =3;
+            PropulsionModifiers.tab_index = 4;
+            StructureModifiers.tab_index = 5;
+            Researches.tab_index = 6;
+            Sensor.tab_index = 7;
+            Repair.tab_index = 8;
+            Construction.tab_index = 9;
+            ECM.tab_index = 10;
+            Features.tab_index = 11;
+            PropulsionType.tab_index = -1;
+            TerrainTable.tab_index = 12;
+
+            var tab_index = 0;
+            SelectedObject = Weapons;
+            $("#tabs_left").tabs();
+            var viewId = getUrlVars()["view"];
+            if (viewId != undefined) {
+                for (var i = 0; i < Objects.length; i++) {
+                    if (Objects[i].sysid == viewId) {
+                        tab_index = Objects[i].tab_index;
+                        SelectedObject = Objects[i];
+                        break;
+                    }
+                }
+            }
+            $("#tabs_left").tabs("option", "active", tab_index);
+
+            //attach click events to each tab
+            for (var i = 0; i < Objects.length; i++) {
+                $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
+                    var DataObject = event.data;
+                    DataObject.LoadLeftGridFunction();
+                });
+            }
+
+
+            LoadAllObjects(function () {
+                DoResearch(7200, player_all_researched, function () {
+                    for (var i = 0; i < Objects.length; i++) {
+                        var showMinTime = false;
+                        if (Objects[i].loaded_data != undefined) {
+                            for(var id in Objects[i].loaded_data_hash)
+                            {
+                                var res_comp_item = ResearchedComponents[player_all_researched][id];
+                                if (res_comp_item != undefined) {
+                                    if(res_comp_item.time_seconds != undefined)
+                                    {
+                                        Objects[i].loaded_data_hash[id].minResearchTime = res_comp_item.time_seconds;
+                                        showMinTime = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (showMinTime && Objects[i].grid_colModel != undefined) {
+                            Objects[i].grid_colModel.push({
+                                label: "Research Time (min)",
+                                name: "minResearchTime",
+                                width: 80,
+                                formatter: function (cellvalue, options, rowObject) {
+                                    if (cellvalue == undefined) {
+                                        return 'cant research(!)';
+                                    }
+                                    if (cellvalue < 3600) {
+                                        return cellvalue.toMMSS();
+                                    } else {
+                                        return cellvalue.toHHMMSS();
+                                    }
+                                },
+                                sorttype: "int",
+                            });
+                        }
+                    }
+
+
+                    SelectedObject.LoadLeftGridFunction();
+                });
+            });
+
+        });
+    </script>
+</head>
+<body style="background:#eeeeee;">
+
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td style="text-align:center;">
+            <div class="menuLink ui-accordion-header ui-helper-reset ui-state-default ui-accordion-header-active ui-accordion-icons" style="padding: 5px;">
+                <a href="design.php" style="margin-right:40px">Tank Designer<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+               
+                <a href="stats.php" style="margin-right:40px">Warzone2100 datababe<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+                <a href="weapons.php" style="margin-right:40px">Weapons Guide<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+            </div>
+            </td>
+        </tr>
+        <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Weapon</a></li>
+                    <li><a href="#left-tabs-1">Body</a></li>
+                    <li><a href="#left-tabs-1">Propulsion</a></li>
+                    <li><a href="#left-tabs-1">Structures</a></li>
+                    <li><a href="#left-tabs-2" style="font-size:0.83em; padding: 1px 5px 1px 5px; text-align:center">Weap.to Propulsion<br/>Modifiers</a></li>
+                    <li><a href="#left-tabs-2" style="font-size:0.83em; padding: 1px 5px 1px 5px; text-align:center">Weap.to Structure<br/>Modifiers</a></li>
+                    <li><a href="#left-tabs-1">Research</a></li>
+                    <li><a href="#left-tabs-1" style="font-size:0.76em; padding: 1px 3px 9px 3px; margin-top: 8px">Sensor</a></li>
+                    <li><a href="#left-tabs-1" style="font-size:0.76em; padding: 1px 3px 9px 3px; margin-top: 8px">Repair</a></li>
+                    <li><a href="#left-tabs-1" style="font-size:0.76em; padding: 1px 3px 9px 3px; margin-top: 8px">Trucks</a></li>
+                    <li><a href="#left-tabs-1" style="font-size:0.76em; padding: 1px 3px 9px 3px; margin-top: 8px">ECM</a></li>
+                    <li><a href="#left-tabs-1" style="font-size:0.92em; padding: 1px 3px 8px 3px; margin-top: 7px">Features</a></li>
+                    <li><a href="#left-tabs-1">Terrain Table</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                    <table style="width:100%">
+                    <tr >
+                        <td style="padding-top:8px; width:60%;vertical-align:top;">
+                            <div id="LeftTreeItemsCaption" class="ui-widget-header ui-corner-top" style="padding:4px">List of items</div>
+                            <div class="ui-widget-content ui-corner-bottom">
+                                <div  id="LeftSearchContainer">
+                                </div><!--style="overflow: scroll; height:90vh"-->
+                                <div id="TreeGrid_Left_Container" style="width:100%"></div>
+                            </div>
+                        </td>
+                        <td style="padding-top:8px; width:40%; vertical-align:top;">
+                            <div id="RightTreeItemsCaption" class="ui-widget-header ui-corner-top" style="padding:4px">Props of selected item</div>
+                            <div class="ui-widget-content ui-corner-bottom">
+                                <div id="Props_Container"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    </table>
+                </div>
+                <div id="left-tabs-2">
+                    <table style="width:100%">
+                    <tr >
+                        <td style="padding-top:8px; width:60%;vertical-align:top;">
+                            <div id="Div2" class="ui-widget-header ui-corner-top" style="padding:4px">List of items</div>
+                            <div class="ui-widget-content ui-corner-bottom">
+                                <div  id="Search_Container2">
+                                </div><!--style="overflow: scroll; height:90vh"-->
+                                <div id="Grid_COntainer2" style="width:100%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    </table>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+
+    <div id="dialog_edit_item" title="Добавление нового элемента" style="display:none">
+        <table style="width:100%;">
+        <tr>
+            <td>
+                Наименование:
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="dialog_input_area" style="width:100%;height:140px;"></textarea>
+            </td>
+        </tr>
+        </table>
+    </div>
+
+
+    <div id="dialog_confirm" title="Подтверждение" style="display:none">
+    </div>
+
+    <div id="tooltip" class="ui-widget-content ui-corner-all" style="display:none">
+        Сообщение.
+    </div>
+
+    <div id="dialog_grid" style="display:none">
+        
+    </div>
+    <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

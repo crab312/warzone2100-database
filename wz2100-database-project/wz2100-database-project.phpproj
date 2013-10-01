@@ -1,0 +1,2503 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>PHPWebProject1</Name>
+    <ProjectGuid>0901809d-0575-4290-afc8-ea480ba54170</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>PHPWebProject1</RootNamespace>
+    <!-- important to be opened by PHP Tools, when also Phalanger Tools are installed -->
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <AssemblyName>PHPWebProject1</AssemblyName>
+    <IISProjectUrl>http://localhost:20818/</IISProjectUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="design.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\search.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\content3-slow.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\content4-broken.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="stats.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="stuff.php" />
+    <Compile Include="weapons.php">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data_master\rules.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\body.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\bodypropulsionimd.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\brain.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\construction.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\ecm.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\features.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\propulsion.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\propulsionsounds.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\propulsiontype.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\repair.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\research.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\sensor.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\structure.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\structuremodifier.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\templates.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\terraintable.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\weaponmodifier.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="data_master\stats\weapons.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="design.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\common_objects.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\designer_functions.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-2.0.3.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_dots-small_65_a6a6a6_2x2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_flat_0_333333_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_flat_65_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_glass_55_fbf8ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_highlight-hard_100_eeeeee_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-bg_highlight-soft_15_cc0000_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-icons_004276_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-icons_cc0000_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\ui-icons_ffffff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\jquery-ui-1.10.3.custom.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\jquery-ui-1.10.3.custom.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_dots-small_65_a6a6a6_2x2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_flat_0_333333_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_flat_65_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_glass_55_fbf8ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_highlight-hard_100_eeeeee_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-bg_highlight-soft_15_cc0000_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-icons_004276_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-icons_cc0000_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\ui-icons_ffffff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\jquery-ui-1.10.3.custom.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\jquery-ui-1.10.3.custom.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\AUTHORS.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\collapsible.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\custom-icons.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\fillspace.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\hoverintent.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\no-auto-height.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\sortable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\categories.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\combobox.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\custom-data.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\folding.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\jqueryui_32x32.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\jquery_32x32.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\sizzlejs_32x32.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\transparent_1x1.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\ui-anim_basic_16x16.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\london.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\maxheight.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\multiple-remote.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\multiple.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\remote-jsonp.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\remote-with-cache.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\remote.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\xml.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\checkbox.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\icons.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\radio.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\splitbutton.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\toolbar.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\alt-field.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\animation.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\buttonbar.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\date-formats.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\date-range.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\dropdown-month-year.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\icon-trigger.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\images\calendar.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\inline.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\jquery.ui.datepicker-ar.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\jquery.ui.datepicker-fr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\jquery.ui.datepicker-he.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\jquery.ui.datepicker-zh-TW.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\localization.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\min-max.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\multiple-calendars.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\other-months.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\show-week.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\demos.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\animated.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\modal-confirmation.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\modal-form.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\modal-message.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\modal.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\constrain-movement.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\cursor-style.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\delay-start.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\events.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\handle.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\revert.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\scroll.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\snap-to.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\sortable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\visual-feedback.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\accepted-elements.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras2.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras2_min.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras3.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras3_min.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras4.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras4_min.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\high_tatras_min.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\photo-manager.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\propagation.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\revert.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\shopping-cart.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\visual-feedback.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\effect\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\effect\easing.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\effect\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\calendar.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\demo-config-on-tile.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\demo-config-on.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\demo-spindown-closed.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\demo-spindown-open.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\icon-docs-info.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\pbar-ani.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\menu\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\menu\icons.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\menu\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\cycler.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\images\earth.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\images\flight.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\images\rocket.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\images\pbar-ani.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\indeterminate.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\label.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\animate.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\aspect-ratio.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\constrain-area.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\delay-start.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\helper.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\max-min.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\snap-to-grid.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\synchronous-resize.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\textarea.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\visual-feedback.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\selectable\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\selectable\display-grid.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\selectable\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\selectable\serialize.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\colorpicker.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\hotelrooms.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\multiple-vertical.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\range-vertical.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\range.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\rangemax.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\rangemin.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\side-scroll.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\slider-vertical.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\steps.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\connect-lists-through-tabs.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\connect-lists.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\delay-start.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\display-grid.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\empty-lists.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\items.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\placeholder.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\portlets.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\currency.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\decimal.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\latlong.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\overflow.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\time.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\content1.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\content2.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\bottom.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\collapsible.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\manipulation.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\mouseover.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\sortable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\vertical.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\ajax\content1.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\ajax\content2.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\custom-animation.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\custom-content.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\custom-style.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\forms.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\images\st-stephens.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\images\tower-bridge.jpg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\tracking.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\video-player.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\widget\default.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\widget\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\accordion.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\autocomplete.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\blind-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\bounce-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\button.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\clip-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\datepicker.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\dialog.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\draggable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\drop-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\droppable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\explode-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\fade-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\fold-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\highlight-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\jQuery.widget.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\menu.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\mouse.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\position.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\progressbar.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\puff-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\pulsate-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\resizable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\scale-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\selectable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\shake-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\size-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\slide-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\slider.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\sortable.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\spinner.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\tabs.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\tooltip.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\transfer-effect.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\globalize.culture.de-DE.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\globalize.culture.ja-JP.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\globalize.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\jquery.mousewheel.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\jshint.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\qunit.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\qunit.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\Gruntfile.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\jquery-1.9.1.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\MIT-LICENSE.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\package.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\README.md">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_glass_65_ffffff_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_glass_75_dadada_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-icons_222222_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-icons_2e83ff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-icons_454545_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-icons_888888_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\ui-icons_cd0a0a_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery-ui.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.accordion.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.all.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.autocomplete.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.base.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.button.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.core.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.datepicker.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.dialog.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.menu.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.progressbar.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.resizable.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.selectable.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.slider.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.spinner.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.tabs.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.theme.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\jquery.ui.tooltip.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-icons_222222_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-icons_2e83ff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-icons_454545_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-icons_888888_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\ui-icons_cd0a0a_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery-ui.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.accordion.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.autocomplete.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.button.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.core.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.datepicker.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.dialog.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.menu.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.progressbar.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.resizable.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.selectable.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.slider.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.spinner.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.tabs.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.theme.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\jquery.ui.tooltip.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_dots-small_65_a6a6a6_2x2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_flat_0_333333_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_flat_65_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_glass_55_fbf8ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_highlight-hard_100_eeeeee_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-bg_highlight-soft_15_cc0000_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-icons_004276_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-icons_cc0000_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\ui-icons_ffffff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery-ui.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.accordion.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.all.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.autocomplete.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.base.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.button.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.core.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.datepicker.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.dialog.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.menu.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.progressbar.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.resizable.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.selectable.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.slider.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.spinner.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.tabs.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.theme.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\jquery.ui.tooltip.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\animated-overlay.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_dots-small_65_a6a6a6_2x2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_flat_0_333333_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_flat_65_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_flat_75_ffffff_40x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_glass_55_fbf8ee_1x400.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_highlight-hard_100_eeeeee_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-bg_highlight-soft_15_cc0000_1x100.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-icons_004276_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-icons_cc0000_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\ui-icons_ffffff_256x240.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery-ui.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.accordion.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.autocomplete.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.button.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.core.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.datepicker.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.dialog.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.menu.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.progressbar.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.resizable.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.selectable.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.slider.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.spinner.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.tabs.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.theme.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\jquery.ui.tooltip.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.accordion.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.autocomplete.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.button.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.core.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.datepicker.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.dialog.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.draggable.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.droppable.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-blind.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-bounce.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-clip.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-drop.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-explode.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-fade.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-fold.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-highlight.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-pulsate.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-scale.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-shake.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-slide.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect-transfer.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.effect.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.menu.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.mouse.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.position.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.progressbar.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.resizable.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.selectable.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.slider.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.sortable.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.spinner.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.tabs.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.tooltip.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui.widget.jquery.json">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery-ui-i18n.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-af.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ar-DZ.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ar.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-az.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-be.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-bg.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-bs.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ca.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-cs.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-cy-GB.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-da.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-de.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-el.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-en-AU.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-en-GB.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-en-NZ.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-eo.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-es.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-et.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-eu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fa.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fo.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fr-CA.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fr-CH.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-fr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-gl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-he.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-hi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-hr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-hu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-hy.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-id.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-is.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-it.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ja.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ka.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-kk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-km.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ko.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ky.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-lb.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-lt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-lv.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-mk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ml.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ms.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-nb.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-nl-BE.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-nl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-nn.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-no.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-pl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-pt-BR.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-pt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-rm.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ro.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ru.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sq.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sr-SR.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-sv.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-ta.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-th.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-tj.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-tr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-uk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-vi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-zh-CN.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-zh-HK.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\jquery.ui.datepicker-zh-TW.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery-ui.custom.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.accordion.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.autocomplete.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.button.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.core.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.datepicker.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.dialog.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.draggable.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.droppable.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-blind.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-bounce.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-clip.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-drop.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-explode.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-fade.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-fold.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-highlight.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-pulsate.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-scale.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-shake.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-slide.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect-transfer.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.effect.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.menu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.mouse.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.position.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.progressbar.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.resizable.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.selectable.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.slider.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.sortable.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.spinner.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.tabs.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.tooltip.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\jquery.ui.widget.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery-ui-i18n.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-af.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ar.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-az.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-be.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-bg.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-bs.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ca.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-cs.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-cy-GB.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-da.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-de.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-el.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-eo.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-es.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-et.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-eu.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fa.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fi.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fo.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fr-CA.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-fr.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-gl.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-he.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-hi.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-hr.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-hu.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-hy.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-id.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-is.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-it.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ja.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ka.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-kk.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-km.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ko.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ky.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-lb.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-lt.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-lv.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-mk.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ml.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ms.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-nb.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-nl-BE.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-nl.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-nn.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-no.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-pl.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-pt.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-rm.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ro.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ru.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sk.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sl.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sq.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sr.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-sv.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-ta.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-th.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-tj.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-tr.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-uk.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-vi.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery-ui.custom.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.accordion.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.autocomplete.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.button.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.core.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.datepicker.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.dialog.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.draggable.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.droppable.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-blind.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-bounce.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-clip.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-drop.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-explode.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-fade.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-fold.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-highlight.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-pulsate.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-scale.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-shake.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-slide.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect-transfer.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.effect.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.menu.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.mouse.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.position.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.progressbar.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.resizable.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.selectable.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.slider.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.sortable.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.spinner.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.tabs.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.tooltip.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\jquery.ui.widget.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\index.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\js\jquery-1.9.1.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\js\jquery-ui-1.10.3.custom.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\js\jquery-ui-1.10.3.custom.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.blockUI.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\css\ellipsis-xbl.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\css\ui.jqgrid.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\Changes.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-ar.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-bg.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-bg1251.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-cat.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-cn.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-cs.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-da.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-de.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-dk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-el.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-en.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-es.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-fa.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-fi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-fr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-gl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-he.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-hr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-hr1250.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-hu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-id.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-is.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-it.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-ja.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-kr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-lt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-mne.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-nl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-no.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-pl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-pt-br.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-pt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-ro.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-ru.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-sk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-sr-latin.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-sr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-sv.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-th.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-tr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-tw.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-ua.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\i18n\grid.locale-vi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\install.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\jquery-1.9.0.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\jquery.jqGrid.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\js\jquery.jqGrid.src.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\grid.addons.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\grid.postext.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\grid.setcolumns.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\jquery.contextmenu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\jquery.searchFilter.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\jquery.tablednd.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\searchFilter.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\ui.multiselect.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\plugins\ui.multiselect.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\css\ellipsis-xbl.xml">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\css\ui.jqgrid.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\css\ui.multiselect.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.base.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.celledit.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.common.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.custom.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.filter.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.formedit.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.grouping.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.import.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.inlinedit.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.jqueryui.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.loader.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.subgrid.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.tbltogrid.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\grid.treegrid.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-ar.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-bg.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-bg1251.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-cat.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-cn.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-cs.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-da.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-de.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-dk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-el.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-en.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-es.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-fa.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-fi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-fr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-gl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-he.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-hr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-hr1250.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-hu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-id.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-is.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-it.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-ja.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-kr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-lt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-mne.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-nl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-no.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-pl.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-pt-br.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-pt.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-ro.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-ru.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-sk.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-sr-latin.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-sr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-sv.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-th.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-tr.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-tw.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-ua.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\i18n\grid.locale-vi.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\jqDnR.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\jqModal.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\jquery.fmatter.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\jquery.jqGrid.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.jqGrid-4.5.2\src\JsonXml.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery.ui.combobox.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\MyCustomScripts2.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\research_functions.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="stats.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Styles\FhHRx.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Styles\MyCustomStyles.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Styles\search-icon.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="test.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="WeaponGuide.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="weapons.html">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data_master\" />
+    <Folder Include="data_master\stats\" />
+    <Folder Include="scripts\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\button\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\datepicker\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\dialog\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\draggable\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\droppable\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\effect\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\menu\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\position\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\progressbar\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\resizable\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\selectable\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\slider\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\sortable\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\spinner\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\ajax\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tooltip\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\widget\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\docs\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\external\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\base\minified\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\themes\blitzer\minified\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\i18n\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\ui\minified\i18n\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\js\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\css\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\js\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\js\i18n\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\plugins\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\src\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\src\css\" />
+    <Folder Include="scripts\jquery.jqGrid-4.5.2\src\i18n\" />
+    <Folder Include="Styles\" />
+  </ItemGroup>
+</Project>
