@@ -48,10 +48,10 @@ function InitDesigner() {
                     clearTimeout(designer_setted_timeout);
                     designer_setted_timeout = undefined;
                 };
-                ShowLoading('designer_parameters_container');
+                ShowLoading('designer_all_data_container');
                 designer_setted_timeout = setTimeout(function () {
                     TryCalculateDesign();
-                    HideLoading('designer_parameters_container');
+                    HideLoading('designer_all_data_container');
                 }, 500);
             }
         }
@@ -550,7 +550,7 @@ function Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id) {
 
 function Designer_Draw_DPSTable(container_id, Tank, enemy_player_number) {
     
-    $('#designer_dps_header').html('[NOT TESTED>>>] </br>DPS (Damage per second) : Research Time=' + last_calculated_research_time.toHHMMSS());
+    //$('#designer_dps_header').html('DPS (Damage per second) : Research Time=' + last_calculated_research_time.toHHMMSS());
 
     var designs = [];
 
@@ -874,22 +874,20 @@ function TryCalculateDesign(callback_function) {
             Designer_Draw_DPSTable('designer_dps_container', Tank, 0);
 
             var container_id = "designer_parameters_container";
-            var grid_element_id = ResetGridContainer(container_id, true);
-            var grid_toolbar_id = grid_element_id + "_toolbar";
+            var grid_element_id = ResetGridContainer(container_id);
             var grid = $(grid_element_id);
             grid.jqGrid
             ({
                 datatype: "local",
                 data: grid_data,
                 rowNum: grid_data.length,
-                //height: $(window).height() - $("#" + container_id).offset().top - 60,
                 height: 'auto',
                 colModel:
                     [
                         { name: "", width: '20px', sortable: false, search: false },
-                        { name: "name", key: true, width: '200px' },
+                        { name: "name", label: 'Parameter', key: true, width: '200px' },
                         {
-                            name: "base", width: '100px',
+                            name: "base", label: 'Base value', width: '100px',
                             formatter: function (cellvalue, options, rowObject) {
                                 if (typeof cellvalue != "string" && isNaN(cellvalue)) {
                                     return '';
@@ -897,9 +895,9 @@ function TryCalculateDesign(callback_function) {
                                 return cellvalue;
                             }
                         },
-                        { name: "group", width: '100px' },
+                        { name: "group", label: 'group', width: '100px' },
                         {
-                            name: "upgraded", width: '100px',
+                            name: "upgraded", label: 'Upgraded value', width: '100px',
                             formatter: function (cellvalue, options, rowObject) {
                                 if (typeof cellvalue != "string" && isNaN(cellvalue)) {
                                     return '';
@@ -911,7 +909,7 @@ function TryCalculateDesign(callback_function) {
                             }
                         },
                         {
-                            name: "upgrade_change", width: '100px',
+                            name: "upgrade_change", label: 'Upgrade Change', width: '100px',
                             formatter: function (cellvalue, options, rowObject) {
                                 if (isNaN(cellvalue)) {
                                     return '';
@@ -931,8 +929,6 @@ function TryCalculateDesign(callback_function) {
 
                 },
                 loadonce: true,
-                recordtext: "records: {2}",
-                ignoreCase: true, //make search case insensitive
                 grouping: true,
                 groupingView: {
                     groupField: ['group'],
@@ -940,9 +936,27 @@ function TryCalculateDesign(callback_function) {
                     groupColumnShow: [false]
                 },
             });
-            grid.jqGrid('filterToolbar', { stringResult: true, searchOnEnter: true, defaultSearch: "cn" });
 
         };
+
+        var show_research_path_method = function (weapon_id, body_id, propulsion_id) {
+
+            var res_path_data = [];
+            if(weapon_id != null)
+            {
+                res_path_data = res_path_data.concat(GetResearchPath_SubTree(weapon_id, player_all_researched));
+            }
+            if(body_id != null)
+            {
+                res_path_data = res_path_data.concat(GetResearchPath_SubTree(body_id, player_all_researched));
+            }
+            if(propulsion_id != null)
+            {
+                res_path_data = res_path_data.concat(GetResearchPath_SubTree(propulsion_id, player_all_researched));
+            }
+
+            DrawResearchPath_Tree("designer_researchpath_container", res_path_data);
+        }
         
         var research_time = $('#designer_research_slider').slider("option", "value");
 
@@ -959,6 +973,8 @@ function TryCalculateDesign(callback_function) {
                     show_params_method();
                 }
                 $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
+
+                show_research_path_method(weapon_id, body_id, propulsion_id);
             });
         } else {
             if (is_unfinished_design) {
@@ -969,6 +985,7 @@ function TryCalculateDesign(callback_function) {
                 show_params_method();
             }
             $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
+            show_research_path_method(weapon_id, body_id, propulsion_id);
         }
 
         if (callback_function != undefined) {
@@ -978,27 +995,136 @@ function TryCalculateDesign(callback_function) {
 }
 
 
-function Stats_Damage_Base(weapon_id) {
-
-}
-
-function Stats_Damage_Upgraded(weapon_id, research_time) {
-
-}
-
-
-function Stats_SpeedRoad_Base(weapon_row, body_row, propulsion_row) {
-
-
-}
-
-
-function GetStatsItem_Slow(DataObject, id) {
-
-    for (var i = 0; i < DataObject.loaded_data.length; i++) {
-        if (DataObject.loaded_data[i].grid_id == id) {
-            return DataObject.loaded_data[i];
-        }
+function GetResearchPath_SubTree(component_id, player) {
+    if(player == undefined)
+    {
+        player = player_all_researched;
     }
-    return null;
+    var result_data = [];
+    var row_index = 0;
+    var res_comp_row = ResearchedComponents[player][component_id];
+    if (res_comp_row == undefined) {
+        var data_row = {};
+        data_row.id = component_id + row_index++;
+        data_row.parent = null;
+        data_row.research_id = null;
+        data_row.calculated_time = null;
+        data_row.level = 0;
+        data_row.isLeaf = true;
+        data_row.expanded = true;
+        data_row.name = component_id;
+        result_data.push(data_row);
+        return result_data;
+    }
+
+    var res_row = Researches.loaded_data_hash[res_comp_row.research_id];
+    if (res_row == undefined) {
+        return result_data;
+    }
+    var add_pre_res_method = function (parent_res_id, res_row, level) {
+        if (level <= -50) {
+            return; //in case infinite recursion
+        }
+        
+        var data_row = {};
+        data_row.id = component_id + row_index++;
+        data_row.parent = parent_res_id;
+        data_row.research_id = res_row.grid_id;
+        data_row.calculated_time = ResearchTime[player][res_row.grid_id];
+        data_row.level = level;
+        data_row.isLeaf = true;
+        data_row.expanded = level >= -1;
+        data_row.name = res_row.name;
+        result_data.push(data_row);
+
+        if (res_row.requiredResearch == undefined) {
+            return;
+        } else {
+            var pre_res = res_row.requiredResearch.split(',');
+            if (pre_res.length > 0) {
+                data_row.isLeaf = false;
+            }
+            for (var i = 0; i < pre_res.length; i++) {
+                if (Researches.loaded_data_hash[pre_res[i]] != undefined) {
+                    if (data_row.research_id != Researches.loaded_data_hash[pre_res[i]].grid_id) {
+                        add_pre_res_method(data_row.id, Researches.loaded_data_hash[pre_res[i]], level - 1);
+                    }
+                }
+            }
+        }
+    };
+    add_pre_res_method(null, res_row, 0);
+    for (var i = 0; i < result_data.length; i++) {
+        result_data[i].level = Math.abs(result_data[i].level);
+    }
+    return result_data;
+}
+
+function DrawResearchPath_Tree(container_id, data_research_path) {
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        //caption: RightTreeObject.LeftTreeItemsCaption + "  " + NameOfRootItem,
+        datatype: "jsonstring",
+        datastr: data_research_path,
+        rowNum: data_research_path.length,
+        height: 'auto',
+        //height: $(window).height() - $("#" + RightTreeObject.Grid_ContainerName).offset().top - 80,
+        //scrollerbar: true,
+        treeGridModel: 'adjacency',
+        colModel: [
+            { label: "id", name: "id", width: 1, hidden: true, key: true },
+            {
+                label: "Research Name", name: "name",
+                formatter: function (cellvalue, options, rowObject) {
+                    var res_html = cellvalue;
+                    if (rowObject.level == 0) {
+                        res_html = '<b>' + res_html +'</b>';
+                    }
+                    var time = 'cant research(!)';
+                    if (rowObject.calculated_time != undefined) {
+                        if (rowObject.calculated_time < 3600) {
+                            time = rowObject.calculated_time.toMMSS();
+                        } else {
+                            time = rowObject.calculated_time.toHHMMSS();
+                        }
+                    }
+                    return res_html + " <label style='font-size:0.8em;color:grey'>(" + time + ")</label>";
+                }
+            },
+            //{
+            //    label: "Time",
+            //    name: "calculated_time",
+            //    formatter: function (cellvalue, options, rowObject) {
+            //        if (cellvalue == undefined) {
+            //            return 'cant research(!)';
+            //        }
+            //        if (cellvalue < 3600) {
+            //            return cellvalue.toMMSS();
+            //        } else {
+            //            return cellvalue.toHHMMSS();
+            //        }
+            //    },
+            //    sorttype: "int",
+            //    width: 20,
+            //    hidden: true,
+            //}
+        ],
+        treeGrid: true,
+        ExpandColumn: "name",
+        ExpandColClick: true,
+        autowidth: true,
+        sortname: "id",
+        treeReader: {
+            level_field: "level",
+            parent_id_field: "parent",
+            leaf_field: "isLeaf",
+            expanded_field: "expanded"
+        },
+        gridComplete: function () {
+            grid.parents("div.ui-jqgrid-view").children("div.ui-jqgrid-hdiv").hide();
+        },
+    });
+    grid.SortTree(1);
 }

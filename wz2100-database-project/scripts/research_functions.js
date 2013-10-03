@@ -133,6 +133,7 @@ function EnableResearch(research_id) {
 var Upgrades;
 var ResearchedComponents; //time when components are accesible from research
 var ResearchTimeState;
+var ResearchTime;
 
 function InitResearchObjects() {
 
@@ -141,6 +142,7 @@ function InitResearchObjects() {
     Upgrades = [];
     ResearchedComponents = [];
     ResearchTimeState = [];
+    ResearchTime = [];
     for (var i = 0; i < players_count; i++) {
         var PlayerUpgrades = {};
         Upgrades.push(PlayerUpgrades);
@@ -149,7 +151,10 @@ function InitResearchObjects() {
         ResearchedComponents.push(PlayerResearchedComponents);
 
         var PlayerResearchTimeState = {};
-        ResearchTimeState.push(ResearchTimeState);
+        ResearchTimeState.push(PlayerResearchTimeState);
+
+        var PlayerResearchTime = {};
+        ResearchTime.push(PlayerResearchTime);
     }
 }
 
@@ -182,6 +187,7 @@ function DoResearch(time_seconds, player, callback_function) {
     ResearchedComponents[player] = {};
     Upgrades[player] = {};
     ResearchTimeState[player] = 0;
+    ResearchTime[player] = {};
 
     LoadAllObjects(function () //continue only when all data is loaded on client side
     {
@@ -265,6 +271,8 @@ function DoResearch(time_seconds, player, callback_function) {
             var res_row = all_research[research_id];
             eventResearched(res_row.Res_Data, player_number);
 
+            ResearchTime[player_number][research_id] = current_time;
+
             if (res_row.Res_Data.resultComponents != undefined)
             {
                 var result_components = res_row.Res_Data.resultComponents.split(',');
@@ -272,6 +280,7 @@ function DoResearch(time_seconds, player, callback_function) {
                 {
                     ResearchedComponents[player_number][result_components[e]] = {};
                     ResearchedComponents[player_number][result_components[e]].time_seconds = current_time;
+                    ResearchedComponents[player_number][result_components[e]].research_id = research_id;
                 }  
             }
 
@@ -280,6 +289,7 @@ function DoResearch(time_seconds, player, callback_function) {
                 for (var e = 0; e < resultStructures.length; e++) {
                     ResearchedComponents[player_number][resultStructures[e]] = {};
                     ResearchedComponents[player_number][resultStructures[e]].time_seconds = current_time;
+                    ResearchedComponents[player_number][resultStructures[e]].research_id = research_id;
                 }
             }
             
