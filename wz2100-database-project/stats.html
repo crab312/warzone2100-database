@@ -66,18 +66,26 @@
 
 
             LoadAllObjects(function () {
+                /* add calculated column - research time ro each component*/
                 DoResearch(7200, player_all_researched, function () {
                     for (var i = 0; i < Objects.length; i++) {
                         var showMinTime = false;
                         if (Objects[i].loaded_data != undefined) {
                             for(var id in Objects[i].loaded_data_hash)
                             {
-                                var res_comp_item = ResearchedComponents[player_all_researched][id];
-                                if (res_comp_item != undefined) {
-                                    if(res_comp_item.time_seconds != undefined)
-                                    {
-                                        Objects[i].loaded_data_hash[id].minResearchTime = res_comp_item.time_seconds;
+                                if (Objects[i] == Researches) {
+                                    var resesearch_obj = ResearchTime[player_all_researched][id];
+                                    if (resesearch_obj != undefined) {
+                                        Objects[i].loaded_data_hash[id].minResearchTime = ResearchTime[player_all_researched][id];
                                         showMinTime = true;
+                                    }
+                                } else {
+                                    var res_comp_item = ResearchedComponents[player_all_researched][id];
+                                    if (res_comp_item != undefined) {
+                                        if (res_comp_item.time_seconds != undefined) {
+                                            Objects[i].loaded_data_hash[id].minResearchTime = res_comp_item.time_seconds;
+                                            showMinTime = true;
+                                        }
                                     }
                                 }
                             }

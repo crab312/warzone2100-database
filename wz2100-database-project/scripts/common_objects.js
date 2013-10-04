@@ -81,7 +81,7 @@ function InitDataObjects() {
             var img_name = rowObject.grid_id + ".gif";
             if (typeof icon_files_hash != 'undefined') {
                 if (icon_files_hash[img_name] == undefined) {
-                    return '';
+                    return EmptyComponentIcon_html(rowObject.name);
                 } else {
                     if (size == undefined) {
                         return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
@@ -180,7 +180,7 @@ function InitDataObjects() {
             if (img_found){
                 return "<img src='data_icons/Body/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
             } else {
-                return '';
+                return EmptyComponentIcon_html(rowObject.name);
             }
         };
         obj.grid_colModel = [
@@ -214,7 +214,7 @@ function InitDataObjects() {
             var img_name = rowObject.grid_id + ".gif";
             if (typeof icon_files_hash != 'undefined') {
                 if (icon_files_hash[img_name] == undefined) {
-                    return '';
+                    return EmptyComponentIcon_html(rowObject.name);
                 } else {
                     if (size == undefined) {
                         return "<img src='data_icons/Propulsion/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
@@ -275,7 +275,7 @@ function InitDataObjects() {
             if (img_found) {
                 return "<img src='data_icons/Structures/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
             } else {
-                return '';
+                return EmptyComponentIcon_html(rowObject.name);
             }
         };
         obj.grid_colModel = [
@@ -462,40 +462,40 @@ function InitDataObjects() {
         obj.LoadDataFunction = LoadResearch;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () {
-                DrawLeftGrid(data_obj);
-                $("#TreeGrid_Left_Container").prepend('<button id="research_calc_button" type="button">Calculate research time</button>');
-                $("#research_calc_button").button({
-                    icons: {
-                        primary: "ui-icon-arrowreturn-1-e",
-                    }
-                }).click(function (event) {
-                    event.preventDefault();
-                    ShowLoading('tabs_left');
-                    DoResearch(7200, 0, function (finished_research) {
-                        for (var i = 0; i < Researches.loaded_data.length; i++) {
-                            var res_id = Researches.loaded_data[i].grid_id;
-                            if (finished_research[res_id] == undefined) {
-                                Researches.loaded_data[i].calculated_time = "Cant research(!)";
-                            } else {
-                                Researches.loaded_data[i].calculated_time = finished_research[res_id].finish_time.toHHMMSS();
-                            }
-                        }
-                        Researches.LoadLeftGridFunction();
-                        HideLoading('tabs_left');
-                    });
-
-                });
-            });
+            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Res. points", name: "researchPoints" },
-            { label: "Min. time <br/> to research", name: "calculated_time" },
-            { label: "Price", name: "researchPower" },
+            {
+                label: "Name", name: "name", formatter: function (cellvalue, options, rowObject) {
+                    return '<b>' + cellvalue + '</b>';
+                },
+                width: 350,
+            },
+            {
+                label: "Price", name: "researchPower", formatter: function (cellvalue, options, rowObject) {
+                    return '$' + cellvalue;
+                },
+                width: 50,
+            },
         ];
         Researches = obj;
+
+        obj.GetIconHtml_Function = function (rowObject) {
+            if (rowObject.statID != undefined) {
+                var stat_id = rowObject.statID;
+                /* search stat_id */
+                for (var i = 0; i < Objects.length; i++) {
+                    if (Objects[i].GetIconHtml_Function != undefined) {
+                        if (Objects[i].loaded_data_hash == undefined ? false : Objects[i].loaded_data_hash[stat_id] != undefined) {
+                            return Objects[i].GetIconHtml_Function(Objects[i].loaded_data_hash[stat_id]);
+                        }
+                    }
+                }
+            }
+            return EmptyComponentIcon_html(rowObject.name);
+        };
+
         Objects.push(obj);
     }
 
@@ -503,7 +503,7 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Sensor";
         obj.path_ini = data_directory + "sensor.ini";
-        obj.LoadDataFunction = LoadResearch;
+        obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
@@ -521,7 +521,7 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Repair";
         obj.path_ini = data_directory + "repair.ini";
-        obj.LoadDataFunction = LoadResearch;
+        obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
@@ -539,7 +539,7 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Construction";
         obj.path_ini = data_directory + "construction.ini";
-        obj.LoadDataFunction = LoadResearch;
+        obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
@@ -558,7 +558,7 @@ function InitDataObjects() {
         obj.sysid = "ECM";
         obj.path_ini = data_directory + "ecm.ini";
         obj.tab_index = 11;
-        obj.LoadDataFunction = LoadResearch;
+        obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
@@ -577,7 +577,7 @@ function InitDataObjects() {
         obj.sysid = "Features";
         obj.path_ini = data_directory + "features.ini";
         obj.tab_index = 12;
-        obj.LoadDataFunction = LoadResearch;
+        obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
@@ -724,7 +724,6 @@ function LoadResearch(DataObject, callback_function) {
     LoadDataObject(DataObject, function () {
         if (DataObject.FirstLoad_Tmp == undefined) {
             for (var i = 0; i < DataObject.loaded_data.length; i++) {
-
                 if (DataObject.loaded_data[i].results == undefined) {
                     DataObject.loaded_data[i].results = [];
                 } else {
@@ -924,3 +923,10 @@ function ShowSelectColumns(DataObject) {
 }
 
 
+function EmptyComponentIcon_html(name) {
+    var shown_name = name;
+    if (name.length > 22) {
+        shown_name = name.substring(0, 21) + '...';
+    }
+    return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
+}
