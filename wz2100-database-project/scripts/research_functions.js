@@ -48,20 +48,27 @@ function eventResearched(research, player) {
         var s = research.results[v].split(":");
         if (['Droids', 'Cyborgs'].indexOf(s[0]) >= 0) // research result applies to droids and cyborgs
         {
-            s[1] = setCharAt(s[1], 0, s[1][0].toLowerCase());  // <<<< SHIT
-            if (s[1] == "thermal") s[1] = "armourHeat";
-            if (s[1] == "power") s[1] = "powerOutput";
+            if (s[1] == "Armour") {
+                s[1] = "armourKinetic";
+            } else if (s[1] == "Thermal") {
+                s[1] = "armourHeat";
+            } else if (s[1] == "HitPoints") {
+                s[1] = "hitpoints";
+            } else if (s[1] == "Power") {
+                s[1] = "powerOutput";
+            }
+
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player].Body) // loop over all bodies
             {
                 if (Stats.Body[i].class === s[0]) // if match against hint in ini file, change it
                 {
-                    if (s[1] == "armour") {
-                        Upgrades[player].Body[i][s[1]] += int_value;
-                    } else {
-                        Upgrades[player].Body[i][s[1]] += Stats.Body[i][s[1]] * int_value / 100;
+                    Upgrades[player].Body[i][s[1]] += Stats.Body[i][s[1]] * int_value / 100;
+                    if(Upgrades[player].Body[i][s[1] + "_percentage"] == undefined)
+                    {
+                        Upgrades[player].Body[i][s[1] + "_percentage"] = 0;
                     }
-                    //debug("  upgraded " + i + " :: " + s[1] + " to " + Upgrades[player].Body[i][s[1]] + " by " + Math.ceil(Stats.Body[i][s[1]] * s[2] / 100));
+                    Upgrades[player].Body[i][s[1] + "_percentage"] += int_value;
                 }
             }
         }
@@ -72,7 +79,6 @@ function eventResearched(research, player) {
                 if (Stats.Building[i][s[0]] > 0) // only applies if building has this stat already
                 {
                     Upgrades[player].Building[i][s[0]] += Stats.Building[i][s[0]] * int_value / 100;
-                    //debug("  upgraded " + i + " to " + Upgrades[player].Building[i][s[0]] + " by " + Math.ceil(Stats.Building[i][s[0]] * s[1] / 100));
                 }
             }
         }
@@ -80,19 +86,35 @@ function eventResearched(research, player) {
             s[1] = setCharAt(s[1], 0, s[1][0].toLowerCase());  // <<<< SHIT
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player].Building) {
+                var hardcoded_type = "";
+                if (Stats.Building[i].Type == "DEFENSE") {
+                    hardcoded_type = "Wall";
+                } else {
+                    hardcoded_type = "Structure";
+                }
+                if(s[1].toLowerCase() == 'hitpoints')
+                {
+                    s[1] = 'hitPoints';
+                }
+
                 if (Stats.Building[i].Type === s[0]) // applies to specific building type
                 {
                     Upgrades[player].Building[i][s[1]] += Stats.Building[i][s[1]] * int_value / 100;
-                    //debug("  upgraded " + i + " to " + Upgrades[player].Building[i][s[1]] + " by " + Math.ceil(Stats.Building[i][s[1]] * s[2] / 100));
                 }
             }
         }
-        else if (['ECM', 'Sensor', 'Repair', 'Construct'].indexOf(s[0]) >= 0) {
+        else if (['ECM', 'Sensor', 'Repair'].indexOf(s[0]) >= 0) {
             s[1] = setCharAt(s[1], 0, s[1][0].toLowerCase());  // <<<< SHIT
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player][s[0]]) {
                 Upgrades[player][s[0]][i][s[1]] += Stats[s[0]][i][s[1]] * int_value / 100;
-                //debug("  upgraded " + i + " to " + Upgrades[player][s[0]][i][s[1]] + " by " + Math.ceil(Stats[s[0]][i][s[1]] * s[2] / 100));
+            }
+        }
+        else if (['Construct'].indexOf(s[0]) >= 0) {
+            s[1] = "constructPoints";
+            var int_value = parseFloat(s[2]);
+            for (var i in Upgrades[player][s[0]]) {
+                Upgrades[player][s[0]][i][s[1]] += Stats[s[0]][i][s[1]] * int_value / 100;
             }
         }
         else if (Stats.WeaponClass.indexOf(s[0]) >= 0) // if first field is a weapon class
@@ -114,7 +136,6 @@ function eventResearched(research, player) {
                     } else {
                         Upgrades[player].Weapon[i][s[1]] += Stats.Weapon[i][s[1]] * int_value / 100;
                     }
-                    //debug("  upgraded " + i + " to " + Upgrades[player].Weapon[i][s[1]] + " by " + Math.ceil(Stats.Weapon[i][s[1]] * s[2] / 100));
                 }
             }
         }
@@ -225,6 +246,7 @@ function DoResearch(time_seconds, player, callback_function) {
         Upgrades[player].Sensor = jQuery.parseJSON(JSON.stringify(Sensor.loaded_data));
         Upgrades[player].ECM = jQuery.parseJSON(JSON.stringify(ECM.loaded_data));
         Upgrades[player].Weapon = jQuery.parseJSON(JSON.stringify(Weapons.loaded_data));
+        Upgrades[player].upgrades = {};
 
         var all_research = {};
         for (var i = 0; i < Researches.loaded_data.length; i++) {

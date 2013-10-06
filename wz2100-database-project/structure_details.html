@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+
+            InitDataObjects();
+
+            //SelectedObject = TankDesigner;
+            //$("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            //attach click events to each tab
+            //for (var i = 0; i < Objects.length; i++) {
+            //    $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
+            //        var DataObject = event.data;
+            //        DataObject.LoadLeftGridFunction();
+            //    });
+            //}
+
+            //SelectedObject.LoadLeftGridFunction();
+
+            var structure_id = getUrlVars()["structure_id"];
+            var SelectedStructure;
+            if (structure_id == undefined) {
+                return;
+            }
+            if (Structures.loaded_data_hash[structure_id] == undefined) {
+                return;
+            }
+            SelectedStructure = Structures.loaded_data_hash[structure_id];
+
+            //GetIconHtml_Function
+
+
+            jQuery('#designer_research_slider').slider({
+                min: 0,
+                max: 5400,
+                step: 30,
+                value: 600,
+                range: "min",
+                slide: function (event, ui) {
+                    jQuery('#designer_research_progress_input').val(func_val_slider(ui.value));
+                    localStorage["designer_research_slider"] = ui.value;
+                    if (last_calculated_research_time != undefined) {
+                        if (designer_setted_timeout != undefined) {
+                            clearTimeout(designer_setted_timeout);
+                            designer_setted_timeout = undefined;
+                        };
+                        ShowLoading('designer_all_data_container');
+                        designer_setted_timeout = setTimeout(function () {
+                            TryCalculateDesign();
+                            HideLoading('designer_all_data_container');
+                        }, 500);
+                    }
+                }
+            });
+            $("#designer_research_progress_input").val(func_val_slider($("#designer_research_slider").slider("value")));
+        });
+
+
+        function DrawStructureDetails(structure_id, callback_function) {
+
+            var player = 0;
+            HideLoading('tabs_left');
+
+            var structure_id = $("#designer_weapon").attr('data-value');
+            var structure = Structures.loaded_data_hash[structure_id];
+
+            var show_params_method = function () {
+
+                var StucDesign = CalculateBuilding(player, structure);
+
+                var grid_data = [];
+
+                /* PRICE & BUILD POINTS */
+                {
+                    var row = new Object;
+                    row.name = 'Building Price';
+                    row.base = StucDesign.baseStats.price.toFixed(0);
+                    row.upgraded = StucDesign.price.toFixed(0);
+                    row.group = '1: Price';
+                    grid_data.push(row);
+                }
+
+                {
+                    var base = StucDesign.baseStats.buildTimeSeconds_2_trucks;
+                    var upgraded = StucDesign.buildTimeSeconds_2_trucks;
+
+                    var row = new Object;
+                    row.name = 'Time to build by 2 trucks';
+                    row.base = base.toMMSS();
+                    row.upgraded = upgraded.toMMSS();
+                    row.upgrade_change = (upgraded - base) / base;
+                    row.group = '2: Build time';
+                    grid_data.push(row);
+                }
+
+                {
+                    var base = StucDesign.baseStats.buildTimeSeconds_4_trucks;
+                    var upgraded = StucDesign.buildTimeSeconds_4_trucks;
+
+                    var row = new Object;
+                    row.name = 'Time to build by 4 trucks';
+                    row.base = base.toMMSS();
+                    row.upgraded = upgraded.toMMSS();
+                    row.upgrade_change = (upgraded - base) / base;
+                    row.group = '2: Build time';
+                    grid_data.push(row);
+                }
+
+                {
+                    var row = new Object;
+                    row.name = 'Build points';
+                    row.base = StucDesign.baseStats.buildPoints;
+                    row.upgraded = StucDesign.buildPoints;
+                    row.upgrade_change = (row.upgraded - row.base) / row.base;
+                    row.group = '2: Build time';
+                    grid_data.push(row);
+                }
+
+                /* Armor */
+                {
+                    var row = new Object;
+                    row.name = 'Hit Points';
+                    row.base = StucDesign.baseStats.hitPoints;
+                    row.upgraded = StucDesign.hitPoints;
+                    row.upgrade_change = (row.upgraded - row.base) / row.base;
+                    row.group = '3: Armor';
+                    grid_data.push(row);
+                }
+                {
+                    var row = new Object;
+                    row.name = 'Kinetic armor';
+                    row.base = StucDesign.baseStats.armourKinetic;
+                    row.upgraded = StucDesign.armourKinetic;
+                    row.upgrade_change = (row.upgraded - row.base) / row.base;
+                    row.group = '3: Armor';
+                    grid_data.push(row);
+                }
+                {
+                    var row = new Object;
+                    row.name = 'Thermal armor';
+                    row.base = StucDesign.baseStats.armourHeat.toFixed(0);
+                    row.upgraded = StucDesign.armourHeat.toFixed(0);
+                    row.upgrade_change = ((row.upgraded - row.base) / row.base).toFixed(0);
+                    row.group = '3: Armor';
+                    grid_data.push(row);
+                }
+
+                /* DAMAGE */
+                if (StucDesign.weapon != undefined) {
+                    {
+                        var row = new Object;
+                        row.name = 'Damage';
+                        row.base = StucDesign.baseStats.damage;
+                        row.upgraded = StucDesign.damage;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+                    {
+                        var row = new Object;
+                        row.name = 'Damage Type';
+                        row.base = StucDesign.baseStats.weaponClass;
+                        row.upgraded = '';
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+                    {
+                        var row = new Object;
+                        row.name = 'Splash Damage';
+                        row.base = StucDesign.baseStats.radiusDamage;
+                        row.upgraded = StucDesign.radiusDamage;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+                    {
+                        var row = new Object;
+                        row.name = 'Splash Radius (tiles)';
+                        row.base = StucDesign.baseStats.radius / 128;
+                        row.upgraded = StucDesign.radius / 128;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+                    {
+                        var row = new Object;
+                        row.name = 'Shots per Minute <br />(Firepause)';
+                        row.base = StucDesign.baseStats.shotsPerMinute.toFixed(2);
+                        row.upgraded = StucDesign.shotsPerMinute.toFixed(2);
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+
+                    {
+                        var row = new Object;
+                        row.name = 'Periodical damage';
+                        row.base = StucDesign.baseStats.periodicalDamage;
+                        row.upgraded = StucDesign.periodicalDamage;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+
+                    {
+                        var row = new Object;
+                        row.name = 'Periodical damage duration <br />(seconds)';
+                        row.base = StucDesign.baseStats.periodicalDamageTime / 10;
+                        row.upgraded = StucDesign.periodicalDamageTime / 10;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+
+                    {
+                        var row = new Object;
+                        row.name = 'Periodical damage radius (tiles)';
+                        row.base = StucDesign.baseStats.periodicalDamageRadius / 128;
+                        row.upgraded = StucDesign.periodicalDamageRadius / 128;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '4: Damage';
+                        grid_data.push(row);
+                    }
+                    /* RANGE */
+                    {
+                        var row = new Object;
+                        row.name = 'Range (tiles)';
+                        row.base = StucDesign.baseStats.longRange / 128;
+                        row.upgraded = StucDesign.longRange / 128;
+                        row.upgrade_change = (row.upgraded - row.base) / row.base;
+                        row.group = '5: Range';
+                        grid_data.push(row);
+                    }
+                }
+
+                $("#designer_abilities_container").html(FormAbilitiesHtml(StucDesign));
+
+                //Designer_Draw_DPSTable('designer_dps_container', StucDesign, 0);
+
+                var container_id = "designer_parameters_container";
+                var grid_element_id = ResetGridContainer(container_id);
+                var grid = $(grid_element_id);
+                grid.jqGrid
+                ({
+                    datatype: "local",
+                    data: grid_data,
+                    rowNum: grid_data.length,
+                    height: 'auto',
+                    colModel:
+                        [
+                            { name: "", width: '20px', sortable: false, search: false },
+                            { name: "name", label: 'Parameter', key: true, width: '200px' },
+                            {
+                                name: "base", label: 'Base value', width: '100px',
+                                formatter: function (cellvalue, options, rowObject) {
+                                    if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                                        return '';
+                                    }
+                                    return cellvalue;
+                                }
+                            },
+                            { name: "group", label: 'group', width: '100px' },
+                            {
+                                name: "upgraded", label: 'Upgraded value', width: '100px',
+                                formatter: function (cellvalue, options, rowObject) {
+                                    if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                                        return '';
+                                    }
+                                    if (cellvalue == rowObject.base) {
+                                        return '';
+                                    }
+                                    return cellvalue;
+                                }
+                            },
+                            {
+                                name: "upgrade_change", label: 'Upgrade Change', width: '100px',
+                                formatter: function (cellvalue, options, rowObject) {
+                                    if (isNaN(cellvalue)) {
+                                        return '';
+                                    } else {
+                                        var fl = (parseFloat(cellvalue) * 100).toFixed(0);
+                                        if (fl == 0) {
+                                            return '';
+                                        } else {
+                                            return "<label>" + fl + "%</label>";
+                                        }
+                                    }
+                                },
+
+                            },
+                        ],
+                    onSelectRow: function (rowid) {
+
+                    },
+                    loadonce: true,
+                    grouping: true,
+                    groupingView: {
+                        groupField: ['group'],
+                        groupText: ['<b> {0} </b>'],
+                        groupColumnShow: [false]
+                    },
+                });
+
+            };
+
+            var show_research_path_method = function (weapon_id, body_id, propulsion_id) {
+
+                var res_path_data = [];
+                if (weapon_id != null) {
+                    res_path_data = res_path_data.concat(GetResearchPath_SubTree(weapon_id, player_all_researched));
+                }
+                if (body_id != null) {
+                    res_path_data = res_path_data.concat(GetResearchPath_SubTree(body_id, player_all_researched));
+                }
+                if (propulsion_id != null) {
+                    res_path_data = res_path_data.concat(GetResearchPath_SubTree(propulsion_id, player_all_researched));
+                }
+
+                DrawResearchPath_Tree("designer_researchpath_container", res_path_data);
+            }
+
+            var research_time = $('#designer_research_slider').slider("option", "value");
+
+            if (last_calculated_research_time != research_time) {
+                ShowLoading('tabs_left');
+                DoResearch(research_time, 0, function (finished_research) {
+                    HideLoading('tabs_left');
+                    last_calculated_research_time = research_time;
+                    if (is_unfinished_design) {
+                        if (weapon != null) {
+                            $("#designer_abilities_container").html(Form_Weapon_Abilities_html(weapon));
+                        }
+                    } else {
+                        show_params_method();
+                    }
+                    $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
+
+                    show_research_path_method(weapon_id, body_id, propulsion_id);
+                });
+            } else {
+                if (is_unfinished_design) {
+                    if (weapon != null) {
+                        $("#designer_abilities_container").html(Form_Weapon_Abilities_html(weapon));
+                    }
+                } else {
+                    show_params_method();
+                }
+                $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
+                show_research_path_method(weapon_id, body_id, propulsion_id);
+            }
+
+            if (callback_function != undefined) {
+                callback_function();
+            }
+        }
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td style="text-align:center;">
+            <div class="menuLink ui-accordion-header ui-helper-reset ui-state-default ui-accordion-header-active ui-accordion-icons" style="padding: 5px;">
+                <a href="design.php" style="margin-right:40px">Tank Designer<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+               
+                <a href="stats.php" style="margin-right:40px">Warzone2100 datababe<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+                <a href="weapons.php" style="margin-right:40px">Weapons Guide<span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="display:inline-block"></span></a>
+            </div>
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-details">Building details</a></li>
+                </ul>
+                <div id="left-tabs-details">
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="building_header_container"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="padding:10px">
+                                <label for="designer_research_progress_input">Research time:</label>
+                                <input type="text" id="designer_research_progress_input" style="border: 0; font-weight: bold;" />
+                                <div id="designer_research_slider"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table id="designer_all_data_container" style="vertical-align: top;">
+                        <tr>
+                            <td style="vertical-align: top">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Paramaters of structure</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_parameters_container"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top: 10px;">Research Paths</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_researchpath_container"></div>
+
+                            </td>
+                            <td style="vertical-align: top">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Abilities</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_abilities_container"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px;">Time of Research (minimum)</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px;" id="designer_research_requirements"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top:20px;" id="designer_dps_header">DPS (Damage per second)</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_dps_container"></div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+    <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

@@ -56,8 +56,6 @@ function InitDesigner() {
             }
         }
     });
-
-
     $("#designer_research_progress_input").val(func_val_slider($("#designer_research_slider").slider("value")));
 
 };
@@ -155,144 +153,6 @@ function ShowSeletDialog_forDataObject(input_selector, DataObject, input_selecto
 }
 
 
-//var TankDesignStats = function () { };
-//WeaponAbilities.prototype = (function () {
-//    var me = {};
-//    me.hitPoints = 0;
-//    me.armourKinetic = 0;
-//    return me;
-//})();
-
-function CalculateTankDesign(player, weapon, body, propulsion) {
-
-    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
-    var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
-
-    var TankDesign = {}; 
-    TankDesign.weapon = jQuery.parseJSON(JSON.stringify(weapon)); //deep copy
-    TankDesign.weapon_upgraded = weapon;
-    TankDesign.body = jQuery.parseJSON(JSON.stringify(body)); //deep copy
-    TankDesign.body_upgraded = body_upgraded;
-    TankDesign.propulsion = jQuery.parseJSON(JSON.stringify(propulsion)); //deep copy
-    TankDesign.baseStats = {};
-
-    /* HP, ARMOR */
-    var hp = body.hitpoints + (body.hitpoints * propulsion.hitpoints) / 100 + weapon.body;
-    TankDesign.baseStats.hitPoints = hp;
-    TankDesign.hitPoints = hp + hp * body_upgraded.armour / 100;
-
-    TankDesign.baseStats.armourKinetic = body.armourKinetic;
-    TankDesign.armourKinetic = body_upgraded.armourKinetic + body_upgraded.armourKinetic * body_upgraded.armour / 100;
-
-    TankDesign.baseStats.armourHeat = body.armourHeat;
-    TankDesign.armourHeat = body_upgraded.armourHeat;
-    
-
-    /* SPEED */
-    var weight = body.weight + (body.weight * propulsion.weight) / 100 + weapon.weight;
-    var prop_modifier = PropulsionType.loaded_data_hash[propulsion.type].multiplier;
-    var vtol_speed_modifier = 1;
-    var speed_bonus = 1;
-    if (body.powerOutput > weight) {
-        speed_bonus = 1.5;
-    }
-    TankDesign.speed_bonus = speed_bonus;
-    if (propulsion.type == 'Lift') {
-        if (body.size == "HEAVY") {
-            vtol_speed_modifier = 0.25;
-        } else if (body.size == "MEDIUM") {
-            vtol_speed_modifier = 0.75;
-        }
-    }
-    var terrain_modifier_road = TerrainTable.loaded_data_hash["6"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
-    var terrain_modifier_sandybush = TerrainTable.loaded_data_hash["1"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
-
-    var engine_base = (body.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
-    var engine_upgraded = (body_upgraded.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
-
-    TankDesign.baseStats.speed_road = Math.min(propulsion.speed / 100 / 1.28, engine_base * terrain_modifier_road / weight / 100 / 1.28).toFixed(2);
-    TankDesign.speed_road = Math.min(propulsion.speed / 100 / 1.28, engine_upgraded * terrain_modifier_road / weight / 100 / 1.28).toFixed(2);
-
-    TankDesign.baseStats.speed_offroad = Math.min(propulsion.speed / 100 / 1.28, engine_base * terrain_modifier_sandybush / weight / 100 / 1.28).toFixed(2);;
-    TankDesign.speed_offroad = Math.min(propulsion.speed / 100 / 1.28, engine_upgraded * terrain_modifier_sandybush / weight / 100 / 1.28).toFixed(2);
-
-    TankDesign.baseStats.weaponClass = weapon.weaponClass;
-    TankDesign.weaponClass = weapon_upgraded.weaponClass;
-
-    TankDesign.baseStats.damage = weapon.damage;
-    TankDesign.damage = weapon_upgraded.damage;
-
-    TankDesign.baseStats.radiusDamage = weapon.radiusDamage;
-    TankDesign.radiusDamage = weapon_upgraded.radiusDamage;
-
-    TankDesign.baseStats.radius = weapon.radius;
-    TankDesign.radius = weapon_upgraded.radius;
-
-    TankDesign.baseStats.shotsPerMinute = Weapon_ShotsPerMinute(weapon);
-    TankDesign.shotsPerMinute = Weapon_ShotsPerMinute(weapon_upgraded);
-
-    TankDesign.baseStats.firePause = weapon.firePause;
-    TankDesign.firePause = weapon_upgraded.firePause;
-
-    TankDesign.baseStats.reloadTime = weapon.reloadTime;
-    TankDesign.reloadTime = weapon_upgraded.reloadTime;
-
-    TankDesign.baseStats.numRounds = weapon.numRounds;
-    TankDesign.numRounds = weapon_upgraded.numRounds;
-
-    TankDesign.baseStats.periodicalDamage = weapon.periodicalDamage;
-    TankDesign.periodicalDamage = weapon_upgraded.periodicalDamage;
-
-    TankDesign.baseStats.periodicalDamage = weapon.periodicalDamage;
-    TankDesign.periodicalDamage = weapon_upgraded.periodicalDamage;
-
-    TankDesign.baseStats.periodicalDamageTime = weapon.periodicalDamageTime;
-    TankDesign.periodicalDamageTime = weapon_upgraded.periodicalDamageTime;
-
-    TankDesign.baseStats.periodicalDamageRadius = weapon.periodicalDamageRadius;
-    TankDesign.periodicalDamageRadius = weapon_upgraded.periodicalDamageRadius;
-
-    /* PRICE, BUILD POINTS, BUILD TIME */
-    var fact_build_points;
-    var fact_build_points_upgraded;
-    
-    if (propulsion.type == 'Lift') {
-        fact_build_points = Structures.loaded_data_hash['A0VTolFactory1'].productionPoints; // per second
-        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0VTolFactory1'].index_of_datarow].productionPoints; // per second
-    } else if (propulsion.type == 'Legged') {
-        fact_build_points = Structures.loaded_data_hash['A0CyborgFactory'].productionPoints; // per second
-        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0CyborgFactory'].index_of_datarow].productionPoints; // per second
-    } else {
-        fact_build_points = Structures.loaded_data_hash['A0LightFactory'].productionPoints; // per second
-        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0LightFactory'].index_of_datarow].productionPoints; // per second
-    }
-
-    TankDesign.baseStats.price = weapon.buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
-    TankDesign.price = weapon_upgraded.buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
-
-    TankDesign.baseStats.buildPoints = weapon.buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
-    TankDesign.buildPoints = weapon_upgraded.buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
-
-    TankDesign.baseStats.buildTimeSeconds_factory_nomodules = TankDesign.baseStats.buildPoints / fact_build_points;
-    TankDesign.buildTimeSeconds_factory_nomodules = TankDesign.buildPoints / fact_build_points_upgraded;
-
-    if (propulsion.type == 'Legged') {
-        TankDesign.baseStats.buildTimeSeconds_factory_with2modules = 0;
-        TankDesign.buildTimeSeconds_factory_with2modules = 0;
-    } else {
-        TankDesign.baseStats.buildTimeSeconds_factory_with2modules = TankDesign.baseStats.buildPoints / (fact_build_points * 3);
-        TankDesign.buildTimeSeconds_factory_with2modules = TankDesign.buildPoints / (fact_build_points * 2 + fact_build_points_upgraded);
-    }
-
-    TankDesign.baseStats.longRange = weapon.longRange;
-    TankDesign.longRange = weapon_upgraded.longRange;
-    
-    /* VTOL Stuff */
-    TankDesign.baseStats.vtol_numShots = (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 0 : weapon.numRounds);
-    TankDesign.vtol_numShots = TankDesign.baseStats.vtol_numShots;
-
-    return TankDesign;
-}
 
 function Weapon_ShotsPerMinute(weapon) {
     var reloadTime = weapon.reloadTime == undefined ? 0 : weapon.reloadTime;
@@ -658,13 +518,14 @@ function CalculateDesign_fromIDs(player, weapon_id, body_id, propulsion_id) {
     return CalculateTankDesign(player, weapon, body, propulsion);
 }
 
+var designer_player = 0;
 function TryCalculateDesign(callback_function) {
 
     ShowLoading('tabs_left');
 
     LoadAllObjects(function () {
 
-        var player = 0;
+        var player = designer_player;
         HideLoading('tabs_left');
         
         var weapon_id = $("#designer_weapon").attr('data-value');
@@ -1127,4 +988,212 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
         },
     });
     grid.SortTree(1);
+}
+
+function CalculateTankDesign(player, weapon, body, propulsion) {
+
+    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+    var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
+
+    var TankDesign = {};
+    TankDesign.name = weapon.name + ' ' + body.name + ' ' + propulsion.name;
+    TankDesign.weapon = jQuery.parseJSON(JSON.stringify(weapon)); //deep copy
+    TankDesign.weapon_upgraded = weapon_upgraded;
+    TankDesign.body = jQuery.parseJSON(JSON.stringify(body)); //deep copy
+    TankDesign.body_upgraded = body_upgraded;
+    TankDesign.propulsion = jQuery.parseJSON(JSON.stringify(propulsion)); //deep copy
+    TankDesign.baseStats = {};
+
+    //add weapon stats to TankDesign object
+    CalculateWeaponStats_AddToObjects(player, weapon, TankDesign, TankDesign.baseStats, TankDesign);
+
+    /* HP, ARMOR */
+    {
+        var hp = body.hitpoints + (body.hitpoints * propulsion.hitpoints) / 100 + weapon.hitpoints;
+        var percent_upgrade = body_upgraded.hitpoints_percentage == undefined ? 0 : body_upgraded.hitpoints_percentage;
+        TankDesign.baseStats.hitPoints = hp;
+        TankDesign.hitPoints = hp + hp * percent_upgrade / 100;
+    }
+
+    TankDesign.baseStats.armourKinetic = body.armourKinetic;
+    TankDesign.armourKinetic = body_upgraded.armourKinetic;
+
+    TankDesign.baseStats.armourHeat = body.armourHeat;
+    TankDesign.armourHeat = body_upgraded.armourHeat;
+
+
+    /* SPEED */
+    var weight = body.weight + (body.weight * propulsion.weight) / 100 + weapon.weight;
+    var prop_modifier = PropulsionType.loaded_data_hash[propulsion.type].multiplier;
+    var vtol_speed_modifier = 1;
+    var speed_bonus = 1;
+    if (body.powerOutput > weight) {
+        speed_bonus = 1.5;
+    }
+    TankDesign.speed_bonus = speed_bonus;
+    if (propulsion.type == 'Lift') {
+        if (body.size == "HEAVY") {
+            vtol_speed_modifier = 0.25;
+        } else if (body.size == "MEDIUM") {
+            vtol_speed_modifier = 0.75;
+        }
+    }
+    var terrain_modifier_road = TerrainTable.loaded_data_hash["6"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
+    var terrain_modifier_sandybush = TerrainTable.loaded_data_hash["1"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
+
+    var engine_base = (body.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
+    var engine_upgraded = (body_upgraded.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
+
+    TankDesign.baseStats.speed_road = Math.min(propulsion.speed / 100 / 1.28, engine_base * terrain_modifier_road / weight / 100 / 1.28).toFixed(2);
+    TankDesign.speed_road = Math.min(propulsion.speed / 100 / 1.28, engine_upgraded * terrain_modifier_road / weight / 100 / 1.28).toFixed(2);
+
+    TankDesign.baseStats.speed_offroad = Math.min(propulsion.speed / 100 / 1.28, engine_base * terrain_modifier_sandybush / weight / 100 / 1.28).toFixed(2);;
+    TankDesign.speed_offroad = Math.min(propulsion.speed / 100 / 1.28, engine_upgraded * terrain_modifier_sandybush / weight / 100 / 1.28).toFixed(2);
+
+    /* PRICE, BUILD POINTS, BUILD TIME */
+    var fact_build_points;
+    var fact_build_points_upgraded;
+
+    if (propulsion.type == 'Lift') {
+        fact_build_points = Structures.loaded_data_hash['A0VTolFactory1'].productionPoints; // per second
+        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0VTolFactory1'].index_of_datarow].productionPoints; // per second
+    } else if (propulsion.type == 'Legged') {
+        fact_build_points = Structures.loaded_data_hash['A0CyborgFactory'].productionPoints; // per second
+        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0CyborgFactory'].index_of_datarow].productionPoints; // per second
+    } else {
+        fact_build_points = Structures.loaded_data_hash['A0LightFactory'].productionPoints; // per second
+        fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0LightFactory'].index_of_datarow].productionPoints; // per second
+    }
+
+    TankDesign.baseStats.price = weapon.buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
+    TankDesign.price = weapon_upgraded.buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
+
+    TankDesign.baseStats.buildPoints = weapon.buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
+    TankDesign.buildPoints = weapon_upgraded.buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
+
+    TankDesign.baseStats.buildTimeSeconds_factory_nomodules = TankDesign.baseStats.buildPoints / fact_build_points;
+    TankDesign.buildTimeSeconds_factory_nomodules = TankDesign.buildPoints / fact_build_points_upgraded;
+
+    if (propulsion.type == 'Legged') {
+        TankDesign.baseStats.buildTimeSeconds_factory_with2modules = 0;
+        TankDesign.buildTimeSeconds_factory_with2modules = 0;
+    } else {
+        TankDesign.baseStats.buildTimeSeconds_factory_with2modules = TankDesign.baseStats.buildPoints / (fact_build_points * 3);
+        TankDesign.buildTimeSeconds_factory_with2modules = TankDesign.buildPoints / (fact_build_points * 2 + fact_build_points_upgraded);
+    }
+
+    return TankDesign;
+}
+
+function CalculateBuilding(player, structure) {
+
+    var StructureDesign;
+    var structure_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Building[structure.index_of_datarow])); //deep copy
+    StructureDesign = {};
+    StructureDesign.baseStats = {};
+
+    if (structure.weapons != undefined) {
+        var weapons = structure.weapons.split(',');
+        if (weapons.length > 0) {
+            var weapon = weapons[0];
+            var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+            //add weapon stats to TankDesign object
+            CalculateWeaponStats_AddToObjects(player, weapon, StructureDesign, StructureDesign.baseStats, StructureDesign);
+        }
+    }
+
+    if (structure.sensorID != undefined) {
+        var sensor = Sensor.loaded_data_hash[structure.sensorID];
+        var sensor_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Sensor[sensor.index_of_datarow])); //deep copy
+        if (sensor != undefined) {
+            StructureDesign.baseStats.sensorRange = sensor.range;
+            StructureDesign.sensorRange = sensor_upgraded.range;
+        }
+    }
+
+    /* HP, ARMOR */
+    var hp = structure.hitpoints;
+    StructureDesign.baseStats.hitPoints = hp;
+    StructureDesign.hitPoints = hp + hp * structure_upgraded.hitPoints / 100;
+
+    var armor = structure.armour;
+    StructureDesign.baseStats.armourKinetic = armor;
+    StructureDesign.armourKinetic = armor + armor * structure_upgraded.armour / 100;
+
+    StructureDesign.baseStats.armourHeat = armor;
+    StructureDesign.armourHeat = armor + armor * structure_upgraded.armour / 100;
+
+    /* PRICE, BUILD POINTS, BUILD TIME */
+    var truck_build_points;
+    var truck_build_points_upgraded;
+
+    truck_build_points = Construction.loaded_data_hash['Spade1Mk1'].constructPoints; // per second
+    truck_build_points_upgraded = Upgrades[player].Construct[Construction.loaded_data_hash['Spade1Mk1'].index_of_datarow].constructPoints; // per second
+
+    StructureDesign.baseStats.price = structure.buildPower;
+    StructureDesign.price = structure_upgraded.buildPower;
+
+    StructureDesign.baseStats.buildPoints = structure.buildPoints;
+    StructureDesign.buildPoints = structure_upgraded.buildPoints;
+
+    StructureDesign.baseStats.buildTimeSeconds_2_trucks = structure.buildPoints / (truck_build_points * 2);
+    StructureDesign.buildTimeSeconds_2_trucks = structure_upgraded.buildPoints / (truck_build_points_upgraded * 2);
+
+    StructureDesign.baseStats.buildTimeSeconds_4_trucks = structure.buildPoints / (truck_build_points * 4);
+    StructureDesign.buildTimeSeconds_4_trucks = structure_upgraded.buildPoints / (truck_build_points_upgraded * 4);
+
+
+    return StructureDesign;
+}
+
+
+function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_object_base, ref_object_upgraded) {
+    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+
+    ref_object.weapon = jQuery.parseJSON(JSON.stringify(weapon)); //deep copy
+    ref_object.weapon_upgraded = weapon_upgraded;
+
+    ref_object_base.weaponClass = weapon.weaponClass;
+    ref_object_upgraded.weaponClass = weapon_upgraded.weaponClass;
+
+    ref_object_base.damage = weapon.damage;
+    ref_object_upgraded.damage = weapon_upgraded.damage;
+
+    ref_object_base.radiusDamage = weapon.radiusDamage;
+    ref_object_upgraded.radiusDamage = weapon_upgraded.radiusDamage;
+
+    ref_object_base.radius = weapon.radius;
+    ref_object_upgraded.radius = weapon_upgraded.radius;
+
+    ref_object_base.shotsPerMinute = Weapon_ShotsPerMinute(weapon);
+    ref_object_upgraded.shotsPerMinute = Weapon_ShotsPerMinute(weapon_upgraded);
+
+    ref_object_base.firePause = weapon.firePause;
+    ref_object_upgraded.firePause = weapon_upgraded.firePause;
+
+    ref_object_base.reloadTime = weapon.reloadTime;
+    ref_object_upgraded.reloadTime = weapon_upgraded.reloadTime;
+
+    ref_object_base.numRounds = weapon.numRounds;
+    ref_object_upgraded.numRounds = weapon_upgraded.numRounds;
+
+    ref_object_base.periodicalDamage = weapon.periodicalDamage;
+    ref_object_upgraded.periodicalDamage = weapon_upgraded.periodicalDamage;
+
+    ref_object_base.periodicalDamage = weapon.periodicalDamage;
+    ref_object_upgraded.periodicalDamage = weapon_upgraded.periodicalDamage;
+
+    ref_object_base.periodicalDamageTime = weapon.periodicalDamageTime;
+    ref_object_upgraded.periodicalDamageTime = weapon_upgraded.periodicalDamageTime;
+
+    ref_object_base.periodicalDamageRadius = weapon.periodicalDamageRadius;
+    ref_object_upgraded.periodicalDamageRadius = weapon_upgraded.periodicalDamageRadius;
+
+    ref_object_base.longRange = weapon.longRange;
+    ref_object_upgraded.longRange = weapon_upgraded.longRange;
+
+    /* VTOL Stuff */
+    ref_object_base.vtol_numShots = (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 0 : weapon.numRounds);
+    ref_object_upgraded.vtol_numShots = ref_object_base.vtol_numShots;
+
 }

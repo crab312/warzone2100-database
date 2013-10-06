@@ -20,12 +20,18 @@ var TankDesigner;
 var SelectedObject;
 var Objects = new Array;
 
+
+$(function () {
+    DrawPageHeader();
+    DrawPageCaption();
+});
+
 function InitDataObjects() {
     /* Update localStorage, in case if site data structures was changed */
 
     InitResearchObjects();
 
-    var current_site_version = "1.16";
+    var current_site_version = "1.19";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -284,7 +290,7 @@ function InitDataObjects() {
             { label: "Class", name: "strength" },
             { label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
             { label: "Build time", name: "buildPoints", width: 45, sorttype: "int" },
-            { label: "Hit points", name: "bodyPoints", width: 45, sorttype: "int" },
+            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
             { label: "Armor kinetic", name: "armour", width: 45, sorttype: "int" },
             { label: "Armor thermal", name: "armour", width: 45, sorttype: "int" },
             //{
@@ -741,57 +747,68 @@ function LoadResearch(DataObject, callback_function) {
 //var readfile;
 function LoadDataObject(DataObject, callback_function) {
     if (DataObject.loaded_data == undefined) {
-        /* retrievind data from server */
-        ShowLoading('tabs_left');
-        $.ajax({
-            url: "stuff.php",
-            data: { url: DataObject.path_ini },
-            datatype: "text",
-            success: function (msg) {
-                var readfile = jQuery.parseJSON(msg);
-                var grid_data = [];
-                var fields_dict = new Array();
-                var grid_columns = new Array();
-                DataObject.loaded_data_hash = {};
-                for (var key in readfile) {
-                    var data_row = readfile[key];
-                    data_row.grid_id = key;
-                    data_row.index_of_datarow = grid_data.length;
-                    grid_data.push(data_row);
 
-                    for (var propertyName in data_row) {
-                        var isNumber = !isNaN(data_row[propertyName]);
-                        if (isNumber) {
-                            //try convert all strings to numbers if possible (was unable to do this in php_parse_ini)
-                            data_row[propertyName] = parseInt(data_row[propertyName]);
-                        }
-                        if (fields_dict[propertyName] == undefined) {
-                            fields_dict[propertyName] = 1;
-                            var grid_col = new Object;
-                            grid_col.name = propertyName;
-                            grid_col.label = propertyName;
-                            if (isNumber) {
-                                grid_col.width = 45;
-                            } else {
-                                grid_col.width = 80;
-                            }
-                            grid_columns.push(grid_col);
-                        }
+        var method_process_loaded_data = function (DataObject, loaded_data, callback_function) {
+            var readfile = jQuery.parseJSON(loaded_data);
+            var grid_data = [];
+            var fields_dict = new Array();
+            var grid_columns = new Array();
+            DataObject.loaded_data_hash = {};
+            for (var key in readfile) {
+                var data_row = readfile[key];
+                data_row.grid_id = key;
+                data_row.index_of_datarow = grid_data.length;
+                grid_data.push(data_row);
+
+                for (var propertyName in data_row) {
+                    var isNumber = !isNaN(data_row[propertyName]);
+                    if (isNumber) {
+                        //try convert all strings to numbers if possible (was unable to do this in php_parse_ini)
+                        data_row[propertyName] = parseInt(data_row[propertyName]);
                     }
-                    DataObject.loaded_data_hash[key] = data_row;
+                    if (fields_dict[propertyName] == undefined) {
+                        fields_dict[propertyName] = 1;
+                        var grid_col = new Object;
+                        grid_col.name = propertyName;
+                        grid_col.label = propertyName;
+                        if (isNumber) {
+                            grid_col.width = 45;
+                        } else {
+                            grid_col.width = 80;
+                        }
+                        grid_columns.push(grid_col);
+                    }
                 }
-                DataObject.all_columns = grid_columns;
-                DataObject.loaded_data = grid_data;
-                HideLoading('tabs_left');
-                if (callback_function != undefined) {
-                    callback_function();
-                }
-            },
-            error: function (msg) {
-                HideLoading('tabs_left');
-                alert('Error happened. Please try to reload page.');
+                DataObject.loaded_data_hash[key] = data_row;
             }
-        });
+            DataObject.all_columns = grid_columns;
+            DataObject.loaded_data = grid_data;
+            if (callback_function != undefined) {
+                callback_function();
+            }
+        }
+
+        if (localStorage[DataObject.sysid + "_loaded_data"] != undefined) {
+            method_process_loaded_data(DataObject, localStorage[DataObject.sysid + "_loaded_data"], callback_function);
+        }
+        else {
+            /* retrievind data from server */
+            ShowLoading('tabs_left');
+            $.ajax({
+                url: "stuff.php",
+                data: { url: DataObject.path_ini },
+                datatype: "text",
+                success: function (msg) {
+                    localStorage[DataObject.sysid + "_loaded_data"] = msg;
+                    method_process_loaded_data(DataObject, msg, callback_function);
+                    HideLoading('tabs_left');
+                },
+                error: function (msg) {
+                    HideLoading('tabs_left');
+                    alert('Error happened. Please try to reload page.');
+                }
+            });
+        }
     } else {
         HideLoading('tabs_left');
         if (callback_function != undefined) {
@@ -929,4 +946,74 @@ function EmptyComponentIcon_html(name) {
         shown_name = name.substring(0, 21) + '...';
     }
     return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
+}
+
+
+function DrawPageHeader() {
+
+    var html = '\
+            <div style="text-align:center;">\
+            <div class="ui-corner-top" style="margin-bottom:-5px;width:100%; height:185px;background:url(\'./Styles/wz2100netbanner.jpg\') no-repeat left top #ffffff; color: #FFFFFF">\
+                <img src="./Styles/wz2100netlogo.png" width="186" height="86" alt="" title="" style="margin-top:10px"/>\
+            </div>\
+            <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top" style=";margin-top:-85px;margin-bottom:-5px;"> \
+                <a href="index.html" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Guide\
+		            </h3>\
+                </a>\
+                <a href="weapons.php" class="ui-helper-reset" style="font-size:0.9em;">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Weapons\
+		            </h3>\
+                </a>\
+                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Bodies\
+		            </h3>\
+                </a>\
+                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Propulsion\
+		            </h3>\
+                </a>\
+                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Buildings\
+		            </h3>\
+                </a>\
+                <a href="stats.php" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Database\
+		            </h3>\
+                </a>\
+                <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Tank Designer\
+		            </h3>\
+                </a>\
+            </div>\
+            </div>\
+    \
+    ';
+
+    var elm = $('#page_header');
+    if (elm.length > 0) {
+        elm.html(html);
+    }
+}
+
+function DrawPageCaption() {
+    var elm = $('#page_caption');
+    if (elm.length > 0) {
+
+        var html = '\
+        <div class="ui-accordion ui-widget ui-helper-reset">\
+            <h3 style="text-align:left; font-size:1.1em;margin-bottom:-10px;padding-bottom:10px;background:rgba(255,255,255,0.90)" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">\
+                <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>\
+        ' + elm.attr('data-caption') +'\
+            </h3>\
+        </div>';
+        elm.html(html);
+    }
 }

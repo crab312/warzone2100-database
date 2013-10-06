@@ -1,15 +1,222 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
     <title></title>
 </head>
-<body>
-    <h1>Welcome to Warzone2100 databse</h1>
-    <br />
-    <a href="design.php">Tank Designer. The best one! :)</a>
-    <br />
-    <a href="stats.php">Warzone datababe: Weapons, Bodies, Propulsion etc.</a>
-    <br />
-    <a href="weapons.php">Weapons Guide</a>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto;">
+    <tr>
+        <td id="page_header" colspan="3">
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <div style="background:#eeeeee;height:100px; margin-bottom:-110px" ></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Inroduction</a>
+	            </h3>
+	            <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+		            Warzone 2100 is a real-time strategy game, originally developed by Pumpkin Studios and published by Eidos Interactive, now developed by the Warzone 2100 Project. Compared to other real-time strategy games, it has a greater focus on artillery, radar, and counter-battery technologies, more frequent in-game cinematic updates as game play progresses, a massive research tree, as well as a vehicle design system.
+	            <div style="text-align:center;">
+                    <a href="Inroduction.html" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:100px; display:inline-block; font-size:0.9em">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-arrow-1-e"></span>
+                            Read more...
+		                </h3>
+                    </a>
+	            </div>
+                </div>
+            </div>
+        </td>
+        <td rowspan="2" style="vertical-align:top;">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Story</a>
+	            </h3>
+	            <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left;">
+                <video controls="controls" width="320" height="240">
+                    <source src="./Styles/devastation.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/>
+                    Video tag not supported. Download the video <a href="./Styles/devastation.mp4">here</a>.
+                    </video>
+	            </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="width:50%; vertical-align:top;">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Manual</a>
+	            </h3>
+	            <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                    <a href="Inroduction.html" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Basics
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Keyboard shortcuts
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Walkthrough
+		                </h3>
+                    </a>
+	            </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:50%; vertical-align:top;">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Reference</a>
+	            </h3>
+	            <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Base structures
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Defensive Structures
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Weapons
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Tank bodies
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Propulsion
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Cyborgs
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Tech Tree
+		                </h3>
+                    </a>
+	            </div>
+            </div>
+        </td>
+        <td style="width:50%; vertical-align:top;">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Advanced Strategy</a>
+	            </h3>
+                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Early-game strategy
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Weapon guide
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Defenses guide
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Formulas
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
+                            Multiplayer rankings
+		                </h3>
+                    </a>
+	            </div>
+            </div>
+        </td>
+        <td style="width:50%; vertical-align:top;">
+            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                    <a href="#">Tools</a>
+	            </h3>
+                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+		            <a href="design.php" class="ui-helper-reset" >
+                        <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-star"></span>
+                            Unit designer
+		                </h3>
+                    </a>
+                    <a href="stats.php" class="ui-helper-reset" >
+		                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:230px">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-calculator"></span>
+                            Database
+		                </h3>
+                    </a>
+	            </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+
+        </td>
+    </tr>
+</table>
 </body>
 </html>

@@ -33,6 +33,9 @@
     <Compile Include="stats.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="structure_details.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="stuff.php" />
     <Compile Include="weapons.php">
       <SubType>Code</SubType>
@@ -102,10 +105,16 @@
     <Content Include="index.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Inroduction.html">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="scripts\common_objects.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="scripts\designer_functions.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\Fight.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="scripts\jquery-2.0.3.js">
@@ -2409,10 +2418,19 @@
     <Content Include="scripts\MyCustomScripts2.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\properties_desription.js">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="scripts\research_functions.js">
       <SubType>Content</SubType>
     </Content>
     <Content Include="stats.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Story.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="structure_details.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Styles\FhHRx.gif">
@@ -2424,10 +2442,13 @@
     <Content Include="Styles\search-icon.png">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="test.html">
+    <Content Include="Styles\wz2100netbanner.jpg">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="WeaponGuide.html">
+    <Content Include="Styles\wz2100netlogo.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="test.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="weapons.html">

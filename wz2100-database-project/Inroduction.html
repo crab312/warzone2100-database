@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+
+        });
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-introduction">Inroduction</a></li>
+                </ul>
+                <div id="left-tabs-introduction">
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            <a href="#">Inroduction</a>
+	                    </h3>
+	                    <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+Warzone 2100 is a real-time strategy game, originally developed by Pumpkin Studios and published by Eidos Interactive, now developed by the Warzone 2100 Project. Compared to other real-time strategy games, it has a greater focus on artillery, radar, and counter-battery technologies, more frequent in-game cinematic updates as game play progresses, a massive research tree, as well as a vehicle design system.
+                        </div>
+                    </div>                    
+                
+                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                        <a href="#">Story</a>
+	                </h3>
+	                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+In the late 21st century, NASDA (the North American Strategic Defense Agency) developed and deployed a massive missile defense system, including a network of nuclear-equipped satellites and ground-based launch sites. However, during a routine maintenance check, something went terribly wrong...
+                    <div style="text-align:center">
+                        <a href="Story.html" class="ui-helper-reset">
+		                    <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="width:100px; display:inline-block; font-size:0.9em">
+                                <span class="ui-accordion-header-icon ui-icon ui-icon-arrow-1-e"></span>
+                                Read more...
+		                    </h3>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                        <a href="#">Multiplayer</a>
+	                </h3>
+	                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+Outside of the story, Warzone 2100 only has a single faction. This limits some of the variety that can be expected from real-time strategy games, although the single faction is very complex. Essentially, Warzone 2100 plays much like Earth 2150 with 3D units and terrain, customizable vehicles, a lack of traditional infantry, use of "research" to acquire new technologies, and the differentiation of vehicles types.
+
+Compared to other RTS's, Warzone 2100 has:
+<ul>
+    <li>A unit design system that lets players choose bodies, propulsions, and weapons.</li>
+    <li>A greater emphasis on sensors and radar: Basic sensors detect units and can co-ordinate ground attacks. Counter-battery (CB) sensors detect enemy artillery batteries and coordinate artillery strikes against enemy artillery. VTOL sensors and VTOL CB sensors coordinate VTOL attacks. Radar detectors detect enemy sensors.</li>
+    <li>A greater emphasis on artillery: With the assistance of sensors, late game artillery can fire from huge distances.</li>
+    <li>A massive technology tree, with small incremental advancements over existing technologies being required for later technologies.</li>
+</ul>
+                    </div>
+                </div>  
+                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                        <a href="#">Inroduction</a>
+	                </h3>
+	                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+Warzone can be downloaded from: 
+                        <a href="http://developer.wz2100.net/wiki/Download" class="ui-helper-reset">
+		                    <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-accordion-icons" style="display:inline-block; font-size:0.9em">
+                                <span class="ui-accordion-header-icon ui-icon ui-icon-arrow-1-e"></span>
+                                Download Warzone 2100
+		                    </h3>
+                        </a><br /><br />
+It's fairly self-explanatory, but if you need help, see: <a href="#">Getting Started</a>.
+                    </div>
+                </div>     
+                    
+                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist">
+	                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                        <a href="#">Playing Warzone</a>
+	                </h3>
+	                <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+<em>See also:  </em><a href="#">Basics</a>
+                        <br />
+The easiest way to learn how to play is to play the <b>Tutorial</b> in the game.
+                        <br />
+                    </div>
+                </div>    
+                                                                       
+            </div>
+
+            </div>
+        </td>
+    </tr>
+    </table>
+</body>
+</html>
