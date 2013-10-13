@@ -205,3 +205,15 @@ input:-moz-placeholder, textarea:-moz-placeholder {
 .menuLink a:hover {
     border: 1px dotted;
 }
+
+.MyStyledLinkMenu a {
+    color: darkred;
+    line-height:1.5em;
+}
+
+.MyStyledLinkMenu a:hover {
+    color: #cc0000;
+    text-decoration:underline;
+    border:dotted thin;
+    padding:2px;
+}

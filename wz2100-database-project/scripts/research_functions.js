@@ -205,6 +205,22 @@ var finished_research;
 
 function DoResearch(time_seconds, player, callback_function) {
 
+    /* try load research results from local storage */
+    if (localStorage["research_results_player_" + player] != undefined) {
+        var res = JSON.parse(localStorage["research_results_player_" + player]);
+        if (res.time_seconds == time_seconds) {
+            ResearchedComponents[player] = res.ResearchedComponents;
+            Upgrades[player] = res.Upgrades;
+            ResearchTimeState[player] = res.ResearchTimeState;
+            ResearchTime[player] = res.ResearchTime;
+            
+            if (callback_function != undefined) {
+                callback_function();    
+            }
+            return;
+        }
+    }
+
     ResearchedComponents[player] = {};
     Upgrades[player] = {};
     ResearchTimeState[player] = 0;
@@ -233,9 +249,7 @@ function DoResearch(time_seconds, player, callback_function) {
 
         }
 
-
         /* Init players upgrade data */
-        
         Upgrades[player].Body = jQuery.parseJSON(JSON.stringify(Bodies.loaded_data));
         for (var i = 0; i < Upgrades[player].Body.length; i++) {
             Upgrades[player].Body[i].armour = 0;
@@ -423,6 +437,15 @@ function DoResearch(time_seconds, player, callback_function) {
         }
 
         ResearchTimeState[player] = time_seconds;
+
+        /* save research results to local storage */
+        var save_results = {};
+        save_results.time_seconds = time_seconds;
+        save_results.ResearchedComponents = ResearchedComponents[player];
+        save_results.Upgrade = Upgrades[player];
+        save_results.ResearchTimeState = ResearchTimeState[player];
+        save_results.ResearchTime = ResearchTime[player];
+        localStorage["research_results_player_" + player] = JSON.stringify(save_results);
 
         if (callback_function != null) {
             callback_function(finished_research);

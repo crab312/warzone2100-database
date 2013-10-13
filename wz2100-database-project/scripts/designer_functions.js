@@ -205,7 +205,7 @@ function Weapon_GetAbilities(weapon) {
     res.LongRanged = weapon.longRange / 128 > 13;
     res.Penetrate = weapon.penetrate == undefined ? false : parseInt(weapon.penetrate) == 1;
     res.ShortRanged = weapon.longRange / 128 < 6;
-    res.UpgradeLine = weapon.weaponSubClass;
+    //res.UpgradeLine = weapon.weaponSubClass;
     res.VTOLWeapon = weapon.numAttackRuns == undefined ? false : parseInt(weapon.numAttackRuns) > 0;
     res.HitRun = (weapon.numRounds == undefined ? false : parseInt(weapon.numRounds) > 1) && (weapon.firePause == undefined ? false : parseInt(weapon.firePause) < 20);
     return res;
@@ -1195,5 +1195,10 @@ function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_objec
     /* VTOL Stuff */
     ref_object_base.vtol_numShots = (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 0 : weapon.numRounds);
     ref_object_upgraded.vtol_numShots = ref_object_base.vtol_numShots;
+
+}
+
+
+function CalcDPSToTopBody(player_attacker, player_attacked, attack_weapon) {
 
 }

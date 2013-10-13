@@ -1017,3 +1017,35 @@ function DrawPageCaption() {
         elm.html(html);
     }
 }
+
+function DrawResearchSlider(container_id, init_value, slide_function) {
+
+    var slider_id = container_id + "_research_slider";
+    var input_id = container_id + "_research_slider_input";
+    var slider_elem = $('<label for="' + input_id + '">Research time:</label><input type="text" id="' + input_id + '" style="border: 0; font-weight: bold;" /><div id="' + slider_id + '"></div>');
+    slider_elem.appendTo($("#" + container_id));
+
+    var func_val_slider = function (value) {
+        return value.toHHMMSS();
+    };
+    jQuery('#' + slider_id).slider({
+        min: 0,
+        max: 5400,
+        step: 30,
+        value: init_value,
+        range: "min",
+        slide: function (event, ui) {
+            jQuery('#' + input_id).val(func_val_slider(ui.value));
+            if (designer_setted_timeout != undefined) {
+                clearTimeout(designer_setted_timeout);
+                designer_setted_timeout = undefined;
+            };
+            designer_setted_timeout = setTimeout(function () {
+                if (slide_function != undefined) {
+                    slide_function($('#' + slider_id).slider("value"));
+                }
+            }, 500);
+        }
+    });
+    $('#' + input_id).val(func_val_slider($('#' + slider_id).slider("value")));
+}
