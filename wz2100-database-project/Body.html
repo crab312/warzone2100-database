@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+    <script>
+
+        var player = 0;
+
+        $(function () {
+
+            InitDataObjects();
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+
+            });
+
+
+            if (localStorage["body_research_state_seconds"] == undefined) {
+                localStorage["body_research_state_seconds"] = 600;
+            }
+
+            ShowLoading('tabs_left');
+            LoadAllObjects(function () {
+                DoResearch(7200, player_all_researched, function () {
+                    DrawResearchSlider("research_slider",
+                        localStorage["body_research_state_seconds"],
+                        function (value) {
+                            if (value != localStorage["body_research_state_seconds"]) {
+                                localStorage["body_research_state_seconds"] = value;
+                                ShowLoading('tabs_left');
+                                DrawBodyLists();
+                                HideLoading('tabs_left');
+                            }
+                        });
+                    DrawBodyLists();
+                    HideLoading('tabs_left');
+                });
+            });
+
+        });
+
+        function DrawBodyLists() {
+            var res_time = localStorage["body_research_state_seconds"];
+            if (res_time == undefined) {
+                return;
+            }
+            DoResearch(res_time, player, function () {
+                var collected_bodies = {};
+
+                /* Tank Bodies */
+                var func_tank_bodies = function (body) {
+                    if (body.designable == undefined) {/* Check Body designable */
+                        return false;
+                    }
+                    if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
+                        return false;
+                    }
+                    if (body.class != "Droids") {
+                        return false;
+                    }
+                    collected_bodies[body.grid_id] = 1;
+                    return true;
+                };
+                var func_tank_light = function (body) {
+                    if (body.size != undefined) {
+                        if (body.size.toLowerCase() == "light") {
+                            return func_tank_bodies(body);
+                        }
+                    }
+                    return false;
+                }
+                DrawBodies('tank_bodies_light', func_tank_light);
+
+                var func_tank_medium = function (body) {
+                    if (body.size != undefined) {
+                        if (body.size.toLowerCase() == "medium") {
+                            return func_tank_bodies(body);
+                        }
+                    }
+                    return false;
+                }
+                DrawBodies('tank_bodies_medium', func_tank_medium);
+
+                var func_tank_heavy = function (body) {
+                    if (body.size != undefined) {
+                        if (body.size.toLowerCase() == "heavy") {
+                            return func_tank_bodies(body);
+                        }
+                    }
+                    if (collected_bodies[body.grid_id] == undefined) {
+                        return func_tank_bodies(body); //..in case when we have some new size strings (like "HEAVY2")
+                    }
+                    return false;
+                }
+                DrawBodies('tank_bodies_heavy', func_tank_heavy);
+
+
+                /* Cyborgs Bodies */
+                var func_cyborgs_bodies = function (body) {
+                    if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
+                        return false;
+                    }
+                    if (body.class != "Cyborgs") {
+                        return false;
+                    }
+                    collected_bodies[body.grid_id] = 1;
+                    return true;
+                };
+                DrawBodies('cyborg_bodies', func_cyborgs_bodies);
+
+                /* Other Bodies */
+                var func_other_bodies = function (body) {
+                    return collected_bodies[body.grid_id] == undefined;  // skip bodies which was listed already
+
+                };
+                DrawBodies('other_bodies', func_other_bodies);
+
+
+            });
+        }
+
+        var tmp_uniq_index = 0;
+
+
+        function DrawBodies(container_id, body_filter_function) {
+
+        var grid_data = [];
+        for (var body_id in Bodies.loaded_data_hash) {
+            if (body_filter_function(Bodies.loaded_data_hash[body_id]))
+            {
+                var res_comp_item = ResearchedComponents[player_all_researched][body_id];
+                if (res_comp_item != undefined) {
+                    Bodies.loaded_data_hash[body_id].minResearchTime = res_comp_item.time_seconds;
+                }
+                
+                grid_data.push(Bodies.loaded_data_hash[body_id]);
+            }
+        }
+
+
+        grid_data.sort(function (a, b) {
+            if(a.size != undefined && b.size != undefined)
+            {
+                if(a.size == b.size)
+                {
+                    return a.minResearchTime > b.minResearchTime ? 1 : -1;
+                }else
+                {
+                    return a.size > b.size  ? 1 : -1;
+                }
+            }
+            return (a.minResearchTime > b.minResearchTime ? 1 : -1) == undefined ? 1 : -1;
+        });
+
+        var grid_element_id = ResetGridContainer(container_id);
+        var grid = $(grid_element_id);
+        grid.jqGrid
+        ({
+            datatype: "local",
+            data: grid_data,
+            rowNum: grid_data.length,
+            height: 'auto',
+            colModel:
+            [
+
+                { label: "", name: "grid_id", key: true, hidden: true },
+                {
+                    label: " ",
+                    name: 'pic',
+                    width: '65px',
+                    sortable: false,
+                    search: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Bodies.GetIconHtml_Function(rowObject) + '</a>';
+                    },
+                },
+                {
+                    label: " ", name: "name",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    },
+                },
+                {
+                    label: "Armor", sortable: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        var res_html = '<label style="color:blue" title="Kinetic Armor">' + (rowObject.armourKinetic == undefined ? '?' : rowObject.armourKinetic) + '</label> / ';
+
+                        res_html += '<label style="color:red" title="Thermal Armor">' + (rowObject.armourHeat == undefined ? '?' : rowObject.armourHeat) + '</label>';
+                        return res_html;
+                    },
+                    width: 70,
+                },
+                {
+                    label: "HP", sortable: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        return rowObject.hitpoints;
+                    },
+                    width: 70,
+                },
+                {
+                    label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                        return '<label style="color:#116611">$' + cellvalue + '</label>';
+                    }, sorttype: "int"
+                },
+                {
+                    label: "Research",
+                    name: "minResearchTime",
+                    width: 80,
+                    sorttype: "int",
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue != undefined) {
+                            if (cellvalue < 3600) {
+                                return cellvalue.toMMSS();
+                            } else {
+                                return cellvalue.toHHMMSS();
+                            }
+                        }
+                        return ' - ';
+                    },
+                },
+            ],
+            onSelectRow: function (rowid) {
+            },
+            loadonce: true,
+            ignoreCase: true, //make search case insensitive
+        });
+
+
+    }
+
+
+        function openBodyDetails(body_id) {
+            alert(body_id);
+        }
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+
+            </td>
+        </tr>
+        <tr>
+            <td id="page_caption" data-caption="Body Guide">
+
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Body Guide</a></li>
+                    <li><a href="#left-tabs-1">Body detail</a></li>
+                    <li><a href="#left-tabs-1">Best Bodies</a></li>
+                </ul>
+
+                <div id="left-tabs-1">
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Introduction
+	                    </h3>
+                        <div id="Div1" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                            The most important parameters of bodies is <b>armor</b> and <b>hit points (HP)</b>. There is 2 kinds of armor: <label style="color:blue">kinetic</label> and <label style="color:red">thermal</label>.
+                            <br />Kinetic armor protects tanks from "physical" damage (from machineguns, cannons, rockets, etc.)
+                            Thermal armor uses to protect from "heat" damage typed weapons (flamers, lasers, thermite bombs etc.)
+                        </div>
+                    </div>
+
+                    <ul  class="MyStyledLinkMenu" style="display:inline-block">
+                        <li>Tank Bodies: <a href="#tank_bodies_light">Light</a> <a href="#tank_bodies_medium">Medium</a> <a href="#tank_bodies_heavy">Heavy</a></li>
+                        <li><a href="#cyborg_bodies">Cyborg Bodies</a></li>
+                        <li><a href="#other_bodies">Other Bodies</a></li>
+                    </ul>
+
+                    <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
+                        <div id="research_slider">
+
+                        </div>
+                        <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Tank Bodies - Light
+	                    </h3>
+                        <div id="tank_bodies_light" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Tank Bodies - Medium
+	                    </h3>
+                        <div id="tank_bodies_medium" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Tank Bodies - Heavy
+	                    </h3>
+                        <div id="tank_bodies_heavy" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Cyborg Bodies
+	                    </h3>
+                        <div id="cyborg_bodies" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Other Bodies
+	                    </h3>
+                        <div id="other_bodies" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+    <div id="modifiers_container" style="display:none">
+
+    </div>
+
+        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

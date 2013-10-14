@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+    <script>
+
+        var player = 0;
+
+        $(function () {
+
+            InitDataObjects();
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+
+            });
+
+
+            if (localStorage["body_research_state_seconds"] == undefined) {
+                localStorage["body_research_state_seconds"] = 600;
+            }
+
+            ShowLoading('tabs_left');
+            LoadAllObjects(function () {
+                DoResearch(7200, player_all_researched, function () {
+                    DrawPropulsion('propulsion_container', true);
+                    DrawPropulsion('nonres_propulsion_container', false);
+                    HideLoading('tabs_left');
+                });
+            });
+
+        });
+
+        
+
+        var tmp_uniq_index = 0;
+
+        function DrawPropulsion(container_id, show_enabled) {
+
+            var grid_data = [];
+            for (var propulsion_id in Propulsion.loaded_data_hash) {
+                var res_comp_item = ResearchedComponents[player_all_researched][propulsion_id];
+                if (show_enabled) {
+                    if (res_comp_item == undefined) {
+                        continue;
+                    }
+                } else {
+                    if (res_comp_item != undefined) {
+                        continue;
+                    }
+                }
+
+                if (res_comp_item != undefined) {
+                    Propulsion.loaded_data_hash[propulsion_id].minResearchTime = res_comp_item.time_seconds;
+                }
+                grid_data.push(Propulsion.loaded_data_hash[propulsion_id]);
+
+            }
+
+            grid_data.sort(function (a, b) {
+                if (a.minResearchTime == undefined)
+                    return 1;
+                if (b.minResearchTime == undefined)
+                    return -1;
+                return a.minResearchTime > b.minResearchTime ? 1 : -1;
+            });
+
+            var grid_element_id = ResetGridContainer(container_id);
+            var grid = $(grid_element_id);
+            grid.jqGrid
+            ({
+                datatype: "local",
+                data: grid_data,
+                rowNum: grid_data.length,
+                height: 'auto',
+                colModel:
+                [
+
+                    { label: "", name: "grid_id", key: true, hidden: true },
+                    {
+                        label: " ",
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Propulsion.GetIconHtml_Function(rowObject) + '</a>';
+                        },
+                    },
+                    {
+                        label: " ", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                        },
+                    },
+                    {
+                        label: "Max. Speed", name: "speed", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
+                            return (cellvalue / 128).toFixed(2)
+                        }, width: 40
+                    },
+                    {
+                        label: "HP Modifier",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return rowObject.hitpoints + '%';
+                        },
+                        width: 70,
+                    },
+                    {
+                        label: "Armor Modifiers", sortable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            var res_html = "";
+                            for (var weap_type in PropulsionModifiers.loaded_data_hash) {
+                                var mod = PropulsionModifiers.loaded_data_hash[weap_type][rowObject.type];
+                                mod = mod == undefined ? '-' : Math.ceil(100*100/mod - 100);
+                                res_html += '<div style="width:40px;display:inline-block;" title="' + weap_type + '">' + mod + "% </div>";
+                            }
+                            res_html += "";
+                            return res_html;
+                        },
+                        width: 310,
+                    },
+
+                    {
+                        label: "Speed Modifier",
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (PropulsionType.loaded_data != undefined) {
+                                return PropulsionType.loaded_data_hash[rowObject.type].multiplier + '%';
+                            }
+                            return ' - ';
+                        },
+                        width: 70,
+                    },
+                    {
+                        label: "Price Modifier", name: "buildPower", width: 55, formatter: function (cellvalue, options, rowObject) {
+                            return '<label style="color:#116611">' + cellvalue + '%</label>';
+                        }, sorttype: "int"
+                    },
+                    {
+                        label: "Research",
+                        name: "minResearchTime",
+                        width: 80,
+                        sorttype: "int",
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (cellvalue != undefined) {
+                                if (cellvalue < 3600) {
+                                    return cellvalue.toMMSS();
+                                } else {
+                                    return cellvalue.toHHMMSS();
+                                }
+                            }
+                            return ' - ';
+                        },
+                    },
+                ],
+                onSelectRow: function (rowid) {
+                },
+                loadonce: true,
+                ignoreCase: true, //make search case insensitive
+            });
+
+
+        }
+
+
+        function openBodyDetails(body_id) {
+            alert(body_id);
+        }
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+
+            </td>
+        </tr>
+        <tr>
+            <td id="page_caption" data-caption="Propulsion Guide">
+
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Propulsion Guide</a></li>
+                    <li><a href="#left-tabs-1">Propulsion Detail</a></li>
+                    <li><a href="#left-tabs-1">Propulsion Damage Modifiers</a></li>
+                    <li><a href="#left-tabs-1">Secret of Speed</a></li>
+                </ul>
+
+                <div id="left-tabs-1">
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Introduction
+	                    </h3>
+                        <div id="Div1" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                            Proper propulsion can make unit fast and well defended.
+                            Each propulsion have <b>Maximum Speed</b> parameter. In Warzone most of units have maximum speed all time. Only some few tank designs have slow speed.
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Propulsion
+	                    </h3>
+                        <div id="propulsion_container" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>
+
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                            Unavailable propulsion
+	                    </h3>
+                        <div id="nonres_propulsion_container" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                        </div>
+                    </div>                   
+
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+    <div id="modifiers_container" style="display:none">
+
+    </div>
+
+        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

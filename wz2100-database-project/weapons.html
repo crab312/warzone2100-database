@@ -43,22 +43,8 @@ $(function () {
     });
 
     $('#tabs_left ul:first li:eq(3) a').click(null, function (event) {
+        OpenDamageModifiers();
 
-        var html = "";
-        html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;">Propulsion Damage Modifiers</div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
-
-        html += '<div class="ui-widget-header ui-corner-top"  style="padding: 5px; margin-top:10px">Structure Damage Modifiers</div><div id="structure_modifiers"></div>';
-        $("#left-tabs-1").html(html);
-
-        LoadDataObject(StructureModifiers, function () {
-            LoadDataObject(PropulsionModifiers, function () {
-
-                        
-
-                DrawGrid(PropulsionModifiers, "propulsion_modifiers",null, 600);
-                DrawGrid(StructureModifiers, "structure_modifiers", null, 600);
-            });
-        });
     });
 
     if (localStorage["weapons_research_state_seconds"] == undefined) {
@@ -95,6 +81,22 @@ $(function () {
 
     //SelectedObject.LoadLeftGridFunction();
 });
+
+function OpenDamageModifiers() {
+    $("#tabs_left").tabs("option", "active", 3);
+    var html = "";
+    html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;">Propulsion Damage Modifiers</div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
+
+    html += '<div class="ui-widget-header ui-corner-top"  style="padding: 5px; margin-top:10px">Structure Damage Modifiers</div><div id="structure_modifiers"></div>';
+    $("#left-tabs-2").html(html);
+
+    LoadDataObject(StructureModifiers, function () {
+        LoadDataObject(PropulsionModifiers, function () {
+            DrawGrid(PropulsionModifiers, "propulsion_modifiers", null, 600);
+            DrawGrid(StructureModifiers, "structure_modifiers", null, 600);
+        });
+    });
+}
 
 function DrawWeaponList() {
     var res_time = localStorage["weapons_research_state_seconds"];
@@ -186,10 +188,7 @@ function DrawWeaponList() {
 
         /* Weapon which we cannot research */
         var func_nonres_weapons = function (weapon) {
-            if (collected_weapons[weapon.grid_id] != undefined) { // skip weapons which was listed already
-                return false;
-            }
-            return true;
+            return collected_weapons[weapon.grid_id] == undefined;
         };
         DrawWeaponLines('nonres_weapons', func_nonres_weapons);
     });
@@ -339,7 +338,11 @@ function DrawWeaponLine(weaponSubClass, weapons_list, container_id) {
                 },
                 width: 70,
             },
-            { label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+            {
+                label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                    return '<label style="color:#116611">$' + cellvalue + '</label>';
+                }, sorttype: "int"
+            },
             {
                 label: "Research",
                 name: "minResearchTime",
@@ -420,27 +423,40 @@ function openWeaponDetails(weapon_id) {
                     <li><a href="#left-tabs-1">Weapon Guide</a></li>
                     <li><a href="#left-tabs-1">Weapons List</a></li>
                     <li><a href="#left-tabs-1">Weapon detail</a></li>
-                    <li><a href="#left-tabs-1">Damage Modifiers</a></li>
+                    <li><a href="#left-tabs-2">Damage Modifiers</a></li>
                     <li><a href="#left-tabs-1">Best Weapons</a></li>
                 </ul>
-                <div id="research_slider" class="ui-widget ui-corner-all" style="padding: -2px; width:500px; position:absolute; z-index:1000; background:rgba(255,255,255,0.0); right:20px; top:47px">
-
-                </div>
                 <div id="left-tabs-1">
-                    <div > 
-
+                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
+	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                           Introduction
+	                    </h3>
+                        <div id="Div2" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                            Weapon is most important part of Tank Design. Strong Weapon can be useful even on weak body and slow propulsion.<br />
+                            <b>First of all:</b> Weapon damage is greatly dependent on enemy propulsion type. See <a href="javascript:OpenDamageModifiers()">Weapon damage modifiers</a> for exact values.<br />
+                            Each weapon have one of two kinds of damage type: <label style="color:blue">kinetic</label> and <label style="color:red">thermal</label>.
+                        </div>
                     </div>
-                    <ul  class="MyStyledLinkMenu">
+                    <ul  class="MyStyledLinkMenu" style="display:inline-block">
                         <li><a href="#tank_weapons">Tank Weapons</a></li>
                         <li><a href="#cyborg_weapons">Cyborg Weapons</a></li>
                         <li><a href="#vtol_weapons">VTOL Weapons</a></li>
                         <li><a href="#other_weapons">Other Weapons</a></li>
                         <li><a href="#nonres_weapons">Unavailable Weapons</a></li>
                     </ul>
+
+                    <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
+                        <div id="research_slider">
+
+                        </div>
+                        <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                    </div>
+
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            <a href="#">Tank Weapons</a>
+                           Tank Weapons
 	                    </h3>
                         <div id="tank_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                         </div>
@@ -449,7 +465,7 @@ function openWeaponDetails(weapon_id) {
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            <a href="#">Cyborg Weapons</a>
+                            Cyborg Weapons
 	                    </h3>
                         <div id="cyborg_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                         </div>
@@ -458,7 +474,7 @@ function openWeaponDetails(weapon_id) {
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            <a href="#">VTOL Weapons</a>
+                            VTOL Weapons
 	                    </h3>
                         <div id="vtol_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                         </div>
@@ -467,7 +483,7 @@ function openWeaponDetails(weapon_id) {
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            <a href="#">Other Weapons</a>
+                            Other Weapons
 	                    </h3>
                         <div id="other_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                         </div>
@@ -476,11 +492,14 @@ function openWeaponDetails(weapon_id) {
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            <a href="#">Unavailable Weapons</a>
+                            Unavailable Weapons
 	                    </h3>
                         <div id="nonres_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                         </div>
                     </div>
+
+                </div>
+                <div id="left-tabs-2">
 
                 </div>
             </div>

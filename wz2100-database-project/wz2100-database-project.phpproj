@@ -18,6 +18,9 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Body.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="design.php">
       <SubType>Code</SubType>
     </Compile>
@@ -42,6 +45,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Body.html">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="data_master\rules.js">
       <SubType>Content</SubType>
     </Content>

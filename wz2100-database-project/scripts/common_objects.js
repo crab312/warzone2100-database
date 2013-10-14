@@ -174,7 +174,7 @@ function InitDataObjects() {
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
         obj.GetIconHtml_Function = function (rowObject) {
-            var img_name = rowObject.name.toLowerCase() + ".gif";
+            var img_name = rowObject.name == undefined ? rowObject.grid_id : rowObject.name.toLowerCase() + ".gif";
             var img_name2 = rowObject.grid_id + ".gif";
             if (typeof icon_files_hash != 'undefined') {
                 var img_found = icon_files_hash[img_name] != undefined;
@@ -941,6 +941,7 @@ function ShowSelectColumns(DataObject) {
 
 
 function EmptyComponentIcon_html(name) {
+    var name = name == undefined ? "...where is my name?" : name;
     var shown_name = name;
     if (name.length > 22) {
         shown_name = name.substring(0, 21) + '...';
@@ -967,12 +968,12 @@ function DrawPageHeader() {
                         Weapons\
 		            </h3>\
                 </a>\
-                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+                <a href="Body.php" class="ui-helper-reset" style="font-size:0.9em">\
 		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Bodies\
 		            </h3>\
                 </a>\
-                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+                <a href="propulsion.php" class="ui-helper-reset" style="font-size:0.9em">\
 		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Propulsion\
 		            </h3>\

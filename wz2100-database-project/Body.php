@@ -1,6 +1,6 @@
 <?php
 ob_start('ob_gzhandler'); //enables compression 
-include("weapons.html");
+include("Body.html");
 ?>
 
 <script type='text/javascript'>
