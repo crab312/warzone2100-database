@@ -816,7 +816,17 @@ function TryCalculateDesign(callback_function) {
                 res_path_data = res_path_data.concat(GetResearchPath_SubTree(propulsion_id, player_all_researched));
             }
 
-            DrawResearchPath_Tree("designer_researchpath_container", res_path_data);
+            $("#designer_researchpath_container").html('<button id="show_res_path" type="button">Show Research paths...</button>');
+            $("#show_res_path").button().click(function (event) {
+                ShowLoading('tabs_left');
+                setTimeout(function () {
+                    DrawResearchPath_Tree("designer_researchpath_container", res_path_data);
+                    HideLoading('tabs_left');
+                }, 200);
+                event.preventDefault();
+            });
+            
+
         }
         
         var research_time = $('#designer_research_slider').slider("option", "value");

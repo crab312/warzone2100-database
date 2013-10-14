@@ -442,7 +442,7 @@ function DoResearch(time_seconds, player, callback_function) {
         var save_results = {};
         save_results.time_seconds = time_seconds;
         save_results.ResearchedComponents = ResearchedComponents[player];
-        save_results.Upgrade = Upgrades[player];
+        save_results.Upgrades = Upgrades[player];
         save_results.ResearchTimeState = ResearchTimeState[player];
         save_results.ResearchTime = ResearchTime[player];
         localStorage["research_results_player_" + player] = JSON.stringify(save_results);
