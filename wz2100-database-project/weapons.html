@@ -35,14 +35,11 @@ $(function () {
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-
+        DrawDetailsTab();
     });
+
 
     $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
-
-    });
-
-    $('#tabs_left ul:first li:eq(3) a').click(null, function (event) {
         OpenDamageModifiers();
 
     });
@@ -399,7 +396,45 @@ function FormWeaponLine_Html(weapon) {
 }
 
 function openWeaponDetails(weapon_id) {
-    alert(weapon_id);
+    $("#tabs_left").tabs("option", "active", 1);
+    DrawDetailsTab(weapon_id);
+}
+
+
+function DrawDetailsTab(weapon_id) {
+    DrawResearchSlider("research_slider_details",
+    localStorage["weapons_research_state_seconds"],
+    function (value) {
+        if (value != localStorage["weapons_research_state_seconds"]) {
+            localStorage["weapons_research_state_seconds"] = value;
+            ShowLoading('tabs_left');
+            DrawWeaponDetailsParameters();
+            HideLoading('tabs_left');
+        }
+    });
+
+    $("#select_weapon_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Weapons, function (weap_id) {
+            DrawWeaponDetailsParameters(weap_id);
+        });
+    });
+
+    if (weapon_id != undefined) {
+        DrawWeaponDetailsParameters(weapon_id);
+    } 
+}
+
+function DrawWeaponDetailsParameters(weap_id) {
+    var weap = Weapons.loaded_data_hash[weap_id];
+    $("#weapon_icon").html(Weapons.GetIconHtml_Function(weap));
+    $("#weapon_name_label").text(weap.name);
+    $("#abilities_container").html(Form_Weapon_Abilities_html(weap));
+    
 }
 
     </script>
@@ -421,8 +456,7 @@ function openWeaponDetails(weapon_id) {
             <div id="tabs_left" >
                 <ul>
                     <li><a href="#left-tabs-1">Weapon Guide</a></li>
-                    <li><a href="#left-tabs-1">Weapons List</a></li>
-                    <li><a href="#left-tabs-1">Weapon detail</a></li>
+                    <li><a href="#left-tabs-detail">Weapon detail</a></li>
                     <li><a href="#left-tabs-2">Damage Modifiers</a></li>
                     <li><a href="#left-tabs-1">Best Weapons</a></li>
                 </ul>
@@ -501,6 +535,70 @@ function openWeaponDetails(weapon_id) {
                 </div>
                 <div id="left-tabs-2">
 
+                </div>
+                <div id="left-tabs-detail">
+                    <table style="width:100%">
+                        <tr>
+                            <td colspan="2">
+                                <div id="selected_weapon_header">
+                                    <span id="weapon_icon"></span>
+                                    <label id="weapon_name_label">[...]</label>
+                                </div>
+                            </td>
+                            <td>
+                                You can see details for any weapon, just select another weapon. <br />
+                                <div style="width:100%;text-align:center">
+                                    <button id="select_weapon_button" type="button" style="display:inline-block">Select Weapon...</button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                                        Description
+	                                </h3>
+                                    <div id="Div4" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block;">
+                                    <div id="research_slider_details">
+
+                                    </div>
+                                    <label style="font-size:0.9em; color:gray;">Use slider to see numeric values for different states of research.</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:top; width:40%">
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div3"></div>
+                            </td>
+                            <td style="vertical-align:top; width:30%">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Abilities</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div1"></div>
+                            </td>
+                            <td style="vertical-align:top; width:30%">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_containe"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Rate of Fire Upgrades</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="rof_upgrades_container"></div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </td>

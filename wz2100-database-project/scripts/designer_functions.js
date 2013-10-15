@@ -8,7 +8,14 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject($("#designer_body"), Bodies, $("#designer_body_icon"));
+        ShowSeletDialog_forDataObject(Bodies,function (selectedRowId) {
+            if (selectedRowId == null) {
+                alert('Sorry but you have not selected a row. Nothing will happen.');
+            } else {
+                setInput(Bodies, $("#designer_body"), selectedRowId, $("#designer_body_icon"));
+            }
+            TryCalculateDesign();
+        });
     });
 
     $("#designer_select_propulsion_button").button({
@@ -17,7 +24,14 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject($("#designer_propulsion"), Propulsion, $("#designer_propulsion_icon"));
+        ShowSeletDialog_forDataObject(Propulsion, function (selectedRowId) {
+            if (selectedRowId == null) {
+                alert('Sorry but you have not selected a row. Nothing will happen.');
+            } else {
+                setInput(Propulsion, $("#designer_propulsion"), selectedRowId, $("#designer_propulsion_icon"));
+            }
+            TryCalculateDesign();
+        });
     });
 
 
@@ -27,7 +41,14 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject($("#designer_weapon"), Weapons, $("#designer_weapon_icon"));
+        ShowSeletDialog_forDataObject(Weapons,  function (selectedRowId) {
+            if (selectedRowId == null) {
+                alert('Sorry but you have not selected a row. Nothing will happen.');
+            } else {
+                setInput(Weapons, $("#designer_weapon"), selectedRowId, $("#designer_weapon_icon"));
+            }
+            TryCalculateDesign();
+        });
     });
 
     var func_val_slider = function (value) {
@@ -105,7 +126,7 @@ function setInput(DataObject, input_selector, selectedRowId, input_selector_icon
 
 
 var designer_dialogs = {};
-function ShowSeletDialog_forDataObject(input_selector, DataObject, input_selector_icon) {
+function ShowSeletDialog_forDataObject(DataObject, callback_function) {
 
     if (designer_dialogs[DataObject.sysid] != undefined) {
         $(designer_dialogs[DataObject.sysid]).dialog('open');
@@ -129,13 +150,10 @@ function ShowSeletDialog_forDataObject(input_selector, DataObject, input_selecto
             {
                 "Ok": function () {
                     var selectedRowId = grid.jqGrid('getGridParam', 'selrow');
-                    if (selectedRowId == null) {
-                        alert('Sorry but you have not selected a row. Nothing will happen.');
-                    } else {
-                        setInput(DataObject, input_selector, selectedRowId, input_selector_icon);
+                    if (callback_function != undefined) {
+                        callback_function(selectedRowId);
                     }
                     $(this).dialog('close');
-                    TryCalculateDesign();
                 },
                 "Cancel": function () {
                     $(this).dialog('close');
@@ -176,7 +194,7 @@ WeaponAbilities.prototype = (function () {
     me.LongRanged = false;
     me.Penetrate = false;
     me.CantFireOnMove = false;
-    me.UpgradeLine = "";
+    //me.UpgradeLine = "";
     me.HitRun = false;
     return me;
 })();
