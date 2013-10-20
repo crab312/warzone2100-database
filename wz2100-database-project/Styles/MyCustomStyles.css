@@ -217,3 +217,12 @@ input:-moz-placeholder, textarea:-moz-placeholder {
     border:dotted thin;
     padding:2px;
 }
+
+.my-header {
+    padding: 4px;
+}
+
+.center .ui-jqgrid {
+    margin-left: auto;
+    margin-right: auto;
+}

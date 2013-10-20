@@ -19,6 +19,7 @@ function num_format(value, precision) {
 }
 
 function str_format(value, precision) {
+
     if (precision == undefined) {
         precision = 0;
     }
@@ -26,6 +27,9 @@ function str_format(value, precision) {
         return ' - ';
     } else {
         if (typeof value == 'number') {
+            if (isNaN(value)) {
+                return ' - ';
+            }
             return value.toFixed(precision);
         } else {
             return value;
@@ -355,6 +359,23 @@ $(function () {
         };
         properties_description[p] = d;
     }
+
+    /* Sensor */
+    {
+        var p = "sensorRange"
+        var d = {};
+        d.short_name = "Sensor";
+        d.name = "Sensor range (tiles)";
+        d.description = "Range of sensor";
+        d.format_str = function (value) {
+            return str_format((value / 128), 1);
+        };
+        d.format_num = function (value) {
+            return num_format((value / 128), 1);
+        };
+        properties_description[p] = d;
+    }
+
 });
 
 function PropDescr(prop) {

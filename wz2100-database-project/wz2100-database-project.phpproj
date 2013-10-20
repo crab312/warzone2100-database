@@ -39,6 +39,9 @@
     <Compile Include="stats.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="structure.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="structure_details.php">
       <SubType>Code</SubType>
     </Compile>
@@ -2440,6 +2443,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Story.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="structure.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="structure_details.html">

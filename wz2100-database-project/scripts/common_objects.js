@@ -553,7 +553,8 @@ function InitDataObjects() {
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
-            { label: "Range", name: "range" },
+            { label: "Power of build ray", name: "buildPoints" },
+            { label: "Price", name: "buildPower" },
         ];
         Construction = obj;
         Objects.push(obj);
@@ -978,7 +979,7 @@ function DrawPageHeader() {
                         Propulsion\
 		            </h3>\
                 </a>\
-                <a href="weapons.html" class="ui-helper-reset" style="font-size:0.9em">\
+                <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
 		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Buildings\
 		            </h3>\
@@ -1049,4 +1050,28 @@ function DrawResearchSlider(container_id, init_value, slide_function) {
         }
     });
     $('#' + input_id).val(func_val_slider($('#' + slider_id).slider("value")));
+}
+
+var sub_sections_index = 1;
+function DrawSection_type1_html(container_id, caption) {
+    var sub_container_name = container_id + '_sub' + sub_sections_index++;
+    var html = '\
+    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" id="base_struc_header"> \
+        <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top"> \
+            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span> \
+    ' + caption + '\
+    </h3>\
+    <div id="' + sub_container_name + '" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">\
+    </div>';
+    $('#' + container_id).append(html);
+    return $('#' + sub_container_name);
+}
+
+function DrawSection_type2_html(container_id, caption) {
+    var sub_container_name = container_id + '_sub' + sub_sections_index++;
+    var html = '\
+    <div class="my-header ui-widget-header ui-corner-all">' + caption + '</div> \
+        <div id="' + sub_container_name + '" class="ui-widget-content"></div>';
+    $('#' + container_id).append(html);
+    return $('#' + sub_container_name);
 }

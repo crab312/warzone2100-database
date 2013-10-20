@@ -219,7 +219,7 @@ function Weapon_GetAbilities(weapon) {
     res.HasPeriodicalDamage = weapon.periodicalDamage == undefined ? false : weapon.periodicalDamage > 0;
     res.HasSplash = weapon.radiusDamage == undefined ? false : weapon.radiusDamage > 0;
     res.HeatDamage = weapon.weaponClass == undefined ? false : weapon.weaponClass == "HEAT";
-    res.Indirect = weapon.movement == undefined ? false : weapon.movement == "INDIRECT";
+    res.Indirect = weapon.movement == undefined ? false : (weapon.movement == "INDIRECT" || weapon.movement == "HOMING-INDIRECT");
     res.LongRanged = weapon.longRange / 128 > 13;
     res.Penetrate = weapon.penetrate == undefined ? false : parseInt(weapon.penetrate) == 1;
     res.ShortRanged = weapon.longRange / 128 < 6;
@@ -1123,13 +1123,14 @@ function CalculateBuilding(player, structure) {
     if (structure.weapons != undefined) {
         var weapons = structure.weapons.split(',');
         if (weapons.length > 0) {
-            var weapon = weapons[0];
+            var weapon = Weapons.loaded_data_hash[weapons[0]];
             var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
             //add weapon stats to TankDesign object
             CalculateWeaponStats_AddToObjects(player, weapon, StructureDesign, StructureDesign.baseStats, StructureDesign);
         }
     }
 
+    /* SENSOR RANGE */
     if (structure.sensorID != undefined) {
         var sensor = Sensor.loaded_data_hash[structure.sensorID];
         var sensor_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Sensor[sensor.index_of_datarow])); //deep copy
@@ -1169,6 +1170,8 @@ function CalculateBuilding(player, structure) {
 
     StructureDesign.baseStats.buildTimeSeconds_4_trucks = structure.buildPoints / (truck_build_points * 4);
     StructureDesign.buildTimeSeconds_4_trucks = structure_upgraded.buildPoints / (truck_build_points_upgraded * 4);
+
+    
 
 
     return StructureDesign;
