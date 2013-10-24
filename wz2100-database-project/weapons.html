@@ -24,6 +24,7 @@
 
 var player = 0;
 
+var res_time;
 $(function () {
 
     InitDataObjects();
@@ -46,6 +47,11 @@ $(function () {
 
     if (localStorage["weapons_research_state_seconds"] == undefined) {
         localStorage["weapons_research_state_seconds"] = 600;
+    }
+
+    var res_time = localStorage["weapons_research_state_seconds"];
+    if (res_time == undefined) {
+        return;
     }
 
     ShowLoading('tabs_left');
@@ -95,103 +101,152 @@ function OpenDamageModifiers() {
     });
 }
 
-function DrawWeaponList() {
-    var res_time = localStorage["weapons_research_state_seconds"];
-    if (res_time == undefined) {
-        return;
+function IsAviableWeapon(weapon) {
+    if (weapon.designable == undefined) {/* Check Weapon designable */
+        return false;
     }
+    if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined)/* Check Weapon can be researched */ {
+        return false;
+    }
+    return true;
+}
+
+function DrawWeaponList() {
+
+    /* set minimum research time for weapons */
+    if (Weapons.loaded_data[0].minResearchTime == undefined) {
+        for (var i = 0; i < Weapons.loaded_data.length; i++) {
+            var weap_id = Weapons.loaded_data[i].grid_id;
+            var res_comp_item = ResearchedComponents[player_all_researched][weap_id];
+            if (res_comp_item != undefined) {
+                Weapons.loaded_data[i].minResearchTime = res_comp_item.time_seconds;
+            }
+        }
+    }
+
     DoResearch(res_time, player, function () {
+
+
+        var tank_weapons = DrawSection_type2_html("tank_weapons", "Tank Weapons");
+        var cyborg_weapons = DrawSection_type2_html("cyborg_weapons", "Cyborg Weapons");
+        var vtol_weapons = DrawSection_type2_html("vtol_weapons", "VTOL Weapons");
+        var other_weapons = DrawSection_type2_html("other_weapons", "Other Weapons");
 
         /* Researchable weapons */
         var collected_weapons = {};
         /* Tank weapons */
-        var func_tank_weapons = function (weapon) {
-            if (weapon.designable == undefined) {/* Check Weapon designable */
-                return false;
-            }
-            if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined)/* Check Weapon can be researched */ {
-                return false;
-            }
-            var abils = Weapon_GetAbilities(weapon);
-            if (abils.VTOLWeapon || abils.CyborgWeapon) {/* Check Weapon not VTOL, not Cyborg */
-                return false;
-            }
-            collected_weapons[weapon.grid_id] = 1;
-            return true;
-        };
-        DrawWeaponLines('tank_weapons', func_tank_weapons);
+        {
+            var func_tank_weapons = function (weapon) {
+                if (!IsAviableWeapon(weapon)) return false;
+                var abils = Weapon_GetAbilities(weapon);
+                if (abils.VTOLWeapon || abils.CyborgWeapon) {/* Check Weapon not VTOL, not Cyborg */
+                    return false;
+                }
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var elem = DrawSection_type1_html(tank_weapons.attr('id'), "");
+            elem.append("<label>Tank weapons splitted into sections by 'research line'. Each section contains list of weapons which use same upgrades, \
+                e.g. when you research machinegun damage you have increased damage of all weapons in MACHINE GUN section.\
+                <br/>Click on weapon to see detailed view.</label>");
+            DrawWeaponLines(tank_weapons.attr('id'), func_tank_weapons);
+        }
 
         /* Cyborgs Weapons */
-        var func_cyborgs_weapons = function (weapon) {
-            if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined)/* Check Weapon can be researched */ {
-                return false;
-            }
-            var abils = Weapon_GetAbilities(weapon);
-            if (!abils.CyborgWeapon) {/* Check Weapon is cyborg weapon */
-                return false;
-            }
-            collected_weapons[weapon.grid_id] = 1;
-            return true;
-        };
-        DrawWeaponLines('cyborg_weapons', func_cyborgs_weapons);
+        {
+            var func_cyborgs_weapons = function (weapon) {
+                if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined)/* Check Weapon can be researched */ {
+                    return false;
+                }
+                var abils = Weapon_GetAbilities(weapon);
+                if (!abils.CyborgWeapon) {/* Check Weapon is cyborg weapon */
+                    return false;
+                }
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var elem = DrawSection_type1_html(cyborg_weapons.attr('id'), "");
+            DrawWeapons(elem.attr('id'), null, func_cyborgs_weapons);
+        }
 
         /* VTOL Weapons */
-        var func_vtol_weapons = function (weapon) {
-            if (weapon.designable == undefined) {/* Check Weapon designable */
-                return false;
-            }
-            if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined)/* Check Weapon can be researched */ {
-                return false;
-            }
-            var abils = Weapon_GetAbilities(weapon);
-            if (!abils.VTOLWeapon) {/* Check Weapon is VTOL-Weapon */
-                return false;
-            }
-            collected_weapons[weapon.grid_id] = 1;
-            return true;
-        };
-        DrawWeaponLines('vtol_weapons', func_vtol_weapons);
+        {
+            var func_vtol_weapons_bombs = function (weapon) {
+                if (!IsAviableWeapon(weapon)) return false;
+                if (!Weapon_GetAbilities(weapon).VTOLWeapon) {/* Check Weapon is VTOL-Weapon */
+                    return false;
+                }
+                if (weapon.weaponEffect != "ARTILLERY ROUND") {
+                    return false;
+                }
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var func_vtol_weapons_aa = function (weapon) {
+                if (!IsAviableWeapon) return false;
+                var abils = Weapon_GetAbilities(weapon);
+                if (!abils.VTOLWeapon || !(abils.CanHitVtols && abils.CannotHitGround)) {/* Check Weapon is VTOL-Weapon */
+                    return false;
+                }
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var func_vtol_weapons = function (weapon) {
+                if (!IsAviableWeapon(weapon)) return false;
+                if (!Weapon_GetAbilities(weapon).VTOLWeapon) {/* Check Weapon is VTOL-Weapon */
+                    return false;
+                }
+                if (collected_weapons[weapon.grid_id] != undefined) {
+                    return false;//this case to skip VTOL-bombs
+                }
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var elem1 = DrawSection_type1_html(vtol_weapons.attr('id'), "Bombs");
+            DrawWeapons(elem1.attr('id'), null, func_vtol_weapons_bombs);
+            var elem2 = DrawSection_type1_html(vtol_weapons.attr('id'), "Interceptors (Air-to-Air weapons)");
+            DrawWeapons(elem2.attr('id'), null, func_vtol_weapons_aa);
+            var elem3 = DrawSection_type1_html(vtol_weapons.attr('id'), "Other VTOL Weapons");
+            DrawWeapons(elem3.attr('id'), null, func_vtol_weapons);
+        }
 
         /* Other weapons */
-        var building_weapons = {};
         {
-            /* Collect weapons used for buildings */
-            for (var i = 0; i < Structures.loaded_data.length; i++) {
-                if (Structures.loaded_data[i].weapons != undefined) {
-                    if (ResearchedComponents[player_all_researched][Structures.loaded_data[i].grid_id] == undefined) {
-                        //skip structures which cannot be researched
-                        continue;
-                    }
-                    var struc_weaps = Structures.loaded_data[i].weapons.split(',');
-                    for (var e = 0 ; e < struc_weaps.length; e++) {
-                        building_weapons[struc_weaps[e]] = 1;
+            var building_weapons = {};
+            {
+                /* Collect weapons used for buildings */
+                for (var i = 0; i < Structures.loaded_data.length; i++) {
+                    if (Structures.loaded_data[i].weapons != undefined) {
+                        if (ResearchedComponents[player_all_researched][Structures.loaded_data[i].grid_id] == undefined) {
+                            //skip structures which cannot be researched
+                            continue;
+                        }
+                        var struc_weaps = Structures.loaded_data[i].weapons.split(',');
+                        for (var e = 0 ; e < struc_weaps.length; e++) {
+                            building_weapons[struc_weaps[e]] = 1;
+                        }
                     }
                 }
             }
+            var func_other_weapons = function (weapon) {
+                if (collected_weapons[weapon.grid_id] != undefined) { // skip weapons which was listed already
+                    return false;
+                }
+
+                if (building_weapons[weapon.grid_id] == undefined && ResearchedComponents[player_all_researched][weapon.grid_id] == undefined) {
+                    return false; //skip non-researchable weapons which also not used on buildings
+                }
+
+                collected_weapons[weapon.grid_id] = 1;
+                return true;
+            };
+            var elem = DrawSection_type1_html(other_weapons.attr('id'), "");
+            DrawWeapons(elem.attr('id'), null, func_other_weapons);
         }
-        var func_other_weapons = function (weapon) {
-            if (collected_weapons[weapon.grid_id] != undefined) { // skip weapons which was listed already
-                return false;
-            }
-
-            if (building_weapons[weapon.grid_id] == undefined && ResearchedComponents[player_all_researched][weapon.grid_id] == undefined) {
-                return false; //skip non-researchable weapons which also not used on buildings
-            }
-
-            collected_weapons[weapon.grid_id] = 1;
-            return true;
-        };
-        DrawWeaponLines('other_weapons', func_other_weapons);
-
-        /* Weapon which we cannot research */
-        var func_nonres_weapons = function (weapon) {
-            return collected_weapons[weapon.grid_id] == undefined;
-        };
-        DrawWeaponLines('nonres_weapons', func_nonres_weapons);
     });
 }
 
-var tmp_uniq_index = 0;
+
 function DrawWeaponLines(container_id, weapon_filer_function) {
 
     var WeapLines = {};
@@ -221,53 +276,67 @@ function DrawWeaponLines(container_id, weapon_filer_function) {
             weap_line.weaponSubClass = weapSubClass;
             weap_line.min_research_time = res_comp_item.time_seconds;
             weap_line.weapons = {};
-            weap_line.weapons[weap_id] = weapon;
+            weap_line.weapons = [weap_id];
             WeapLines[weapSubClass] = weap_line;  
             WeapLines_array.push(weap_line);
         }else
         {
             weap_line.min_research_time = Math.min(weap_line.min_research_time, res_comp_item.time_seconds);
-            weap_line.weapons[weap_id] = weapon;
+            weap_line.weapons.push(weap_id);
         }
     }
 
     WeapLines_array.sort(function (elm1, elm2) {
         return elm1.min_research_time - elm2.min_research_time;
     });
-    $("#" + container_id).html("");
     for(var i=0; i < WeapLines_array.length; i++)
     {
-        var grid_container_name = container_id + "_" + tmp_uniq_index++;
-        var style_str = "";
-        if (i != 0) {
-            style_str = 'style = "margin-top:30px"';
-        }
-        var elem = $('<div id="' + grid_container_name + '" ' + style_str + '  ></div>');
-        elem.appendTo($("#" + container_id));
-        DrawWeaponLine(WeapLines_array[i].weaponSubClass, WeapLines_array[i].weapons, grid_container_name);
+        var elem = DrawSection_type1_html($('#' + container_id).attr('id'), WeapLines_array[i].weaponSubClass);
+        DrawWeapons(elem.attr('id'), WeapLines_array[i].weapons,null );
     }
 }
 
-function DrawWeaponLine(weaponSubClass, weapons_list, container_id) {
-
+var listed_weapons = {};
+function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
+    /* prepare list of structures depending on function parameters */
     var grid_data = [];
-    for (var weap_id in weapons_list) {
-        var weap = weapons_list[weap_id];
-        grid_data.push(weap);
+    if (weap_id_list == null) {
+        for (var weap_id in Weapons.loaded_data_hash) {
+            if (weapon_filter_function(Weapons.loaded_data_hash[weap_id])) {
+                grid_data.push(Weapons.loaded_data_hash[weap_id]);
+            }
+        }
+    } else {
+        for (var i = 0; i < weap_id_list.length; i++) {
+            grid_data.push(Weapons.loaded_data_hash[weap_id_list[i]]);
+        }
     }
 
-    var grid_element_id = ResetGridContainer(container_id);
-    var grid = $(grid_element_id);
+    /* calculate parameters of weapons */
+    for (var i = 0; i < grid_data.length; i++) {
+
+        /* save listed weapons */
+        listed_weapons[grid_data[i].grid_id] = 1;
+    }
+
+    grid_data.sort(function (a, b) {
+        return a.minResearchTime - b.minResearchTime;
+    });
+
+
+    var table_id = container_id + '_table';
+    var html = '<table id="' + table_id + '" ></table>';
+    $('#' + container_id).append('<div style="margin-top:5px">' + html + '</div>');
+    var grid = $('#' + table_id);
+
     grid.jqGrid
     ({
-        caption: weaponSubClass,
         datatype: "local",
         data: grid_data,
         rowNum: grid_data.length,
         height: 'auto',
         colModel:
         [
-
             { label: "", name: "grid_id", key: true, hidden: true },
             {
                 label: " ",
@@ -390,9 +459,136 @@ function DrawWeaponLine(weaponSubClass, weapons_list, container_id) {
 
 }
 
-function FormWeaponLine_Html(weapon) {
 
+function show_nonres() {
+    if ($('#nonres_weaps').length == 0) {
+        sect = $('<div id="nonres_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Unavailable weapons");
+        var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
+        DoResearch(res_time, player, function () {
+            {
+                var func = function (weapon) {
+                    return listed_weapons[weapon.grid_id] == undefined;
+                };
+                DrawWeapons(sect2.attr('id'), null, func);
+            }
+        });
+    }
+    document.getElementById("nonres_weaps").scrollIntoView();
+}
 
+function showAA() {
+    if ($('#aa_weaps').length == 0) {
+        sect = $('<div id="aa_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var aa_weap = DrawSection_type2_html(sect.attr('id'), "Anti-Air Weapons");
+        var sect2 = DrawSection_type1_html(aa_weap.attr('id'), "");
+        sect2.append("<label>Weapons which can attack only flying <i>VTOL units</i>. This weapons cannot hit ground objects.</label>");
+        DoResearch(res_time, player, function () {
+            {
+                var func = function (weapon) {
+                    if (!IsAviableWeapon(weapon)) return false;
+                    var abils = Weapon_GetAbilities(weapon);
+                    if (!(abils.CanHitVtols && abils.CannotHitGround)) {
+                        return false;
+                    }
+                    return true;
+                };
+                DrawWeapons(sect2.attr('id'), null, func);
+            }
+        });
+    }
+    document.getElementById("aa_weaps").scrollIntoView();
+}
+
+function showArty() {
+    if ($('#arty_weaps').length == 0) {
+        sect = $('<div id="arty_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Artillery");
+        var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
+        DoResearch(res_time, player, function () {
+            {
+                var func = function (weapon) {
+                    if (!IsAviableWeapon(weapon)) return false;
+                    var abils = Weapon_GetAbilities(weapon);
+                    if (!abils.Indirect || abils.CannotHitGround) {
+                        return false;
+                    }
+                    return true;
+                };
+                DrawWeapons(sect2.attr('id'), null, func);
+            }
+        });
+    }
+    document.getElementById("arty_weaps").scrollIntoView();
+}
+
+function showAPWeaps() {
+    if ($('#AP_weaps').length == 0) {
+        sect = $('<div id="AP_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-cyborg Weapons");
+        var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
+        DoResearch(res_time, player, function () {
+            {
+                var func = function (weapon) {
+                    if (!IsAviableWeapon(weapon)) return false;
+                    var abils = Weapon_GetAbilities(weapon);
+                    if (abils.CannotHitGround || weapon.weaponEffect != "ANTI PERSONNEL") {
+                        return false;
+                    }
+                    return true;
+                };
+                DrawWeapons(sect2.attr('id'), null, func);
+            }
+        });
+    }
+    document.getElementById("AP_weaps").scrollIntoView();
+}
+
+function showAntiDef() {
+    if ($('#AntiDef_weaps').length == 0) {
+        sect = $('<div id="AntiDef_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-defense weapons");
+        var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
+        DoResearch(res_time, player, function () {
+            {
+                var func = function (weapon) {
+                    if (!IsAviableWeapon(weapon)) return false;
+                    var abils = Weapon_GetAbilities(weapon);
+                    if (abils.CannotHitGround || weapon.weaponEffect != "BUNKER BUSTER") {
+                        return false;
+                    }
+                    return true;
+                };
+                DrawWeapons(sect2.attr('id'), null, func);
+            }
+        });
+    }
+    document.getElementById("AntiDef_weaps").scrollIntoView();
+}
+
+function showOverpowred() {
+    if ($('#OP_weaps').length == 0) {
+        sect = $('<div id="OP_weaps"></div>');
+        sect.insertAfter("#other_weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Weapons which are overpowered in Multiplayer");
+        DoResearch(res_time, player, function () {
+            {
+                var low_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at low-oil games");
+                var op_list1 = ["MG4ROTARYMk1", "Bomb4-VTOL-HvyINC", "Flame1Mk1", "Flame2"];
+                DrawWeapons(low_sect.attr('id'), op_list1);
+
+                var hi_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at high-oil games");
+                var op_list2 = ["Bomb4-VTOL-HvyINC", "Bomb5-VTOL-Plasmite", "Howitzer150Mk1", "Mortar-Incenediary"];
+                DrawWeapons(hi_sect.attr('id'), op_list2);
+            }
+        });
+    }
+    document.getElementById("OP_weaps").scrollIntoView();
 }
 
 function openWeaponDetails(weapon_id) {
@@ -458,7 +654,6 @@ function DrawWeaponDetailsParameters(weap_id) {
                     <li><a href="#left-tabs-1">Weapon Guide</a></li>
                     <li><a href="#left-tabs-detail">Weapon detail</a></li>
                     <li><a href="#left-tabs-2">Damage Modifiers</a></li>
-                    <li><a href="#left-tabs-1">Best Weapons</a></li>
                 </ul>
                 <div id="left-tabs-1">
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
@@ -472,66 +667,42 @@ function DrawWeaponDetailsParameters(weap_id) {
                             Each weapon have one of two kinds of damage type: <label style="color:blue">kinetic</label> and <label style="color:red">thermal</label>.
                         </div>
                     </div>
-                    <ul  class="MyStyledLinkMenu" style="display:inline-block">
-                        <li><a href="#tank_weapons">Tank Weapons</a></li>
-                        <li><a href="#cyborg_weapons">Cyborg Weapons</a></li>
-                        <li><a href="#vtol_weapons">VTOL Weapons</a></li>
-                        <li><a href="#other_weapons">Other Weapons</a></li>
-                        <li><a href="#nonres_weapons">Unavailable Weapons</a></li>
-                    </ul>
+                    <table>
+                        <tr>
+                            <td>
+                                <ul  class="MyStyledLinkMenu" style="display:inline-block">
+                                    <li><a href="#tank_weapons">Tank Weapons</a></li>
+                                    <li><a href="#cyborg_weapons">Cyborg Weapons</a></li>
+                                    <li><a href="#vtol_weapons">VTOL Weapons</a></li>
+                                    <li><a href="#other_weapons">Other Weapons</a></li>
+                                    <li><a href="javascript:show_nonres()">Unavailable Weapons</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="MyStyledLinkMenu" style="display:inline-block">
+                                    <li><a href="javascript:showAA()">Anti-Air (AA) Weapons</a></li>
+                                    <li><a href="javascript:showArty()">Artillery</a></li>
+                                    <li><a href="javascript:showAPWeaps()">Anti-Cyborg Weapons</a></li>
+                                    <li><a href="javascript:showAntiDef()">Anti-defense weapons</a></li>
+                                    <li><a href="javascript:showOverpowred()">Overpowered Weapons</a></li>
+                                </ul>
+                            </td>
+                            <td style="width:40%">
+                                <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
+                                    <div id="research_slider">
 
-                    <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
-                        <div id="research_slider">
+                                    </div>
+                                    <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
 
-                        </div>
-                        <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
-                    </div>
 
-                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
-	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                           Tank Weapons
-	                    </h3>
-                        <div id="tank_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                        </div>
-                    </div>
-
-                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
-	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            Cyborg Weapons
-	                    </h3>
-                        <div id="cyborg_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                        </div>
-                    </div>
-
-                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
-	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            VTOL Weapons
-	                    </h3>
-                        <div id="vtol_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                        </div>
-                    </div>
-
-                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
-	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            Other Weapons
-	                    </h3>
-                        <div id="other_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                        </div>
-                    </div>
-
-                    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
-	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                            Unavailable Weapons
-	                    </h3>
-                        <div id="nonres_weapons" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                        </div>
-                    </div>
-
+                    <div id="tank_weapons"></div>
+                    <div id="cyborg_weapons"></div>
+                    <div id="vtol_weapons"></div>
+                    <div id="other_weapons"></div>
                 </div>
                 <div id="left-tabs-2">
 
