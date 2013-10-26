@@ -49,7 +49,7 @@
 
             ShowLoading('tabs_left');
             LoadAllObjects(function () {
-                DoResearch(7200, player_all_researched, function () {
+                DoResearchAll(player_all_researched,true, function () {
                     DrawResearchSlider("research_slider",
                         localStorage["body_research_state_seconds"],
                         function (value) {
@@ -156,11 +156,6 @@
         for (var body_id in Bodies.loaded_data_hash) {
             if (body_filter_function(Bodies.loaded_data_hash[body_id]))
             {
-                var res_comp_item = ResearchedComponents[player_all_researched][body_id];
-                if (res_comp_item != undefined) {
-                    Bodies.loaded_data_hash[body_id].minResearchTime = res_comp_item.time_seconds;
-                }
-                
                 grid_data.push(Bodies.loaded_data_hash[body_id]);
             }
         }
@@ -295,6 +290,8 @@
                             The most important parameters of bodies is <b>armor</b> and <b>hit points (HP)</b>. There is 2 kinds of armor: <label style="color:blue">kinetic</label> and <label style="color:red">thermal</label>.
                             <br />Kinetic armor protects tanks from "physical" damage (from machineguns, cannons, rockets, etc.)
                             Thermal armor uses to protect from "heat" damage typed weapons (flamers, lasers, thermite bombs etc.)
+                            <br />Note: to produce tanks with <i>medium</i> bodies you need build factory module.
+                            Tanks on <i>heavy</i> bodies are require 2 factory modules.
                         </div>
                     </div>
 

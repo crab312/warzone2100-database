@@ -56,7 +56,7 @@ $(function () {
 
     ShowLoading('tabs_left');
     LoadAllObjects(function () {
-        DoResearch(7200, player_all_researched, function () {
+        DoResearchAll(player_all_researched,true, function () {
             DrawResearchSlider("research_slider",
                 localStorage["weapons_research_state_seconds"],
                 function (value) {
@@ -112,17 +112,6 @@ function IsAviableWeapon(weapon) {
 }
 
 function DrawWeaponList() {
-
-    /* set minimum research time for weapons */
-    if (Weapons.loaded_data[0].minResearchTime == undefined) {
-        for (var i = 0; i < Weapons.loaded_data.length; i++) {
-            var weap_id = Weapons.loaded_data[i].grid_id;
-            var res_comp_item = ResearchedComponents[player_all_researched][weap_id];
-            if (res_comp_item != undefined) {
-                Weapons.loaded_data[i].minResearchTime = res_comp_item.time_seconds;
-            }
-        }
-    }
 
     DoResearch(res_time, player, function () {
 
@@ -354,42 +343,15 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
                     return '<a href="javascript:openWeaponDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
                 },
             },
-            { label: "Range", name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue / 128).toFixed(1) }, width: 40 },
+            {
+                label: "Range", name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
+                    return (cellvalue / 128).toFixed(1)
+                }, width: 40
+            },
             {
                 label: "Damage", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    var html_res = "";
-                    if (rowObject.damage != undefined) {
-
-                        if (rowObject.weaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
-                            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
-                        } else {
-                            html_res += "<b>" + rowObject.damage + "</b>";
-                        }
-                    }
-
-                    if (rowObject.radiusDamage != undefined && rowObject.radius != undefined) {
-                        html_res += "</br>";
-
-                        if (rowObject.weaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
-                            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
-                        } else {
-                            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
-                        }
-                    }
-
-                    if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
-                        html_res += "</br>";
-                        if (rowObject.periodicalDamageWeaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + "</label></b> /sec" + "";
-                            html_res += " " + rowObject.periodicalDamageWeaponClass.toLowerCase() + "";
-                        } else {
-                            html_res += "<b>" + rowObject.periodicalDamage + " /sec" + "</b>";
-                        }
-                    }
-                    return html_res;
+                    return WeaponDamage_htmlCell(rowObject);
                 },
                 width: 130
             },
@@ -439,14 +401,16 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
                 width: 300,
                 formatter: function (cellvalue, options, rowObject) {
                     var abils = Weapon_GetAbilities(rowObject);
-                    var res_html = "";
+                    var res_html = "<ul style='margin:2px; font-size:0.9em'>";
                     for (var ability in abils) {
                         if (abils[ability]) {
                             var des = Abilities_Description(ability);
-                            res_html += des.name + '<br />';
+                            if (!des.designer_only_ability) {
+                                res_html += '<li><i>' + des.name + '</i></li>';
+                            }
                         }
                     }
-                    return res_html;
+                    return '</ul>' + res_html;
                 },
             },
         ],

@@ -49,7 +49,7 @@
 
             ShowLoading('tabs_left');
             LoadAllObjects(function () {
-                DoResearch(7200, player_all_researched, function () {
+                DoResearchAll(player_all_researched,true, function () {
                     DrawPropulsion('propulsion_container', true);
                     DrawPropulsion('nonres_propulsion_container', false);
                     HideLoading('tabs_left');
@@ -77,9 +77,9 @@
                     }
                 }
 
-                if (res_comp_item != undefined) {
-                    Propulsion.loaded_data_hash[propulsion_id].minResearchTime = res_comp_item.time_seconds;
-                }
+                //if (res_comp_item != undefined) {
+                //    Propulsion.loaded_data_hash[propulsion_id].minResearchTime = res_comp_item.time_seconds;
+                //}
                 grid_data.push(Propulsion.loaded_data_hash[propulsion_id]);
 
             }

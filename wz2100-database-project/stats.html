@@ -67,9 +67,8 @@
 
             LoadAllObjects(function () {
                 /* add calculated column - research time ro each component*/
-                DoResearch(7200, player_all_researched, function () {
+                DoResearchAll(player_all_researched,true, function () {
                     for (var i = 0; i < Objects.length; i++) {
-                        var showMinTime = false;
                         if (Objects[i].loaded_data != undefined) {
                             for(var id in Objects[i].loaded_data_hash)
                             {
@@ -77,25 +76,18 @@
                                     var resesearch_obj = ResearchTime[player_all_researched][id];
                                     if (resesearch_obj != undefined) {
                                         Objects[i].loaded_data_hash[id].minResearchTime = ResearchTime[player_all_researched][id];
-                                        showMinTime = true;
-                                    }
-                                } else {
-                                    var res_comp_item = ResearchedComponents[player_all_researched][id];
-                                    if (res_comp_item != undefined) {
-                                        Objects[i].loaded_data_hash[id].minResearchTime = res_comp_item.time_seconds;
-                                        showMinTime = true;
                                     }
                                 }
                             }
                         }
-                        if (showMinTime && Objects[i].grid_colModel != undefined) {
+                        if (Objects[i].grid_colModel != undefined) {
                             Objects[i].grid_colModel.push({
                                 label: "Research Time (min)",
                                 name: "minResearchTime",
                                 width: 80,
                                 formatter: function (cellvalue, options, rowObject) {
                                     if (cellvalue == undefined) {
-                                        return 'cant research(!)';
+                                        return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
                                     }
                                     if (cellvalue < 3600) {
                                         return cellvalue.toMMSS();

@@ -21,6 +21,9 @@
     <Compile Include="Body.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cyborgs.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="design.php">
       <SubType>Code</SubType>
     </Compile>
@@ -52,6 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Body.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="cyborgs.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="data_master\rules.js">

@@ -147,6 +147,22 @@ $(function () {
     }
 
     {
+        var p = "longRange_tiles"
+        var d = {};
+        d.short_name = "Range";
+        d.name = "Range (tiles)";
+        d.description = "Maximum range of fire.";
+        d.format_str = function (value) {
+            return str_format(value / 128, 1);
+        };
+        d.format_num = function (value) {
+            return num_format(value/128, 1);
+        };
+        properties_description[p] = d;
+    }
+    
+
+    {
         var p = "vtol_numShots"
         var d = {};
         d.short_name = "VTOL ammo";

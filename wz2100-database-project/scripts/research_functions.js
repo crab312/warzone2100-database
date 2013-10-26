@@ -94,7 +94,7 @@ function eventResearched(research, player) {
                 }
                 if(s[1].toLowerCase() == 'hitpoints')
                 {
-                    s[1] = 'hitPoints';
+                    s[1] = 'hitpoints';
                 }
 
                 if (Stats.Building[i].Type === s[0]) // applies to specific building type
@@ -203,7 +203,26 @@ function LoadAllObjects(all_loaded_callback) {
 var Stats;
 var finished_research;
 
-function DoResearch(time_seconds, player, callback_function) {
+function DoResearchAll(player, do_set_research_time, callback_function) {
+    DoResearch(7200, player, callback_function, do_set_research_time);
+}
+
+function SetMinResearchTime(player_researcher) {
+    /* save minimum research time for a component */
+    var res_comps = ResearchedComponents[player_researcher];
+    for(var comp_id in res_comps)
+    {
+        for (var i = 0; i < Objects.length; i++) {
+            if (Objects[i].loaded_data_hash != undefined) {
+                if (Objects[i].loaded_data_hash[comp_id] != undefined) {
+                    Objects[i].loaded_data_hash[comp_id].minResearchTime = res_comps[comp_id].time_seconds;
+                }
+            }
+        }      
+    }
+}
+
+function DoResearch(time_seconds, player, callback_function, do_set_research_time) {
 
     /* try load research results from local storage */
     if (localStorage["research_results_player_" + player] != undefined) {
@@ -214,6 +233,10 @@ function DoResearch(time_seconds, player, callback_function) {
             ResearchTimeState[player] = res.ResearchTimeState;
             ResearchTime[player] = res.ResearchTime;
             
+            if (do_set_research_time) {
+                SetMinResearchTime(player);
+            }
+
             if (callback_function != undefined) {
                 callback_function();    
             }
@@ -228,7 +251,6 @@ function DoResearch(time_seconds, player, callback_function) {
 
     LoadAllObjects(function () //continue only when all data is loaded on client side
     {
-
         Stats = {};
         Stats.Weapon = Weapons.loaded_data;
         Stats.Body = Bodies.loaded_data;
@@ -317,7 +339,7 @@ function DoResearch(time_seconds, player, callback_function) {
                     ResearchedComponents[player_number][result_components[e]] = {};
                     ResearchedComponents[player_number][result_components[e]].time_seconds = current_time;
                     ResearchedComponents[player_number][result_components[e]].research_id = research_id;
-                }  
+                } 
             }
 
             if (res_row.Res_Data.resultStructures != undefined) {
@@ -328,6 +350,8 @@ function DoResearch(time_seconds, player, callback_function) {
                     ResearchedComponents[player_number][resultStructures[e]].research_id = research_id;
                 }
             }
+
+
             
             
             //remove from active research
@@ -446,6 +470,10 @@ function DoResearch(time_seconds, player, callback_function) {
         save_results.ResearchTimeState = ResearchTimeState[player];
         save_results.ResearchTime = ResearchTime[player];
         localStorage["research_results_player_" + player] = JSON.stringify(save_results);
+
+        if (do_set_research_time) {
+            SetMinResearchTime(player);
+        }
 
         if (callback_function != null) {
             callback_function(finished_research);

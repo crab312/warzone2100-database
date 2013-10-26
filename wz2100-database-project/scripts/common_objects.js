@@ -15,6 +15,7 @@ var ECM;
 var Sensor;
 var Features;
 var TankDesigner;
+var Templates;
 
 
 var SelectedObject;
@@ -31,7 +32,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.20";
+    var current_site_version = "1.23";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -556,6 +557,24 @@ function InitDataObjects() {
             { label: "Power of build ray", name: "buildPoints" },
             { label: "Price", name: "buildPower" },
         ];
+
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            var img_name = rowObject.grid_id + ".gif";
+            if (typeof icon_files_hash != 'undefined') {
+                if (icon_files_hash[img_name] == undefined) {
+                    return EmptyComponentIcon_html(rowObject.name);
+                } else {
+                    if (size == undefined) {
+                        return "<img src='data_icons/SupportTurrets/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
+                    } else {
+                        return "<img src='data_icons/SupportTurrets/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
+                    }
+                }
+            } else {
+                return '';
+            }
+        };
+
         Construction = obj;
         Objects.push(obj);
     }
@@ -596,6 +615,57 @@ function InitDataObjects() {
         ];
         Features = obj;
         Objects.push(obj);
+    }
+
+    {
+        var obj = new Object;
+        obj.sysid = "Templates";
+        obj.path_ini = data_directory + "templates.ini";
+        obj.tab_index = 12;
+        obj.LoadDataFunction = LoadDataObject;
+        obj.grid_colModel = [
+            { label: "ID", name: "grid_id", key: true, hidden: true },
+            { label: "Name", name: "name" },
+            { label: "Body", name: "compBody" },
+            { label: "Propulsion", name: "compPropulsion" },
+            { label: "Type", name: "type" },
+            { label: "Weapons", name: "weapons" },
+        ];
+
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            var img_name = null;
+            var img_folder = null;
+            if (rowObject.type == "CYBORG" || rowObject.type == "CYBORG_SUPER") {
+                img_name = rowObject.weapons.split(',')[0] + ".gif";
+                img_folder = 'Weapon';
+            }
+            if (rowObject.type == "CYBORG_CONSTRUCT") {
+                img_name = rowObject.compConstruct + ".gif";
+                img_folder = 'SupportTurrets';
+            }
+            if (rowObject.type == "CYBORG_REPAIR") {
+                img_name = rowObject.compRepair + ".gif";
+                img_folder = 'SupportTurrets';
+            }
+            if(img_name != null){
+                if (typeof icon_files_hash != 'undefined') {
+                    if (icon_files_hash[img_name] == undefined) {
+                        return EmptyComponentIcon_html(rowObject.name);
+                    } else {
+                        if (size == undefined) {
+                            return "<img src='data_icons/" + img_folder + "/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
+                        } else {
+                            return "<img src='data_icons/" + img_folder + "/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
+                        }
+                    }
+                } else {
+                    return '';
+                }
+            }
+        };
+
+        Templates = obj;
+        //Objects.push(obj); do not add to 'objects' array because we do not need load templates in LoadAll(..) function
     }
 
 }
@@ -979,6 +1049,11 @@ function DrawPageHeader() {
                         Propulsion\
 		            </h3>\
                 </a>\
+                <a href="cyborgs.php" class="ui-helper-reset" style="font-size:0.9em">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+                        Cyborgs\
+		            </h3>\
+                </a>\
                 <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
 		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Buildings\
@@ -990,8 +1065,8 @@ function DrawPageHeader() {
 		            </h3>\
                 </a>\
                 <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Tank Designer\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:110px; display:inline-block">\
+                        <span class="ui-icon ui-icon-star" style="display:inline-block;padding:0px;margin-bottom:-4px"></span>Tank Designer\
 		            </h3>\
                 </a>\
             </div>\
@@ -1075,3 +1150,4 @@ function DrawSection_type2_html(container_id, caption) {
     $('#' + container_id).append(html);
     return $('#' + sub_container_name);
 }
+

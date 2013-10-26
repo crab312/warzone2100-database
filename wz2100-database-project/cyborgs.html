@@ -1,0 +1,445 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <script src="scripts/properties_desription.js"></script>
+
+    <title></title>
+
+    <script>
+
+        var player = 0;
+
+        $(function () {
+
+            InitDataObjects();
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+
+            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+
+            });
+
+            if (localStorage["body_research_state_seconds"] == undefined) {
+                localStorage["body_research_state_seconds"] = 600;
+            }
+
+            ShowLoading('tabs_left');
+            LoadAllObjects(function () {
+                DoResearchAll(player_all_researched, true, function () {
+                    LoadCyborgDesigns(function () {
+                        DrawResearchSlider("research_slider",
+                            localStorage["body_research_state_seconds"],
+                            function (value) {
+                                if (value != localStorage["body_research_state_seconds"]) {
+                                    localStorage["body_research_state_seconds"] = value;
+                                    ShowLoading('tabs_left');
+                                    DrawCyborgsLists();
+                                    HideLoading('tabs_left');
+                                }
+                            });
+                        DrawCyborgsLists();
+                        HideLoading('tabs_left');
+                    });
+                });
+            });
+
+        });
+
+        function DrawCyborgsLists() {
+
+            var res_time = localStorage["body_research_state_seconds"];
+            if (res_time == undefined) {
+                return;
+            }
+            DoResearch(res_time, player, function () {
+                var collected_strucs = {};
+
+                DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
+
+                //Factory
+                var grid_factory = $('<table id="factory_grid"></table>');
+                $('#factory_stats_container').append(grid_factory); //type = CYBORG FACTORY
+                grid_data = [Structures.loaded_data_hash["A0CyborgFactory"]];
+                grid_factory.jqGrid
+                ({
+                    datatype: "local",
+                    data: grid_data,
+                    rowNum: grid_data.length,
+                    height: 'auto',
+                    colModel: [{
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return Structures.GetIconHtml_Function(rowObject);
+                        }
+                    }].concat(Structures.grid_colModel),
+                    loadonce: true,
+                });
+
+                var cyb_support = DrawSection_type2_html("cyb_support", "Support Cyborgs");
+                var cyb_light = DrawSection_type2_html("cyb_light", "Light Cyborgs");
+                var cyb_heavy = DrawSection_type2_html("cyb_heavy", "Heavy Cyborgs");
+
+                /* Support Cyborgs */
+                {
+                    var elem = DrawSection_type1_html(cyb_support.attr('id'), "");
+                    var func_support_cyborgs = function (cyborg) {
+                        if (cyborg.weapons == undefined) {
+                            return true;
+                        }
+                        return false;
+                    };
+                    DrawCyborgs(elem.attr('id'), null, func_support_cyborgs);
+                }
+
+                /* Light Cyborgs */
+                {
+                    var elem = DrawSection_type1_html(cyb_light.attr('id'), "");
+                    var func_light_cyborgs = function (cyborg) {
+                        if (cyborg.weapons == undefined) {
+                            return false;
+                        }
+                        var cyb_body = Bodies.loaded_data_hash[cyborg.compBody];
+                        if (cyb_body.droidType == "CYBORG") {
+                            return true
+                        }
+                        return false;
+                    };
+                    DrawCyborgs(elem.attr('id'), null, func_light_cyborgs);
+                }
+
+                /* Heavy Cyborgs */
+                {
+                    var elem = DrawSection_type1_html(cyb_heavy.attr('id'), "");
+                    var func_heavy_cyborgs = function (cyborg) {
+                        if (cyborg.weapons == undefined) {
+                            return false;
+                        }
+                        var cyb_body = Bodies.loaded_data_hash[cyborg.compBody];
+                        if (cyb_body.droidType == "CYBORG_SUPER") {
+                            return true
+                        }
+                        return false;
+                    };
+                    DrawCyborgs(elem.attr('id'), null, func_heavy_cyborgs);
+                }
+            });
+        }
+
+        var tmp_uniq_index = 0;
+
+        function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_model_additions) {
+            /* prepare list of cyborgs depending on function parameters */
+            var grid_data = [];
+            if (cyb_id_list == null) {
+                for (var i = 0; i < CyborgDesigns.length; i++) {
+                    if (cyborg_filter_function(CyborgDesigns[i])) {
+                        grid_data.push(CyborgDesigns[i]);
+                    }
+                }
+            } else {
+                for (var i = 0; i < cyb_id_list.length; i++) {
+                    grid_data.push(Templates.loaded_data_hash[cyb_id_list[i]]);
+                }
+            }
+
+            /* calculate parameters of cyborgs */
+            for (var i = 0; i < grid_data.length; i++) {
+                var body_id = grid_data[i].compBody, propulsion_id = grid_data[i].compPropulsion;
+                var turret_id = "";
+                var armed;
+                if (grid_data[i].type == "CYBORG" || grid_data[i].type == "CYBORG_SUPER") {
+                    turret_id = grid_data[i].weapons.split(',')[0];
+                    armed = true;
+                } else if (grid_data[i].type == "CYBORG_CONSTRUCT") {
+                    turret_id = grid_data[i].compConstruct;
+                    armed = false;
+                } else if (grid_data[i].type == "CYBORG_REPAIR") {
+                    turret_id = grid_data[i].compRepair;
+                    armed = false;
+                }
+                grid_data[i].armed = armed;
+                grid_data[i].design_data = CalculateDesign_fromIDs(player, turret_id, body_id, propulsion_id, !armed);
+            }
+
+            grid_data.sort(function (a, b) {
+                return a.minResearchTime - b.minResearchTime;
+            });
+
+            if (col_model_additions == undefined)
+                col_model_additions = [];
+
+            /* draw grid with given list of cyborgs */
+            var table_id = container_id + '_table';
+            var html = '<table id="' + table_id + '" ></table>';
+            $('#' + container_id).append('<div style="margin-top:5px">' + html + '</div>');
+            var grid = $('#' + table_id);
+            grid.jqGrid
+            ({
+                datatype: "local",
+                data: grid_data,
+                rowNum: grid_data.length,
+                height: 'auto',
+                colModel:
+                [
+
+                    { label: "", name: "grid_id", key: true, hidden: true },
+                    {
+                        label: " ",
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return '<a href="javascript:openCyborgDetails(\'' + rowObject.grid_id + '\')">' + Templates.GetIconHtml_Function(rowObject) + '</a>';
+                        },
+                    },
+                    {
+                        label: " ", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            var name = cellvalue;
+                            if (rowObject.name == undefined) {
+                                name = rowObject.design_data.weapon.name;
+                            }
+                            return '<a href="javascript:openCyborgDetails(\'' + rowObject.grid_id + '\')">' + name + '</a>';
+                        },
+                    },
+                    {
+                        label: "Armor", sortable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+
+                            var res_html = '<label style="color:blue" title="Kinetic Armor">' + PropDescr('armourKinetic').format_str(rowObject.design_data.armourKinetic) + '</label> / ';
+                            res_html += '<label style="color:red" title="Thermal Armor">' + PropDescr('armourHeat').format_str(rowObject.design_data.armourHeat) + '</label>';
+                            return res_html;
+                        },
+                        width: 70,
+                    },
+                    {
+                        label: "HP", sortable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return PropDescr('hitpoints').format_str(rowObject.design_data.hitpoints);
+                        },
+                        width: 70,
+                    },
+                    {
+                        label: "Range", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
+                            return PropDescr('longRange_tiles').format_str(rowObject.design_data.longRange);
+                        }, width: 40
+                    },
+                    {
+                        label: "Damage", sortable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return WeaponDamage_htmlCell(rowObject.design_data);
+                        },
+                        width: 130
+                    },
+                    {
+                        label: "Rate of Fire", sortable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (rowObject.armed) {
+                                return Weapon_ShotsPerMinute(rowObject.design_data).toFixed(1) + " /min";
+                            } else {
+                                return '';
+                            }
+                        }, width: 70,//
+                    },
+                    {
+                        label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                            return '<label style="color:#116611">' + PropDescr('price').format_str(rowObject.design_data.price) + '</label>';
+                        }, sorttype: "int"
+                    },
+                    {
+                        label: "Research",
+                        name: "minResearchTime",
+                        width: 80,
+                        sorttype: "int",
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (cellvalue != undefined) {
+                                if (cellvalue < 3600) {
+                                    return cellvalue.toMMSS();
+                                } else {
+                                    return cellvalue.toHHMMSS();
+                                }
+                            }
+                            return ' - ';
+                        },
+                    },
+                    {
+                        label: "Production Time",
+                        width: 80,
+                        sorttype: "int",
+                        formatter: function (cellvalue, options, rowObject) {
+                            cellvalue = rowObject.design_data.buildTimeSeconds_factory_nomodules;
+                            if (cellvalue != undefined) {
+                                return cellvalue.toMMSS();
+                            }
+                            return ' - ';
+                        },
+                    },
+                    {
+                        label: "Abilities",
+                        width: 300,
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (rowObject.armed) {
+                                var abils = Weapon_GetAbilities(rowObject.design_data.weapon);
+                                var res_html = "<ul style='margin:2px; font-size:0.9em'>";
+                                for (var ability in abils) {
+                                    if (abils[ability]) {
+                                        var des = Abilities_Description(ability);
+                                        if (!des.designer_only_ability) {
+                                            res_html += '<li><i>' + des.name + '</i></li>';
+                                        }
+                                    }
+                                }
+                                return '</ul>' + res_html;
+                            } else {
+                                return '-';
+                            }
+                        },
+                    },
+                ].concat(col_model_additions),
+                onSelectRow: function (rowid) {
+                },
+                loadonce: true,
+                ignoreCase: true, //make search case insensitive
+            });
+        }
+
+
+        function openCyborgDetails(body_id) {
+            alert(body_id);
+        }
+
+        var CyborgDesigns;
+        function LoadCyborgDesigns(callback_function) {
+            LoadDataObject(Templates, function () {
+                CyborgDesigns = [];
+                var resComp = ResearchedComponents[player_all_researched];
+                data = Templates.loaded_data;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type == "CYBORG" || data[i].type == "CYBORG_SUPER") {
+                        var weapon_id = data[i].weapons.split(',')[0], body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                        var can_research = resComp[weapon_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
+                        if (can_research) {
+                            var cyb_templ = data[i];
+                            cyb_templ.minResearchTime = Math.max(resComp[weapon_id].time_seconds, resComp[body_id].time_seconds, resComp[propulsion_id].time_seconds);
+                            CyborgDesigns.push(cyb_templ);
+                        }
+                    }
+                    if (data[i].type == "CYBORG_CONSTRUCT") {
+                        var contruct_id = data[i].compConstruct, body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                        var can_research = resComp[contruct_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
+                        if (can_research) {
+                            var cyb_templ = data[i];
+                            cyb_templ.minResearchTime = Math.max(resComp[contruct_id].time_seconds, resComp[body_id].time_seconds, resComp[propulsion_id].time_seconds);
+                            CyborgDesigns.push(cyb_templ);
+                        }
+                    }
+                    if (data[i].type == "CYBORG_REPAIR") {
+                        var repair_id = data[i].compRepair, body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                        var can_research = resComp[repair_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
+                        if (can_research) {
+                            var cyb_templ = data[i];
+                            cyb_templ.minResearchTime = Math.max(resComp[repair_id].time_seconds, resComp[body_id].time_seconds, resComp[propulsion_id].time_seconds);
+                            CyborgDesigns.push(cyb_templ);
+                        }
+                    }
+                }
+                if (callback_function != undefined) {
+                    callback_function();
+                }
+            });
+        }
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+
+            </td>
+        </tr>
+        <tr>
+            <td id="page_caption" data-caption="Cyborgs Guide">
+
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Cyborgs Guide</a></li>
+                    <li><a href="#left-tabs-1">Cyborgs detail</a></li>
+                </ul>
+
+                <div id="left-tabs-1">
+
+                    <div id="intro"></div>
+                    <div id="intro_content">
+                        <br />Cyborg is alternative type of troops in Warzone. Cyborgs are small, fast, and well defended against anti-tank weapons.
+                        <br />Cyborgs are suffer from Artillery and "Anti-Personell" weapons like Machineguns.
+                        <table style="width:100%; margin-top:10px">
+                            <tr>
+                                <td style="width:30%; vertical-align:top">
+                                    <ul class="MyStyledLinkMenu" style="display:inline-block">
+                                        <li><a href="#cyb_support">Support Cyborgs</a></li>
+                                        <li><a href="#cyb_light">Light Cyborgs</a></li>
+                                        <li><a href="#cyb_heavy">Heavy cyborgs</a></li>
+                                    </ul>
+                                </td>
+                                <td style="width:70%; vertical-align:top">
+                                    To <b>produce</b> cyborgs you need <i>Cyborg Factory</i>.
+                                    <div id="factory_stats_container" style="margin-top:10px"></div>
+                                    <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right; margin-top:30px">
+                                        <div id="research_slider">
+
+                                        </div>
+                                        <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <div id="cyb_support"></div>
+                    <div id="cyb_light"></div>
+                    <div id="cyb_heavy"></div>
+
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+    <div id="modifiers_container" style="display:none">
+
+    </div>
+
+        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

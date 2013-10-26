@@ -88,7 +88,7 @@ var player_current_design = 0;
 function Designer_PreLoad(callback_function) {
     InitDesigner();
     LoadAllObjects(function () {
-        DoResearch(7200, player_all_researched, function () {
+        DoResearchAll(player_all_researched,true, function () {
             if (localStorage["designer_designer_weapon"] != undefined) {
                 setInput(Weapons, $("#designer_weapon"), localStorage["designer_designer_weapon"], $("#designer_weapon_icon"));
             }
@@ -173,6 +173,8 @@ function ShowSeletDialog_forDataObject(DataObject, callback_function) {
 
 
 function Weapon_ShotsPerMinute(weapon) {
+    if (weapon.firePause == undefined)
+        return 0;
     var reloadTime = weapon.reloadTime == undefined ? 0 : weapon.reloadTime;
     var num_rounds = weapon.numRounds == undefined ? 1 : weapon.numRounds;
     if (num_rounds == 0) num_rounds = 1;
@@ -244,6 +246,7 @@ function Abilities_Description(ability_name) {
     res.name = "";
     res.descr = "";
     res.icon_class = "";
+    res.designer_only_ability = false;
     switch (ability_name) {
         case "CanHitVtols":
             res.name = "Can Attack VTOLs";
@@ -264,6 +267,7 @@ function Abilities_Description(ability_name) {
             res.name = "Cyborg Weapon";
             res.descr = "This weapon can be used only by cyborgs. ";
             res.icon_class = "ui-icon ui-icon-alert";
+            res.designer_only_ability = true;
             break;
         case "HasPeriodicalDamage":
             res.name = "Overtime damage";
@@ -303,11 +307,13 @@ function Abilities_Description(ability_name) {
         case "UpgradeLine":
             res.name = "Weapon Line";
             res.descr = "";
+            res.designer_only_ability = true;
             break;
         case "VTOLWeapon":
             res.name = "VTOL weapon";
             res.descr = "This weapon can be used only on VTOL-units.";
             res.icon_class = "ui-icon ui-icon-alert";
+            res.designer_only_ability = true;
             break;
         case "HitRun":
             res.name = "Hit&Run";
@@ -335,6 +341,7 @@ function Abilities_Description(ability_name) {
             res.name = "Cyborg";
             res.descr = "This is robotic warrior (selected cyborg body anr/or cyborg propulsion)";
             res.icon_class = "ui-icon ui-icon-shuffle";
+            res.designer_only_ability = true;
             break;
         default:
             break;
@@ -529,11 +536,11 @@ function calculate_damage(TankFrom, TankTo, time_seconds) {
     return one_shot_damage * shots_count + per_second_damage * time_seconds; 
 }
 
-function CalculateDesign_fromIDs(player, weapon_id, body_id, propulsion_id) {
-    var weapon = Weapons.loaded_data_hash[weapon_id];
+function CalculateDesign_fromIDs(player, weapon_id, body_id, propulsion_id, non_weapon_design) {
+    var weapon = GetTurretDataRow(weapon_id, non_weapon_design);
     var body = Bodies.loaded_data_hash[body_id];
     var propulsion = Propulsion.loaded_data_hash[propulsion_id];
-    return CalculateTankDesign(player, weapon, body, propulsion);
+    return CalculateTankDesign(player, weapon, body, propulsion, non_weapon_design);
 }
 
 var designer_player = 0;
@@ -616,8 +623,8 @@ function TryCalculateDesign(callback_function) {
             {
                 var row = new Object;
                 row.name = 'Health Points';
-                row.base = Tank.baseStats.hitPoints;
-                row.upgraded = Tank.hitPoints;
+                row.base = Tank.baseStats.hitpoints;
+                row.upgraded = Tank.hitpoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = '3: Armor';
                 grid_data.push(row);
@@ -1018,29 +1025,73 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
     grid.SortTree(1);
 }
 
-function CalculateTankDesign(player, weapon, body, propulsion) {
+function GetTurretDataRow(turret_id, non_weapon_design) {
+    if(non_weapon_design == true)
+    {
+        for (var i = 0; i < Objects.length; i++) {
+            if (Objects[i].loaded_data_hash != undefined) {
+                var t = Objects[i].loaded_data_hash[turret_id];
+                if (t != undefined) {
+                    return t;
+                }
+            }
+        }
+    }else
+    {
+        return Weapons.loaded_data_hash[turret_id];
+    }
+}
 
-    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+function GetTurretUpgrade(player, turret_id, non_weapon_design) {
+    if (non_weapon_design == true) {
+        for (var i = 0; i < Objects.length; i++) {
+            if (Objects[i].loaded_data_hash != undefined) {
+                var t = Objects[i].loaded_data_hash[turret_id];
+                if (t != undefined) {
+                    if (Objects[i] == Construction) {
+                        return Upgrades[player].Construct;
+                    }
+                    if (Objects[i] == Repair) {
+                        return Upgrades[player].Repair;
+                    }
+                    if (Objects[i] == Sensor) {
+                        return Upgrades[player].Sensor;
+                    }
+                    if (Objects[i] == ECM) {
+                        return Upgrades[player].ECM;
+                    }
+                }
+            }
+        }
+    } else {
+        return Upgrades[player].Weapon;
+    }
+}
+
+function CalculateTankDesign(player, turret, body, propulsion, non_weapon_design) {
+
+    var turret_upgraded = jQuery.parseJSON(JSON.stringify(GetTurretUpgrade(player, turret.grid_id, non_weapon_design)[turret.index_of_datarow])); //deep copy
     var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
 
     var TankDesign = {};
-    TankDesign.name = weapon.name + ' ' + body.name + ' ' + propulsion.name;
-    TankDesign.weapon = jQuery.parseJSON(JSON.stringify(weapon)); //deep copy
-    TankDesign.weapon_upgraded = weapon_upgraded;
+    TankDesign.name = turret.name + ' ' + body.name + ' ' + propulsion.name;
+    TankDesign.weapon = jQuery.parseJSON(JSON.stringify(turret)); //deep copy
+    TankDesign.weapon_upgraded = turret_upgraded;
     TankDesign.body = jQuery.parseJSON(JSON.stringify(body)); //deep copy
     TankDesign.body_upgraded = body_upgraded;
     TankDesign.propulsion = jQuery.parseJSON(JSON.stringify(propulsion)); //deep copy
     TankDesign.baseStats = {};
 
     //add weapon stats to TankDesign object
-    CalculateWeaponStats_AddToObjects(player, weapon, TankDesign, TankDesign.baseStats, TankDesign);
+    CalculateWeaponStats_AddToObjects(player, turret, TankDesign, TankDesign.baseStats, TankDesign, non_weapon_design);
 
     /* HP, ARMOR */
     {
-        var hp = body.hitpoints + (body.hitpoints * propulsion.hitpoints) / 100 + weapon.hitpoints;
+        var turret_hp = turret.hitpoints == undefined ? 0 : turret.hitpoints;
+        var hp = body.hitpoints + (body.hitpoints * propulsion.hitpoints) / 100 + turret_hp;
         var percent_upgrade = body_upgraded.hitpoints_percentage == undefined ? 0 : body_upgraded.hitpoints_percentage;
-        TankDesign.baseStats.hitPoints = hp;
-        TankDesign.hitPoints = hp + hp * percent_upgrade / 100;
+        TankDesign.baseStats.hitpoints = hp;
+        TankDesign.hitpoints = hp + hp * percent_upgrade / 100;
     }
 
     TankDesign.baseStats.armourKinetic = body.armourKinetic;
@@ -1051,7 +1102,7 @@ function CalculateTankDesign(player, weapon, body, propulsion) {
 
 
     /* SPEED */
-    var weight = body.weight + (body.weight * propulsion.weight) / 100 + weapon.weight;
+    var weight = body.weight + (body.weight * propulsion.weight) / 100 + turret.weight;
     var prop_modifier = PropulsionType.loaded_data_hash[propulsion.type].multiplier;
     var vtol_speed_modifier = 1;
     var speed_bonus = 1;
@@ -1093,11 +1144,11 @@ function CalculateTankDesign(player, weapon, body, propulsion) {
         fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0LightFactory'].index_of_datarow].productionPoints; // per second
     }
 
-    TankDesign.baseStats.price = weapon.buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
-    TankDesign.price = weapon_upgraded.buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
+    TankDesign.baseStats.price = turret.buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
+    TankDesign.price = turret_upgraded.buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
 
-    TankDesign.baseStats.buildPoints = weapon.buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
-    TankDesign.buildPoints = weapon_upgraded.buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
+    TankDesign.baseStats.buildPoints = turret.buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
+    TankDesign.buildPoints = turret_upgraded.buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
 
     TankDesign.baseStats.buildTimeSeconds_factory_nomodules = TankDesign.baseStats.buildPoints / fact_build_points;
     TankDesign.buildTimeSeconds_factory_nomodules = TankDesign.buildPoints / fact_build_points_upgraded;
@@ -1142,8 +1193,8 @@ function CalculateBuilding(player, structure) {
 
     /* HP, ARMOR */
     var hp = structure.hitpoints;
-    StructureDesign.baseStats.hitPoints = hp;
-    StructureDesign.hitPoints = hp + hp * structure_upgraded.hitPoints / 100;
+    StructureDesign.baseStats.hitpoints = hp;
+    StructureDesign.hitpoints = hp + hp * structure_upgraded.hitpoints / 100;
 
     var armor = structure.armour;
     StructureDesign.baseStats.armourKinetic = armor;
@@ -1178,8 +1229,10 @@ function CalculateBuilding(player, structure) {
 }
 
 
-function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_object_base, ref_object_upgraded) {
-    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_object_base, ref_object_upgraded, non_weapon_design) {
+
+   
+    var weapon_upgraded = jQuery.parseJSON(JSON.stringify(GetTurretUpgrade(player, weapon.grid_id, non_weapon_design)[weapon.index_of_datarow])); //deep copy
 
     ref_object.weapon = jQuery.parseJSON(JSON.stringify(weapon)); //deep copy
     ref_object.weapon_upgraded = weapon_upgraded;
@@ -1232,4 +1285,40 @@ function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_objec
 
 function CalcDPSToTopBody(player_attacker, player_attacked, attack_weapon) {
 
+}
+
+
+function WeaponDamage_htmlCell(rowObject) {
+    var html_res = "";
+    if (rowObject.damage != undefined) {
+
+        if (rowObject.weaponClass == "HEAT") {
+            html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
+            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
+        } else {
+            html_res += "<b>" + rowObject.damage + "</b>";
+        }
+    }
+
+    if (rowObject.radiusDamage != undefined && rowObject.radius != undefined) {
+        html_res += "</br>";
+
+        if (rowObject.weaponClass == "HEAT") {
+            html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
+            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
+        } else {
+            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
+        }
+    }
+
+    if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
+        html_res += "</br>";
+        if (rowObject.periodicalDamageWeaponClass == "HEAT") {
+            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + "</label></b> /sec" + "";
+            html_res += " " + rowObject.periodicalDamageWeaponClass.toLowerCase() + "";
+        } else {
+            html_res += "<b>" + rowObject.periodicalDamage + " /sec" + "</b>";
+        }
+    }
+    return html_res;
 }
