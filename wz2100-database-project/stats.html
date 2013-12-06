@@ -38,7 +38,6 @@
             Construction.tab_index = 9;
             ECM.tab_index = 10;
             Features.tab_index = 11;
-            PropulsionType.tab_index = -1;
             TerrainTable.tab_index = 12;
 
             var tab_index = 0;
@@ -80,7 +79,7 @@
                                 }
                             }
                         }
-                        if (Objects[i].grid_colModel != undefined) {
+                        if (Objects[i].grid_colModel != undefined && Objects[i].non_researchable != true) {
                             Objects[i].grid_colModel.push({
                                 label: "Research Time (min)",
                                 name: "minResearchTime",
@@ -110,7 +109,7 @@
 </head>
 <body style="background:#eeeeee;">
 
-    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+    <table style="width:95%;max-width:1200px;min-width:800px; margin-left: auto ; margin-right: auto ;">
         <tr>
             <td id="page_header">
             </td>
@@ -121,7 +120,7 @@
         </tr>
         <tr>
         <td style="width:100%;vertical-align:top">
-            <div id="tabs_left" style="padding-top:0px">
+            <div id="tabs_left" style="padding-top:0px;min-height:700px">
                 <ul>
                     <li><a href="#left-tabs-1">Weapon</a></li>
                     <li><a href="#left-tabs-1">Body</a></li>

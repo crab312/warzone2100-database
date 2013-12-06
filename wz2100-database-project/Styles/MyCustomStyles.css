@@ -185,7 +185,10 @@ input:-moz-placeholder, textarea:-moz-placeholder {
 }
 
 
-.ui-jqgrid tr.jqgrow td {vertical-align:middle !important}
+.ui-jqgrid tr.jqgrow td {
+    vertical-align:middle !important
+
+}
 
 .RowBordered {
     border: solid !important;
@@ -225,4 +228,9 @@ input:-moz-placeholder, textarea:-moz-placeholder {
 .center .ui-jqgrid {
     margin-left: auto;
     margin-right: auto;
+}
+
+.jqgrow.ui-state-highlight{ 
+    outline: 1px solid #ffcc8e !important;
+    outline-offset: -1px !important;
 }

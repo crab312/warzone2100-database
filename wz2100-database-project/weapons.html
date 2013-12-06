@@ -18,6 +18,8 @@
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
 
+    <script src="scripts/properties_desription.js"></script>
+
     <title></title>
 
     <script>
@@ -36,7 +38,7 @@ $(function () {
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-        DrawDetailsTab();
+        DrawDetailsTab_Init();
     });
 
 
@@ -49,25 +51,25 @@ $(function () {
         localStorage["weapons_research_state_seconds"] = 600;
     }
 
-    var res_time = localStorage["weapons_research_state_seconds"];
-    if (res_time == undefined) {
-        return;
-    }
+    //var res_time = localStorage["weapons_research_state_seconds"];
+    //if (res_time == undefined) {
+    //    return;
+    //}
+    res_time = 600;
 
     ShowLoading('tabs_left');
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched,true, function () {
             DrawResearchSlider("research_slider",
-                localStorage["weapons_research_state_seconds"],
+                res_time,
                 function (value) {
-                    if (value != localStorage["weapons_research_state_seconds"]) {
-                        localStorage["weapons_research_state_seconds"] = value;
-                        ShowLoading('tabs_left');
-                        DrawWeaponList();
-                        HideLoading('tabs_left');
-                    }
+                        DoResearch(value, player, function () {
+                            DrawWeaponList();
+                    });
                 });
-            DrawWeaponList();
+            DoResearch(res_time, player, function () {
+                DrawWeaponList();
+            });
             HideLoading('tabs_left');
         });
     });
@@ -111,12 +113,17 @@ function IsAviableWeapon(weapon) {
     return true;
 }
 
+var weap_modifiers_str;
+
 function DrawWeaponList() {
 
-    DoResearch(res_time, player, function () {
-
-
-        var tank_weapons = DrawSection_type2_html("tank_weapons", "Tank Weapons");
+   // DoResearch(res_time, player, function () {
+    FillPropModifierHash();
+        $("#tank_weapons").html('');
+        $("#cyborg_weapons").html('');
+        $("#vtol_weapons").html('');
+        $("#other_weapons").html('');
+        var tank_weapons = DrawSection_type2_html("tank_weapons", "Tank Weapons");  
         var cyborg_weapons = DrawSection_type2_html("cyborg_weapons", "Cyborg Weapons");
         var vtol_weapons = DrawSection_type2_html("vtol_weapons", "VTOL Weapons");
         var other_weapons = DrawSection_type2_html("other_weapons", "Other Weapons");
@@ -192,11 +199,11 @@ function DrawWeaponList() {
                 return true;
             };
             var elem1 = DrawSection_type1_html(vtol_weapons.attr('id'), "Bombs");
-            DrawWeapons(elem1.attr('id'), null, func_vtol_weapons_bombs);
+            DrawWeapons(elem1.attr('id'), null, func_vtol_weapons_bombs, VTOL_cols);
             var elem2 = DrawSection_type1_html(vtol_weapons.attr('id'), "Interceptors (Air-to-Air weapons)");
-            DrawWeapons(elem2.attr('id'), null, func_vtol_weapons_aa);
+            DrawWeapons(elem2.attr('id'), null, func_vtol_weapons_aa, VTOL_cols);
             var elem3 = DrawSection_type1_html(vtol_weapons.attr('id'), "Other VTOL Weapons");
-            DrawWeapons(elem3.attr('id'), null, func_vtol_weapons);
+            DrawWeapons(elem3.attr('id'), null, func_vtol_weapons, VTOL_cols);
         }
 
         /* Other weapons */
@@ -232,9 +239,25 @@ function DrawWeaponList() {
             var elem = DrawSection_type1_html(other_weapons.attr('id'), "");
             DrawWeapons(elem.attr('id'), null, func_other_weapons);
         }
-    });
+    //});
 }
 
+
+function FillPropModifierHash()
+{
+    weap_modifiers_str = {};
+    for(var mdf in PropulsionModifiers.loaded_data_hash)
+    {
+        var m = PropulsionModifiers.loaded_data_hash[mdf];
+        var str = "";
+        for (var prop_type in PropulsionType.loaded_data_hash)
+        {
+            var val = m[prop_type] == undefined ? ' - ' : m[prop_type];
+            str = str + prop_type + ":" + val + "%, ";
+        }
+        weap_modifiers_str[mdf] = str;
+    }
+}
 
 function DrawWeaponLines(container_id, weapon_filer_function) {
 
@@ -285,19 +308,41 @@ function DrawWeaponLines(container_id, weapon_filer_function) {
     }
 }
 
+var VTOL_cols = [
+    {
+        label: "VTOL Ammo", name: "ammo", width: 45, formatter: function (cellvalue, options, rowObject) {
+            return CalcVTOL_numshots(rowObject);
+        }, sorttype: "int"
+    },
+
+    ]
+
 var listed_weapons = {};
-function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
+function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additional_columns) {
     /* prepare list of structures depending on function parameters */
+    if (additional_columns == null || additional_columns == undefined) {
+        additional_columns = [];
+    }
     var grid_data = [];
     if (weap_id_list == null) {
         for (var weap_id in Weapons.loaded_data_hash) {
             if (weapon_filter_function(Weapons.loaded_data_hash[weap_id])) {
-                grid_data.push(Weapons.loaded_data_hash[weap_id]);
+                var weapon = Weapons.loaded_data_hash[weap_id];
+                var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow]))
+                weapon_upgraded.base = weapon;
+                //var weap_c = {};
+                //weap_c.base = {};
+                //CalculateWeaponStats_AddToObjects(player, weap, weap_c, weap_c.base, weap_c, false);
+                //grid_data.push(weap_c);
+                grid_data.push(weapon_upgraded);
             }
         }
     } else {
         for (var i = 0; i < weap_id_list.length; i++) {
-            grid_data.push(Weapons.loaded_data_hash[weap_id_list[i]]);
+            var weapon = Weapons.loaded_data_hash[weap_id_list[i]];
+            var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow]))
+            weapon_upgraded.base = weapon;
+            grid_data.push(weapon_upgraded);
         }
     }
 
@@ -372,7 +417,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
                 }, sorttype: "int"
             },
             {
-                label: "Research",
+                label: "<label title='Minimum time of research'>Research</label>",
                 name: "minResearchTime",
                 width: 80,
                 formatter: function (cellvalue, options, rowObject) {
@@ -389,31 +434,32 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function) {
                 },
             },
             {
-                label: "Class",
+                label: "<label title='Propulsion damage modifiers (Class)'>Class</label>",
                 width: 70,
                 name: "weaponEffect",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<label style="font-size:0.8em">' + cellvalue + '</label>';
+                    return '<a href="javascript:OpenDamageModifiers()" style="font-size:0.8em;" title="' + weap_modifiers_str[cellvalue] + '" >' + cellvalue + '</a>';//<span class="ui-icon ui-icon-extlink" style="display:inline-block"></span>
                 },
             },
-            {
-                label: "Abilities",
-                width: 300,
-                formatter: function (cellvalue, options, rowObject) {
-                    var abils = Weapon_GetAbilities(rowObject);
-                    var res_html = "<ul style='margin:2px; font-size:0.9em'>";
-                    for (var ability in abils) {
-                        if (abils[ability]) {
-                            var des = Abilities_Description(ability);
-                            if (!des.designer_only_ability) {
-                                res_html += '<li><i>' + des.name + '</i></li>';
-                            }
-                        }
-                    }
-                    return '</ul>' + res_html;
-                },
-            },
-        ],
+        ].concat(additional_columns).concat([
+                        {
+                            label: "Abilities",
+                            width: 300,
+                            formatter: function (cellvalue, options, rowObject) {
+                                var abils = Weapon_GetAbilities(rowObject);
+                                var res_html = "<ul style='margin:2px; font-size:0.9em'>";
+                                for (var ability in abils) {
+                                    if (abils[ability]) {
+                                        var des = Abilities_Description(ability);
+                                        if (!des.designer_only_ability) {
+                                            res_html += '<li><i>' + des.name + '</i></li>';
+                                        }
+                                    }
+                                }
+                                return '</ul>' + res_html;
+                            },
+                        },
+                        ]),
         onSelectRow: function (rowid) {
         },
         loadonce: true,
@@ -557,21 +603,37 @@ function showOverpowred() {
 
 function openWeaponDetails(weapon_id) {
     $("#tabs_left").tabs("option", "active", 1);
-    DrawDetailsTab(weapon_id);
+    DrawDetailsTab_Init(weapon_id);
 }
 
 
-function DrawDetailsTab(weapon_id) {
+function DrawDetailsTab_Init(weapon_id) {
+    var res_time = 600;
+
     DrawResearchSlider("research_slider_details",
-    localStorage["weapons_research_state_seconds"],
-    function (value) {
-        if (value != localStorage["weapons_research_state_seconds"]) {
-            localStorage["weapons_research_state_seconds"] = value;
-            ShowLoading('tabs_left');
-            DrawWeaponDetailsParameters();
-            HideLoading('tabs_left');
-        }
-    });
+        res_time,
+        //localStorage["weapons_research_state_seconds"],
+        function (value) {
+            //if (value != localStorage["weapons_research_state_seconds"]) {
+            //    localStorage["weapons_research_state_seconds"] = value;
+            //}
+
+            DoResearch(value, 0, function () {
+                DrawWeaponDetailsParameters(weapon_id);
+            });
+        });
+
+    if (weapon_id != undefined) {
+        DoResearch(res_time, 0, function () {
+            DrawWeaponDetailsParameters(weapon_id);
+            DrawWeaponStaticData(weapon_id);
+        });
+    }
+}
+
+function DrawWeaponDetailsParameters(weap_id) {
+    var weapon = Weapons.loaded_data_hash[weap_id];
+    var weapon_upgraded = GetTurretUpgrade(player, weap_id, false)[weapon.index_of_datarow];
 
     $("#select_weapon_button").button({
         icons: {
@@ -579,22 +641,114 @@ function DrawDetailsTab(weapon_id) {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject(Weapons, function (weap_id) {
-            DrawWeaponDetailsParameters(weap_id);
+        ShowSeletDialog_forDataObject(Weapons, weap_id, function (weap_id_new) {
+            DrawWeaponDetailsParameters(weap_id_new);
+            DrawWeaponStaticData(weap_id_new);
         });
     });
 
-    if (weapon_id != undefined) {
-        DrawWeaponDetailsParameters(weapon_id);
-    } 
+    $("#weapon_icon").html(Weapons.GetIconHtml_Function(weapon));
+    $("#weapon_name_label").text(weapon.name);
+    $("#abilities_container").html(Form_Weapon_Abilities_html(weapon));
+    
+
+    $('#weapon_details_details').html('<div id="weapon_details_details_container"></div>');
+    var grid_data = CalcWeaponRelatedParameters(weapon, weapon_upgraded);
+    DrawComponentDetailsGrid(grid_data, "weapon_details_details_container");
+
+    Designer_Draw_DPSTable("dps_table_container", [weapon_upgraded], player);
 }
 
-function DrawWeaponDetailsParameters(weap_id) {
-    var weap = Weapons.loaded_data_hash[weap_id];
-    $("#weapon_icon").html(Weapons.GetIconHtml_Function(weap));
-    $("#weapon_name_label").text(weap.name);
-    $("#abilities_container").html(Form_Weapon_Abilities_html(weap));
-    
+function DrawWeaponStaticData(weapon_id) {
+
+    var weapon = Weapons.loaded_data_hash[weapon_id];
+
+    /* Draw Damage modifiers table */
+    var grid_data_mdf = [];
+    var modif = PropulsionModifiers.loaded_data_hash[weapon.weaponEffect];
+    for (var prop_type in PropulsionType.loaded_data_hash) {
+        grid_data_mdf.push({
+            propulsion: prop_type,
+            modifier: modif[prop_type] == undefined ? ' - ' : modif[prop_type] + '%',
+        });
+    }
+    var grid_element_id = ResetGridContainer("weapon_details_damage_modifiers");
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data_mdf,
+        rowNum: grid_data_mdf.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "propulsion", width: '100px', fixed: true },
+                { name: "modifier", width: '50px', fixed: true },
+            ],
+        loadonce: true,
+    });
+
+    /* Draw Research Path */
+    var res_path_data = GetResearchPath_SubTree(weapon_id, player_all_researched, 5);
+    DrawResearchPath_Tree("research_path_container", res_path_data);
+
+    /* Draw damage upgrades table */
+    DrawUpgradeTable("damage_upgrades_container", weapon_id, "damage");
+    DrawUpgradeTable("rof_upgrades_container", weapon_id, "firepause");
+}
+
+function DrawUpgradeTable(container_id, weapon_id, research_hint) {
+    var weapon = Weapons.loaded_data_hash[weapon_id];
+    var weapon_upgraded = GetTurretUpgrade(player_all_researched, weapon_id, false)[weapon.index_of_datarow];
+    var upgrade_log = weapon_upgraded.upgrade_history;
+    var grid_data = [];
+    var summ = 100;
+    for (var i in upgrade_log) {
+        var log_rec = upgrade_log[i];
+        var research = Researches.loaded_data_hash[log_rec.research_id];
+        if (log_rec.hint.toLowerCase() == research_hint) {
+            summ = summ + log_rec.value;
+            grid_data.push({
+                name: research.name,
+                time_int: ResearchTime[player_all_researched][log_rec.research_id],
+                value: log_rec.value,
+                summ: summ,
+            });
+        }
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
+                {
+                    label: "Research Time (min)",
+                    width: 80,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.time_int == undefined) {
+                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                        }
+                        if (rowObject.time_int < 3600) {
+                            return rowObject.time_int.toMMSS();
+                        } else {
+                            return rowObject.time_int.toHHMMSS();
+                        }
+                    },
+                },
+                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: "Summ Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+            ],
+        sortname: "time_int",
+        loadonce: true,
+    });
 }
 
     </script>
@@ -677,7 +831,7 @@ function DrawWeaponDetailsParameters(weap_id) {
                             <td colspan="2">
                                 <div id="selected_weapon_header">
                                     <span id="weapon_icon"></span>
-                                    <label id="weapon_name_label">[...]</label>
+                                    <label id="weapon_name_label" style="font-size:1.2em">[...]</label>
                                 </div>
                             </td>
                             <td>
@@ -709,25 +863,26 @@ function DrawWeaponDetailsParameters(weap_id) {
                             </td>
                         </tr>
                         <tr>
-                            <td style="vertical-align:top; width:40%">
+                            <td style="vertical-align:top; width:45%">
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div3"></div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_details_details"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_details_damage_modifiers"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="dps_table_container"></div>
                             </td>
-                            <td style="vertical-align:top; width:30%">
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Abilities</div>
+                            <td style="vertical-align:top; width:35%">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px;">Abilities</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
-
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div1"></div>
-                            </td>
-                            <td style="vertical-align:top; width:30%">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
 
+                            </td>
+                            <td style="vertical-align:top; width:20%">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_containe"></div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Rate of Fire Upgrades</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="rof_upgrades_container"></div>

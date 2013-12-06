@@ -8,11 +8,26 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject(Bodies,function (selectedRowId) {
+        ShowSeletDialog_forDataObject(Bodies,$("#designer_body").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
                 alert('Sorry but you have not selected a row. Nothing will happen.');
             } else {
-                setInput(Bodies, $("#designer_body"), selectedRowId, $("#designer_body_icon"));
+
+                var body_id = localStorage["designer_designer_body"];
+                var body = Bodies.loaded_data_hash[selectedRowId];
+                if (body != undefined) {
+                    if (body.weaponSlots >= 2) {
+                        if (body.weaponSlots >= 3) {
+                            alert('Selected Multi-Turret Body but we do not support more than 2 turrets');
+                        }
+                        $('#designer_weapon2_row').show();
+                    } else {
+                        $('#designer_weapon2_row').hide();
+                    }
+                    setInput(Bodies, $("#designer_body"), selectedRowId, $("#designer_body_icon"));
+                }
+
+                
             }
             TryCalculateDesign();
         });
@@ -24,7 +39,7 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject(Propulsion, function (selectedRowId) {
+        ShowSeletDialog_forDataObject(Propulsion, $("#designer_propulsion").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
                 alert('Sorry but you have not selected a row. Nothing will happen.');
             } else {
@@ -41,7 +56,7 @@ function InitDesigner() {
         }
     }).click(function (event) {
         event.preventDefault();
-        ShowSeletDialog_forDataObject(Weapons,  function (selectedRowId) {
+        ShowSeletDialog_forDataObject(Weapons, $("#designer_weapon").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
                 alert('Sorry but you have not selected a row. Nothing will happen.');
             } else {
@@ -51,6 +66,119 @@ function InitDesigner() {
         });
     });
 
+    $("#designer_select_system_turret_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+
+        var menu_dialog_id = "designer_select_system_turret_button_dialog";
+        $('body').append('<div id="' + menu_dialog_id + '"></div>');
+        var constr_button = $('<button id="designer_select_construction_button" type="button">Construction (Trucks)</button>');
+        var sens_button = $('<button id="designer_select_sensor_button" type="button">Sensor</button>');
+        var repair_button = $('<button id="designer_select_repair_button" type="button">Repair</button>');
+        var ecm_button = $('<button id="designer_select_repair_button" type="button">ECM (electoric stuff)</button>');
+        $('#' + menu_dialog_id).append(constr_button).append('<br/>');
+        $('#' + menu_dialog_id).append(sens_button).append('<br/>');
+        $('#' + menu_dialog_id).append(repair_button).append('<br/>');
+        $('#' + menu_dialog_id).append(ecm_button).append('<br/>');
+
+        var method_set_val = function (selectedRowId, DataObject) {
+            if (selectedRowId == null) {
+                alert('Sorry but you have not selected a row. Nothing will happen.');
+            } else {
+                setInput(DataObject, $("#designer_weapon"), selectedRowId, $("#designer_weapon_icon"));
+            }
+            TryCalculateDesign();
+            $('#' + menu_dialog_id).dialog("close")
+        };
+
+        constr_button.button({
+            icons: {
+                primary: "ui-icon-triangle-1-s",
+            }
+        }).click(function (event) {
+            event.preventDefault();
+            ShowSeletDialog_forDataObject(Construction, $("#designer_weapon").attr('data-value'), method_set_val);
+        });
+
+        sens_button.button({
+            icons: {
+                primary: "ui-icon-triangle-1-s",
+            }
+        }).click(function (event) {
+            event.preventDefault();
+            ShowSeletDialog_forDataObject(Sensor, $("#designer_weapon").attr('data-value'), method_set_val);
+        });
+
+        repair_button.button({
+            icons: {
+                primary: "ui-icon-triangle-1-s",
+            }
+        }).click(function (event) {
+            event.preventDefault();
+            ShowSeletDialog_forDataObject(Repair, $("#designer_weapon").attr('data-value'), method_set_val);
+        });
+
+        ecm_button.button({
+            icons: {
+                primary: "ui-icon-triangle-1-s",
+            }
+        }).click(function (event) {
+            event.preventDefault();
+            ShowSeletDialog_forDataObject(ECM, $("#designer_weapon").attr('data-value'), method_set_val);
+        });
+        $("#designer_select_system_turret_button").attr("disabled", true);
+        $('#' + menu_dialog_id).dialog(
+        {
+            title: "Select an item",
+            buttons:
+            {
+                "Cancel": function () {
+                    $(this).dialog('close');
+                }
+            },
+            width: 300, 
+            close: function () {
+                $("#designer_select_system_turret_button").attr("disabled", false);
+                $(this).dialog("destroy");
+                $("#" + menu_dialog_id).remove(); //guarantees dialog destruction
+            }
+            // position: { my: "center ce", at: "left bottom", of: window }
+        });
+
+
+    });
+    
+
+    $("#designer_select_weapon2_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Weapons, $("#designer_weapon2").attr('data-value'), function (selectedRowId) {
+            if (selectedRowId == null) {
+                alert('Sorry but you have not selected a row. Nothing will happen.');
+            } else {
+                setInput(Weapons, $("#designer_weapon2"), selectedRowId, $("#designer_weapon2_icon"));
+            }
+            TryCalculateDesign();
+        });
+    });
+
+    $("#designer_select_weapon2_button_clear").button({
+        icons: {
+            primary: "ui-icon-close",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        setInput(Weapons, $("#designer_weapon2"), null, $("#designer_weapon2_icon"));
+        TryCalculateDesign();
+    });
+
+    
     var func_val_slider = function (value) {
         return value.toHHMMSS();
     }
@@ -90,10 +218,28 @@ function Designer_PreLoad(callback_function) {
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched,true, function () {
             if (localStorage["designer_designer_weapon"] != undefined) {
-                setInput(Weapons, $("#designer_weapon"), localStorage["designer_designer_weapon"], $("#designer_weapon_icon"));
+                var turret_id =  localStorage["designer_designer_weapon"];
+                setInput(FindComponentDataObject(turret_id), $("#designer_weapon"), turret_id, $("#designer_weapon_icon"));
+            }
+            if (localStorage["designer_designer_weapon2"] != undefined) {
+                var turret_id = localStorage["designer_designer_weapon2"];
+                setInput(FindComponentDataObject(turret_id), $("#designer_weapon2"), turret_id, $("#designer_weapon2_icon"));
             }
             if (localStorage["designer_designer_body"] != undefined) {
-                setInput(Bodies, $("#designer_body"), localStorage["designer_designer_body"], $("#designer_body_icon"));
+                var body_id = localStorage["designer_designer_body"];
+                var body = Bodies.loaded_data_hash[body_id];
+                if (body != undefined) {
+                    if (body.weaponSlots >= 2) {
+                        if (body.weaponSlots >= 3) {
+                            alert('Selected Multi-Turret Body but we do not support more than 2 turrets');
+                        }
+                        $('#designer_weapon2_row').show();
+                    } else {
+                        $('#designer_weapon2_row').hide();
+                    }
+                    setInput(Bodies, $("#designer_body"), body_id, $("#designer_body_icon"));
+                }
+                
             }
             if (localStorage["designer_designer_propulsion"] != undefined) {
                 setInput(Propulsion, $("#designer_propulsion"), localStorage["designer_designer_propulsion"], $("#designer_propulsion_icon"));
@@ -114,22 +260,67 @@ function Designer_PreLoad(callback_function) {
 }
 
 function setInput(DataObject, input_selector, selectedRowId, input_selector_icon) {
+    
     input_selector.attr('data-value', selectedRowId);
-    input_selector.val(DataObject.loaded_data_hash[selectedRowId].name);
-    localStorage["designer_" + input_selector.attr('id')] = selectedRowId;
-
-
-    if (DataObject.GetIconHtml_Function != undefined) {
-        input_selector_icon.html(DataObject.GetIconHtml_Function(DataObject.loaded_data_hash[selectedRowId]));
+    if (selectedRowId == null) {
+        input_selector.val(null);
+        input_selector_icon.html('');
+    } else {
+        var tmp_name = DataObject.loaded_data_hash[selectedRowId].name;
+        input_selector.val(tmp_name);
+        if (DataObject.GetIconHtml_Function == undefined) {
+            input_selector_icon.html(EmptyComponentIcon_html(tmp_name));
+        }
+        else {
+            input_selector_icon.html(DataObject.GetIconHtml_Function(DataObject.loaded_data_hash[selectedRowId]));
+        }
     }
+    if (selectedRowId == null) {
+        localStorage.removeItem("designer_" + input_selector.attr('id'));
+        input_selector.removeAttr('data-value');
+    } else {
+        localStorage["designer_" + input_selector.attr('id')] = selectedRowId;
+    }
+
+
+
 }
 
 
 var designer_dialogs = {};
-function ShowSeletDialog_forDataObject(DataObject, callback_function) {
 
-    if (designer_dialogs[DataObject.sysid] != undefined) {
-        $(designer_dialogs[DataObject.sysid]).dialog('open');
+function ShowSeletDialog_forDataObject(DataObject, selected_value, callback_function) {
+
+    //var ok_func = function () {
+    //    var selectedRowId = grid.jqGrid('getGridParam', 'selrow');
+    //    if (callback_function != undefined) {
+    //        callback_function(selectedRowId);
+    //    }
+    //    $(this).dialog('close');
+    //};
+
+    if (designer_dialogs[DataObject.sysid] != undefined) { //try to use saved dialog
+        var dialog = $(designer_dialogs[DataObject.sysid].dialog);
+        var grid = $(designer_dialogs[DataObject.sysid].grid)
+
+        dialog.dialog('option', 'buttons', {
+            "Ok": function () {
+                var selectedRowId = grid.jqGrid('getGridParam', 'selrow');
+                if (callback_function != undefined) {
+                    callback_function(selectedRowId, DataObject);
+                }
+                $(this).dialog('close');
+            },
+            "Cancel": function () {
+                $(this).dialog('close');
+            }
+        });
+        dialog.dialog('open');
+
+        if (selected_value != null && selected_value != undefined) {
+            grid.jqGrid('setSelection', selected_value);
+        }
+
         return;
     }
 
@@ -142,8 +333,11 @@ function ShowSeletDialog_forDataObject(DataObject, callback_function) {
 
 
     LoadDataObject(DataObject, function () {
+        
         var grid = DrawGrid(DataObject, container_id, null, 575, 575);
-        designer_dialogs[DataObject.sysid] = $("#" + container_id).dialog(
+        designer_dialogs[DataObject.sysid] = {};
+        designer_dialogs[DataObject.sysid].grid = grid; //save dialog and grid
+        designer_dialogs[DataObject.sysid].dialog = $("#" + container_id).dialog(
         {
             title: "Select an item",
             buttons:
@@ -151,7 +345,7 @@ function ShowSeletDialog_forDataObject(DataObject, callback_function) {
                 "Ok": function () {
                     var selectedRowId = grid.jqGrid('getGridParam', 'selrow');
                     if (callback_function != undefined) {
-                        callback_function(selectedRowId);
+                        callback_function(selectedRowId, DataObject);
                     }
                     $(this).dialog('close');
                 },
@@ -163,10 +357,15 @@ function ShowSeletDialog_forDataObject(DataObject, callback_function) {
             width: 600,
             height: 700,
             close: function () {
+                //$(this).dialog("destroy");
+                //$("#" + dialog_id).remove(); //guarantees dialog destruction
                 //this.hide();
             },
             // position: { my: "center ce", at: "left bottom", of: window }
         });
+        if (selected_value != null && selected_value != undefined) {
+            grid.jqGrid('setSelection', selected_value);
+        }
     });
 }
 
@@ -250,7 +449,7 @@ function Abilities_Description(ability_name) {
     switch (ability_name) {
         case "CanHitVtols":
             res.name = "Can Attack VTOLs";
-            res.descr = "This unis can attack and kill flying enemy units. Warzone units can't attack VTOLs by default.";
+            res.descr = "This unit can attack and kill flying enemy units. Warzone units can't attack VTOLs by default.";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "CannotHitGround":
@@ -373,7 +572,30 @@ function Form_Weapon_Abilities_html(weapon) {
 
 function FormAbilitiesHtml(TankDesign) {
 
-    var abils_html = Form_Weapon_Abilities_html(TankDesign.weapon);
+    var abils_html = "";
+    for (var i = 0; i < TankDesign.turrets.length; i++) {
+        var turret_id = TankDesign.turrets[i].grid_id;
+        if (Weapons.loaded_data_hash[turret_id] == undefined) {
+            var form_abil_html = function (name, descr) {
+                abils_html += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
+                abils_html += '<span style="display:inline-block;" class="ui-icon ui-icon-star"></span>';
+                abils_html += '<div style="display:inline-block;"><b>' + name + '</b></div>';
+                abils_html += '<div style="font-size:0.8em;">' + descr + '</div>';
+                abils_html += '</div>'
+            }
+            if (Sensor.loaded_data_hash[turret_id] != undefined) {
+                form_abil_html("This is Sensor Unit", "Artillery can be attached to this unit.");
+            } else if (Repair.loaded_data_hash[turret_id] != undefined) {
+                form_abil_html("This is Repair unit", "This unit can 'cure' damaged tanks");
+            } else if (Construction.loaded_data_hash[turret_id] != undefined) {
+                form_abil_html("This is Construction unit", "This unit can build base and defensive buildings");
+            } else if (ECM.loaded_data_hash[turret_id] != undefined) {
+                form_abil_html("This is weird electonic unit", "I dont know what this unit can do :)");
+            }
+        }else{
+            abils_html += Form_Weapon_Abilities_html(TankDesign.turrets[i]);
+        }
+    }
     var abils = Body_GetAbilities(TankDesign);
     for (var ability in abils) {
         if (typeof abils[ability] == "boolean") {
@@ -394,14 +616,20 @@ function FormAbilitiesHtml(TankDesign) {
     return abils_html;
 }
 
-function Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id) {
+function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
 
     var res = "";
     var resComp = ResearchedComponents[player_all_researched];
-    var can_research = resComp[weapon_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
+    var can_research = resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
+    for (var i = 0; i < turrets_ids.length; i++) {
+        can_research = can_research && resComp[turrets_ids[i]];
+    }
     if(can_research)
     {
-        var minTime = Math.max(resComp[weapon_id].time_seconds, resComp[body_id].time_seconds, resComp[propulsion_id].time_seconds);
+        var minTime = Math.max(resComp[body_id].time_seconds, resComp[propulsion_id].time_seconds);
+        for (var i = 0; i < turrets_ids.length; i++) {
+            minTime = Math.max(minTime, resComp[turrets_ids[i]].time_seconds);
+        }
         //res += '<div style="padding:5px;">Min time to research: <span style="float:right; display:inline"><b>' + minTime.toHHMMSS() + '</b></span></div>';
         if (ResearchTimeState[player_current_design] < minTime) {
             res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>This design is not available on current selected research time</b></div>';
@@ -410,11 +638,14 @@ function Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id) {
         res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>I do not know is this design researchable or not</b></div>';
     }
 
-    var wep_time = resComp[weapon_id] == undefined ? "don't know" : resComp[weapon_id].time_seconds.toHHMMSS();
-    var wep_name = Weapons.loaded_data_hash[weapon_id] == undefined ? "unknown" : Weapons.loaded_data_hash[weapon_id].name;
-    res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-    res += '<div>Weapon "' + wep_name + '" : <span style="float:right; display:inline"><b>' + wep_time + '</b></span></div>';
-    res += '</div>'
+    for (var i = 0; i < turrets_ids.length; i++) {
+        var turret = FindTurretById(turrets_ids[i]);
+        var res_time = resComp[turrets_ids[i]] == undefined ? "don't know" : resComp[turrets_ids[i]].time_seconds.toHHMMSS();
+        var comp_name = turret == null ? "unknown" : turret.name;
+        res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
+        res += '<div>Turret "' + comp_name + '" : <span style="float:right; display:inline"><b>' + res_time + '</b></span></div>';
+        res += '</div>'
+    }
 
     var bod_time = resComp[body_id] == undefined ? "don't know" : resComp[body_id].time_seconds.toHHMMSS();
     var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "unknown" : Bodies.loaded_data_hash[body_id].name;
@@ -433,7 +664,7 @@ function Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id) {
 }
 
 
-function Designer_Draw_DPSTable(container_id, Tank, enemy_player_number) {
+function Designer_Draw_DPSTable(container_id, TankWeapons, enemy_player_number) {
     
     //$('#designer_dps_header').html('DPS (Damage per second) : Research Time=' + last_calculated_research_time.toHHMMSS());
 
@@ -455,11 +686,11 @@ function Designer_Draw_DPSTable(container_id, Tank, enemy_player_number) {
 
     var grid_data = [];
     for (var i = 0; i < designs.length; i++) {
-        var dps_360s = calculate_damage(Tank, designs[i], 360);
+        var dps_360s = calculate_damage(TankWeapons, designs[i], 360);
         grid_data[i] = {};
         grid_data[i].id = i;
         grid_data[i].group = designs[i].body.size;
-        grid_data[i].weapon = designs[i].weapon.name;
+        grid_data[i].weapon = designs[i].turrets[0].name;
         grid_data[i].body = designs[i].body.name;
         grid_data[i].propulsion = designs[i].propulsion.name;
         grid_data[i].dps = (dps_360s / 360).toFixed(1);
@@ -496,44 +727,55 @@ function Designer_Draw_DPSTable(container_id, Tank, enemy_player_number) {
 
 }
 
-function calculate_damage(TankFrom, TankTo, time_seconds) {
+function calculate_damage(TankWeapons, TankTo, time_seconds) {
     
-    var tank1_abils = Weapon_GetAbilities(TankFrom.weapon);
-    var tank2_abils = Body_GetAbilities(TankTo);
-    if (tank2_abils.FlyingUnit) {
-        if (!tank1_abils.CanHitVtols) {
-            return 0;
+    var damage = [];
+    for (var i = 0; i < TankWeapons.length; i++) {
+        if (Weapons.loaded_data_hash[TankWeapons[i].grid_id] == undefined) {
+            continue; //this is non-weapon turret
         }
-    }
-    if (tank1_abils.CannotHitGround && tank1_abils.CanHitVtols) {
-        if (!tank2_abils.FlyingUnit) {
-            return 0;
+        var tank1weap = TankWeapons[i];
+        var tank1_abils = Weapon_GetAbilities(tank1weap);
+        var tank2_abils = Body_GetAbilities(TankTo);
+        if (tank2_abils.FlyingUnit) {
+            if (!tank1_abils.CanHitVtols) {
+                continue;
+            }
         }
+        if (tank1_abils.CannotHitGround && tank1_abils.CanHitVtols) {
+            if (!tank2_abils.FlyingUnit) {
+                continue;
+            }
+        }
+
+        var armor_direct;
+        var armor_periodical = TankTo.armourHeat;
+        if (tank1_abils.HeatDamage) {
+            armor_direct = TankTo.armourHeat;
+        } else {
+            armor_direct = TankTo.armourKinetic;
+        }
+
+        var propulsion_modifier = parseInt(PropulsionModifiers.loaded_data_hash[tank1weap.weaponEffect][TankTo.propulsion.type]);
+
+        var shots_count = Weapon_ShotsPerMinute(tank1weap) * (time_seconds / 60);
+        var clean_damage = tank1weap.damage * propulsion_modifier / 100;
+        var per_second_damage = 0;
+        if (tank1_abils.HasPeriodicalDamage) {
+            var clean_damage_incendiary_per_second = tank1weap.periodicalDamage; //version 3.1.0 100% incen damage + //будем считать что шанс поджесь 100%, потом надо будет переделать на мин. и макс. урон
+            per_second_damage = clean_damage_incendiary_per_second - armor_periodical;
+        } else {
+            per_second_damage = 0;
+        }
+
+        var one_shot_damage = Math.max(clean_damage / 3, clean_damage - armor_direct);
+        damage.push(one_shot_damage * shots_count + per_second_damage * time_seconds);
     }
-
-    var armor_direct;
-    var armor_periodical = TankTo.armourHeat;
-    if (tank1_abils.HeatDamage) {
-        armor_direct = TankTo.armourHeat;
-    }else{
-        armor_direct = TankTo.armourKinetic;
+    var total_damage = 0;
+    for (var i = 0; i < damage.length; i++) {
+        total_damage += damage[i];
     }
-
-    var propulsion_modifier = parseInt(PropulsionModifiers.loaded_data_hash[TankFrom.weapon.weaponEffect][TankTo.propulsion.type]);
-
-    var shots_count = TankFrom.shotsPerMinute * (time_seconds / 60);
-    var clean_damage = TankFrom.damage * propulsion_modifier / 100;
-    var per_second_damage = 0;
-    if (tank1_abils.HasPeriodicalDamage) {
-        var clean_damage_incendiary_per_second = TankFrom.periodicalDamage; //version 3.1.0 100% incen damage + //будем считать что шанс поджесь 100%, потом надо будет переделать на мин. и макс. урон
-        per_second_damage = clean_damage_incendiary_per_second - armor_periodical;
-    } else {
-        per_second_damage = 0;
-    }
-
-    var one_shot_damage = Math.max(clean_damage / 3, clean_damage - armor_direct);
-
-    return one_shot_damage * shots_count + per_second_damage * time_seconds; 
+    return total_damage;
 }
 
 function CalculateDesign_fromIDs(player, weapon_id, body_id, propulsion_id, non_weapon_design) {
@@ -553,21 +795,31 @@ function TryCalculateDesign(callback_function) {
         var player = designer_player;
         HideLoading('tabs_left');
         
-        var weapon_id = $("#designer_weapon").attr('data-value');
-        var weapon = Weapons.loaded_data_hash[weapon_id];
-        //if (weapon == undefined) return;
-        
+        var turret1_id = $("#designer_weapon").attr('data-value');
+        var turret1 = FindComponentDataObject(turret1_id).loaded_data_hash[turret1_id];
 
+        var turret2_id = $("#designer_weapon2").attr('data-value');
+        var turret2 = turret2_id != null && turret2_id != undefined ? FindComponentDataObject(turret2_id).loaded_data_hash[turret2_id] : undefined;
+        //if (weapon == undefined) return;
+       
         var body_id = $("#designer_body").attr('data-value');
         var body = Bodies.loaded_data_hash[body_id];
         //if (body == undefined) return;
         
+        var num_turrets = body == undefined ? 1 : (body.weaponSlots > 1 && turret2 != undefined ? 2 : 1);
+        var turrets = num_turrets > 1 ? [turret1, turret2] : [turret1];
+        var turrets_ids = num_turrets > 1 ? [turret1_id, turret2_id] : [turret1_id];
 
         var propulsion_id = $("#designer_propulsion").attr('data-value');
         var propulsion = Propulsion.loaded_data_hash[propulsion_id];
         //if (propulsion == undefined) return;
 
-        is_unfinished_design = weapon == undefined || body == undefined || propulsion == undefined;
+
+        if (body == undefined ? true : (body.weaponSlots > 1 ? false : true)) {
+            $('#designer_weapon2_row').hide();
+        }
+
+        is_unfinished_design = turret1 == undefined || body == undefined || propulsion == undefined;
 
 
         var show_params_method = function () {
@@ -575,17 +827,17 @@ function TryCalculateDesign(callback_function) {
             //var weapon_upgraded = Upgrades[player].Weapon[weapon.index_of_datarow];
             //var body_upgraded = Upgrades[player].Body[body.index_of_datarow];
 
-            var Tank = CalculateTankDesign(player, weapon, body, propulsion);
+            var Tank = CalculateTankDesign(player, turrets, body, propulsion);
 
             var grid_data = [];
-
+            var group_prefix = 0;
             /* PRICE & BUILD POINTS */
             {
                 var row = new Object;
                 row.name = 'Tank price';
                 row.base = Tank.baseStats.price.toFixed(0);
                 row.upgraded = Tank.price.toFixed(0);
-                row.group = '1: Price';
+                row.group = ++group_prefix +': ' + 'Price';
                 grid_data.push(row);
             }
 
@@ -595,7 +847,7 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgraded = Tank.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_nomodules - Tank.baseStats.buildTimeSeconds_factory_nomodules) / Tank.baseStats.buildTimeSeconds_factory_nomodules;
-                row.group = '2: Build time';
+                row.group = ++group_prefix + ': ' + 'Build time';
                 grid_data.push(row);
             }
 
@@ -605,7 +857,7 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.buildTimeSeconds_factory_with2modules.toMMSS();
                 row.upgraded = Tank.buildTimeSeconds_factory_with2modules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_with2modules - Tank.baseStats.buildTimeSeconds_factory_with2modules) / Tank.baseStats.buildTimeSeconds_factory_with2modules;
-                row.group = '2: Build time';
+                row.group = group_prefix + ': ' + 'Build time';
                 grid_data.push(row);
             }
 
@@ -615,7 +867,7 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.buildPoints;
                 row.upgraded = Tank.buildPoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '2: Build time';
+                row.group = group_prefix + ': ' + 'Build time';
                 grid_data.push(row);
             }
 
@@ -626,7 +878,7 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.hitpoints;
                 row.upgraded = Tank.hitpoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '3: Armor';
+                row.group = ++group_prefix + ': ' + 'Armor';
                 grid_data.push(row);
             }
             {
@@ -635,7 +887,7 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.armourKinetic;
                 row.upgraded = Tank.armourKinetic;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '3: Armor';
+                row.group = group_prefix + ': ' + 'Armor';
                 grid_data.push(row);
             }
             {
@@ -644,104 +896,46 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.armourHeat.toFixed(0);
                 row.upgraded = Tank.armourHeat.toFixed(0);
                 row.upgrade_change = ((row.upgraded - row.base) / row.base).toFixed(0);
-                row.group = '3: Armor';
+                row.group = group_prefix + ': ' + 'Armor';
                 grid_data.push(row);
             }
 
             /* DAMAGE */
-            {
-                var row = new Object;
-                row.name = 'Damage';
-                row.base = Tank.baseStats.damage;
-                row.upgraded = Tank.damage;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
+            var group_label_postfix = num_turrets > 1 ? ' (Weapon 1)' : '';
+            for (var i = 0; i < num_turrets; i++) {
+                if (i > 0) {
+                    group_label_postfix = ' (Weapon 2)';
+                }
+                var turret_id = Tank.turrets[i].grid_id;
+                if (Weapons.loaded_data_hash[turret_id] == undefined) {
+                    {
+                        var row = new Object;
+                        row.name = 'Damage';
+                        row.base = 'no damage';
+                        row.upgraded = 'no damage';;
+                        row.upgrade_change = '0';
+                        row.group = ++group_prefix +': ' + 'Damage';
+                        grid_data.push(row);
+                    }
+                } else {
+                    //Show damage stats only for weapon turrets
+                    var weap_params = CalcWeaponRelatedParameters(Tank.turrets[i], Tank.turrets_upgraded[i]);
+                    group_prefix++;
+                    for (var p in weap_params) {
+                        weap_params[p].group = group_prefix +': ' + weap_params[p].group + group_label_postfix;
+                    }
+                    grid_data = grid_data.concat(weap_params);
+                }
             }
-            {
-                var row = new Object;
-                row.name = 'Damage Type';
-                row.base = Tank.baseStats.weaponClass;
-                row.upgraded = '';
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-            {
-                var row = new Object;
-                row.name = 'Splash Damage';
-                row.base = Tank.baseStats.radiusDamage;
-                row.upgraded = Tank.radiusDamage;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-            {
-                var row = new Object;
-                row.name = 'Splash Radius (tiles)';
-                row.base = Tank.baseStats.radius / 128;
-                row.upgraded = Tank.radius / 128;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-            {
-                var row = new Object;
-                row.name = 'Shots per Minute <br />(Firepause)'; 
-                row.base = Tank.baseStats.shotsPerMinute.toFixed(2);
-                row.upgraded = Tank.shotsPerMinute.toFixed(2);
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-
-            {
-                var row = new Object;
-                row.name = 'Periodical damage';
-                row.base = Tank.baseStats.periodicalDamage;
-                row.upgraded = Tank.periodicalDamage;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-
-            {
-                var row = new Object;
-                row.name = 'Periodical damage duration <br />(seconds)';
-                row.base = Tank.baseStats.periodicalDamageTime / 10;
-                row.upgraded = Tank.periodicalDamageTime / 10;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-
-            {
-                var row = new Object;
-                row.name = 'Periodical damage radius (tiles)';
-                row.base = Tank.baseStats.periodicalDamageRadius / 128;
-                row.upgraded = Tank.periodicalDamageRadius / 128;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '4: Damage';
-                grid_data.push(row);
-            }
-            /* RANGE */
-            {
-                var row = new Object;
-                row.name = 'Range (tiles)';
-                row.base = Tank.baseStats.longRange / 128;
-                row.upgraded = Tank.longRange / 128;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '5: Range';
-                grid_data.push(row);
-            }
-
             /* SPEED */
+            var group_name = ++group_prefix + ': ' + 'Speed';
             {
                 var row = new Object;
                 row.name = 'Speed Road';
                 row.base = Tank.baseStats.speed_road;
                 row.upgraded = Tank.speed_road;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '6: Speed';
+                row.group = group_name
                 grid_data.push(row);
             }
             {
@@ -750,87 +944,27 @@ function TryCalculateDesign(callback_function) {
                 row.base = Tank.baseStats.speed_offroad;
                 row.upgraded = Tank.speed_offroad;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = '6: Speed';
+                row.group = group_name;
                 grid_data.push(row);
             }
 
             $("#designer_abilities_container").html(FormAbilitiesHtml(Tank));
             
 
-            Designer_Draw_DPSTable('designer_dps_container', Tank, 0);
+            Designer_Draw_DPSTable('designer_dps_container', Tank.turrets_upgraded, 0);
 
             var container_id = "designer_parameters_container";
-            var grid_element_id = ResetGridContainer(container_id);
-            var grid = $(grid_element_id);
-            grid.jqGrid
-            ({
-                datatype: "local",
-                data: grid_data,
-                rowNum: grid_data.length,
-                height: 'auto',
-                colModel:
-                    [
-                        { name: "", width: '20px', sortable: false, search: false },
-                        { name: "name", label: 'Parameter', key: true, width: '200px' },
-                        {
-                            name: "base", label: 'Base value', width: '100px',
-                            formatter: function (cellvalue, options, rowObject) {
-                                if (typeof cellvalue != "string" && isNaN(cellvalue)) {
-                                    return '';
-                                }
-                                return cellvalue;
-                            }
-                        },
-                        { name: "group", label: 'group', width: '100px' },
-                        {
-                            name: "upgraded", label: 'Upgraded value', width: '100px',
-                            formatter: function (cellvalue, options, rowObject) {
-                                if (typeof cellvalue != "string" && isNaN(cellvalue)) {
-                                    return '';
-                                }
-                                if (cellvalue == rowObject.base) {
-                                    return '';
-                                }
-                                return cellvalue;
-                            }
-                        },
-                        {
-                            name: "upgrade_change", label: 'Upgrade Change', width: '100px',
-                            formatter: function (cellvalue, options, rowObject) {
-                                if (isNaN(cellvalue)) {
-                                    return '';
-                                } else {
-                                    var fl = (parseFloat(cellvalue) * 100).toFixed(0);
-                                    if (fl == 0) {
-                                        return '';
-                                    } else {
-                                        return "<label>" + fl + "%</label>";
-                                    }
-                                }
-                            },
-
-                        },
-                    ],
-                onSelectRow: function (rowid) {
-
-                },
-                loadonce: true,
-                grouping: true,
-                groupingView: {
-                    groupField: ['group'],
-                    groupText: ['<b> {0} </b>'],
-                    groupColumnShow: [false]
-                },
-            });
+            DrawComponentDetailsGrid(grid_data, container_id);
 
         };
 
-        var show_research_path_method = function (weapon_id, body_id, propulsion_id) {
+        var show_research_path_method = function (turrets_ids, body_id, propulsion_id) {
 
             var res_path_data = [];
-            if(weapon_id != null)
-            {
-                res_path_data = res_path_data.concat(GetResearchPath_SubTree(weapon_id, player_all_researched));
+            for (var t = 0; t < turrets_ids.length; t++) {
+                if (turrets_ids[t] != null) {
+                    res_path_data = res_path_data.concat(GetResearchPath_SubTree(turrets_ids[t], player_all_researched));
+                }
             }
             if(body_id != null)
             {
@@ -857,31 +991,30 @@ function TryCalculateDesign(callback_function) {
         var research_time = $('#designer_research_slider').slider("option", "value");
 
         if (last_calculated_research_time != research_time) {
-            ShowLoading('tabs_left');
-            DoResearch(research_time, 0, function (finished_research) {
-                HideLoading('tabs_left');
+            DoResearch(research_time, player, function (finished_research) {
                 last_calculated_research_time = research_time;
                 if (is_unfinished_design) {
-                    if (weapon != null) {
+                    if (turret1 != null) {
                         $("#designer_abilities_container").html(Form_Weapon_Abilities_html(weapon));
                     }
                 }else{
                     show_params_method();
                 }
-                $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
+                $("#designer_research_requirements").html(Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id));
 
-                show_research_path_method(weapon_id, body_id, propulsion_id);
+                show_research_path_method(turrets_ids, body_id, propulsion_id);
             });
         } else {
             if (is_unfinished_design) {
-                if (weapon != null) {
-                    $("#designer_abilities_container").html(Form_Weapon_Abilities_html(weapon));
+                if (turret1 != null) {
+                    var html_tmp = "";
+                    $("#designer_abilities_container").html(Form_Weapon_Abilities_html(turret1));
                 }
             }else{
                 show_params_method();
             }
-            $("#designer_research_requirements").html(Form_ResearchRequirements_Html(weapon_id, body_id, propulsion_id));
-            show_research_path_method(weapon_id, body_id, propulsion_id);
+            $("#designer_research_requirements").html(Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id));
+            show_research_path_method(turrets_ids, body_id, propulsion_id);
         }
 
         if (callback_function != undefined) {
@@ -890,8 +1023,169 @@ function TryCalculateDesign(callback_function) {
     });
 }
 
+function DrawComponentDetailsGrid(grid_data, container_id) {
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+            [
+                { name: "", width: '20px', sortable: false, search: false },
+                { name: "name", label: 'Parameter', key: true, width: '200px' },
+                {
+                    name: "base", label: 'Base value', width: '50px', fixed: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                            return '';
+                        }
+                        return cellvalue;
+                    }
+                },
+                { name: "group", label: 'group', width: '100px' },
+                {
+                    name: "upgraded", label: 'Upgraded value', width: '50px', fixed: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                            return '';
+                        }
+                        if (cellvalue == rowObject.base) {
+                            return '';
+                        }
+                        return cellvalue;
+                    }
+                },
+                {
+                    name: "upgrade_change", label: 'Upgrade Change', width: '50px',fixed:true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (isNaN(cellvalue)) {
+                            return '';
+                        } else {
+                            var fl = (parseFloat(cellvalue) * 100).toFixed(0);
+                            if (fl == 0) {
+                                return '';
+                            } else {
+                                return "<label>" + fl + "%</label>";
+                            }
+                        }
+                    },
 
-function GetResearchPath_SubTree(component_id, player) {
+                },
+            ],
+        onSelectRow: function (rowid) {
+
+        },
+        loadonce: true,
+        grouping: true,
+        groupingView: {
+            groupField: ['group'],
+            groupText: ['<b> {0} </b>'],
+            groupColumnShow: [false]
+        },
+    });
+}
+
+function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
+
+    var grid_data = [];
+    var turret = weapon_base;
+    var turret_upgraded = weapon_upgraded;
+    var damage1_label = "Damage";
+    var range_label = "Range";
+    {
+        var row = new Object;
+        row.name = 'Damage';
+        row.base = turret.damage;
+        row.upgraded = turret_upgraded.damage;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Damage Type';
+        row.base = turret.weaponClass;
+        row.upgraded = '';
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Splash Damage';
+        row.base = turret.radiusDamage;
+        row.upgraded = turret_upgraded.radiusDamage;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Splash Radius (tiles)';
+        row.base = turret.radius / 128;
+        row.upgraded = turret_upgraded.radius / 128;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Shots per Minute <br />(Firepause)';
+        row.base = Weapon_ShotsPerMinute(turret).toFixed(2);
+        row.upgraded = Weapon_ShotsPerMinute(turret_upgraded).toFixed(2);
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+
+    {
+        var row = new Object;
+        row.name = 'Periodical damage';
+        row.base = turret.periodicalDamage;
+        row.upgraded = turret_upgraded.periodicalDamage;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+
+    {
+        var row = new Object;
+        row.name = 'Periodical damage duration <br />(seconds)';
+        row.base = turret.periodicalDamageTime / 10;
+        row.upgraded = turret_upgraded.periodicalDamageTime / 10;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+
+    {
+        var row = new Object;
+        row.name = 'Periodical damage radius (tiles)';
+        row.base = turret.periodicalDamageRadius / 128;
+        row.upgraded = turret_upgraded.periodicalDamageRadius / 128;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        grid_data.push(row);
+    }
+    /* RANGE */
+    {
+        var row = new Object;
+        row.name = 'Range (tiles)';
+        row.base = turret.longRange / 128;
+        row.upgraded = turret_upgraded.longRange / 128;
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = range_label;
+        grid_data.push(row);
+    }
+    return grid_data;
+}
+
+function GetResearchPath_SubTree(component_id, player,expand_level) {
+    if (expand_level == undefined) {
+        expand_level = 1;
+    }
     if(player == undefined)
     {
         player = player_all_researched;
@@ -929,7 +1223,7 @@ function GetResearchPath_SubTree(component_id, player) {
         data_row.calculated_time = ResearchTime[player][res_row.grid_id];
         data_row.level = level;
         data_row.isLeaf = true;
-        data_row.expanded = level >= -1;
+        data_row.expanded = level >= -1 * expand_level;
         data_row.name = res_row.name;
         result_data.push(data_row);
 
@@ -1068,26 +1362,45 @@ function GetTurretUpgrade(player, turret_id, non_weapon_design) {
     }
 }
 
-function CalculateTankDesign(player, turret, body, propulsion, non_weapon_design) {
+function CalculateTankDesign(player, turrets, body, propulsion, non_weapon_design) {
 
-    var turret_upgraded = jQuery.parseJSON(JSON.stringify(GetTurretUpgrade(player, turret.grid_id, non_weapon_design)[turret.index_of_datarow])); //deep copy
+    var turrets_num = 1;
+    if ($.isArray(turrets)) {
+        if (turrets.length > 1) {
+            turrets_num = 2;
+        }
+    } else {
+        turrets = [turrets];
+    }
+
+    var turrets_upgraded = [];
+    var turret_name = "";
+    for(var i=0; i<turrets_num; i++)
+    {
+        turret_name += turrets[i].name + " ";
+        turrets_upgraded[i] = jQuery.parseJSON(JSON.stringify(GetTurretUpgrade(player, turrets[i].grid_id, non_weapon_design)[turrets[i].index_of_datarow])); //deep copy
+    }
+    
     var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
 
     var TankDesign = {};
-    TankDesign.name = turret.name + ' ' + body.name + ' ' + propulsion.name;
-    TankDesign.weapon = jQuery.parseJSON(JSON.stringify(turret)); //deep copy
-    TankDesign.weapon_upgraded = turret_upgraded;
+    TankDesign.name = turret_name + body.name + ' ' + propulsion.name;
+    TankDesign.turrets = jQuery.parseJSON(JSON.stringify(turrets)); //deep copy
+    TankDesign.turrets_upgraded = turrets_upgraded;
     TankDesign.body = jQuery.parseJSON(JSON.stringify(body)); //deep copy
     TankDesign.body_upgraded = body_upgraded;
     TankDesign.propulsion = jQuery.parseJSON(JSON.stringify(propulsion)); //deep copy
     TankDesign.baseStats = {};
 
     //add weapon stats to TankDesign object
-    CalculateWeaponStats_AddToObjects(player, turret, TankDesign, TankDesign.baseStats, TankDesign, non_weapon_design);
+    //CalculateWeaponStats_AddToObjects(player, turret, TankDesign, TankDesign.baseStats, TankDesign, non_weapon_design);
 
     /* HP, ARMOR */
     {
-        var turret_hp = turret.hitpoints == undefined ? 0 : turret.hitpoints;
+        var turret_hp = 0;
+        for (var i = 0; i < turrets_num; i++) {
+            turret_hp += turrets[i].hitpoints == undefined ? 0 : turrets[i].hitpoints;
+        }
         var hp = body.hitpoints + (body.hitpoints * propulsion.hitpoints) / 100 + turret_hp;
         var percent_upgrade = body_upgraded.hitpoints_percentage == undefined ? 0 : body_upgraded.hitpoints_percentage;
         TankDesign.baseStats.hitpoints = hp;
@@ -1102,7 +1415,11 @@ function CalculateTankDesign(player, turret, body, propulsion, non_weapon_design
 
 
     /* SPEED */
-    var weight = body.weight + (body.weight * propulsion.weight) / 100 + turret.weight;
+    var turret_weight = 0;
+    for (var i = 0; i < turrets_num; i++) {
+        turret_weight += turrets[i].weight == undefined ? 0 : turrets[i].weight;
+    }
+    var weight = body.weight + (body.weight * propulsion.weight) / 100 + turret_weight;
     var prop_modifier = PropulsionType.loaded_data_hash[propulsion.type].multiplier;
     var vtol_speed_modifier = 1;
     var speed_bonus = 1;
@@ -1144,11 +1461,18 @@ function CalculateTankDesign(player, turret, body, propulsion, non_weapon_design
         fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0LightFactory'].index_of_datarow].productionPoints; // per second
     }
 
-    TankDesign.baseStats.price = turret.buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
-    TankDesign.price = turret_upgraded.buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
+    var turret_buildPower = 0;
+    var turret_buildPoints = 0;
+    for (var i = 0; i < turrets_num; i++) {
+        turret_buildPower += turrets[i].buildPower == undefined ? 0 : turrets[i].buildPower;
+        turret_buildPoints += turrets[i].buildPoints == undefined ? 0 : turrets[i].buildPoints;
+    }
 
-    TankDesign.baseStats.buildPoints = turret.buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
-    TankDesign.buildPoints = turret_upgraded.buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
+    TankDesign.baseStats.price = turret_buildPower + body.buildPower + body.buildPower * propulsion.buildPower / 100;
+    TankDesign.price = turret_buildPower + body_upgraded.buildPower + body_upgraded.buildPower * propulsion.buildPower / 100;
+
+    TankDesign.baseStats.buildPoints = turret_buildPoints + body.buildPoints + body.buildPoints * propulsion.buildPoints / 100;
+    TankDesign.buildPoints = turret_buildPoints + body_upgraded.buildPoints + body_upgraded.buildPoints * propulsion.buildPoints / 100;
 
     TankDesign.baseStats.buildTimeSeconds_factory_nomodules = TankDesign.baseStats.buildPoints / fact_build_points;
     TankDesign.buildTimeSeconds_factory_nomodules = TankDesign.buildPoints / fact_build_points_upgraded;
@@ -1175,7 +1499,7 @@ function CalculateBuilding(player, structure) {
         var weapons = structure.weapons.split(',');
         if (weapons.length > 0) {
             var weapon = Weapons.loaded_data_hash[weapons[0]];
-            var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
+            //var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
             //add weapon stats to TankDesign object
             CalculateWeaponStats_AddToObjects(player, weapon, StructureDesign, StructureDesign.baseStats, StructureDesign);
         }
@@ -1277,7 +1601,7 @@ function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_objec
     ref_object_upgraded.longRange = weapon_upgraded.longRange;
 
     /* VTOL Stuff */
-    ref_object_base.vtol_numShots = (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 0 : weapon.numRounds);
+    ref_object_base.vtol_numShots = CalcVTOL_numshots(weapon);
     ref_object_upgraded.vtol_numShots = ref_object_base.vtol_numShots;
 
 }
@@ -1291,34 +1615,39 @@ function CalcDPSToTopBody(player_attacker, player_attacked, attack_weapon) {
 function WeaponDamage_htmlCell(rowObject) {
     var html_res = "";
     if (rowObject.damage != undefined) {
-
+        var dmg = PropDescr('damage').format_str(rowObject.damage);
         if (rowObject.weaponClass == "HEAT") {
-            html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
+            html_res += "<label style='color: darkred'><b>" + dmg + "</b></label>";
             html_res += " " + rowObject.weaponClass.toLowerCase() + "";
         } else {
-            html_res += "<b>" + rowObject.damage + "</b>";
+            html_res += "<b>" + dmg + "</b>";
         }
     }
 
     if (rowObject.radiusDamage != undefined && rowObject.radius != undefined) {
+        var rad_dmg = PropDescr('radiusDamage').format_str(rowObject.radiusDamage);
         html_res += "</br>";
-
         if (rowObject.weaponClass == "HEAT") {
-            html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
+            html_res += "<label style='color: darkred'><b>" + rad_dmg + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
             html_res += " " + rowObject.weaponClass.toLowerCase() + "";
         } else {
-            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
+            html_res += "<b>" + rad_dmg + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
         }
     }
 
     if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
         html_res += "</br>";
+        var period_dmg = PropDescr('periodicalDamage').format_str(rowObject.periodicalDamage);
         if (rowObject.periodicalDamageWeaponClass == "HEAT") {
-            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + "</label></b> /sec" + "";
+            html_res += "<label style='color: darkred'><b>" + period_dmg + "</label></b> /sec" + "";
             html_res += " " + rowObject.periodicalDamageWeaponClass.toLowerCase() + "";
         } else {
-            html_res += "<b>" + rowObject.periodicalDamage + " /sec" + "</b>";
+            html_res += "<b>" + period_dmg + " /sec" + "</b>";
         }
     }
     return html_res;
+}
+
+function CalcVTOL_numshots(weapon) {
+    return (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 1 : weapon.numRounds);
 }

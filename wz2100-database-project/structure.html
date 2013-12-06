@@ -26,528 +26,530 @@
 
         var player = 0;
 
-        $(function () {
+$(function () {
 
-            InitDataObjects();
-            $("#tabs_left").tabs();
-            $("#tabs_left").tabs("option", "active", 0);
+    InitDataObjects();
+    $("#tabs_left").tabs();
+    $("#tabs_left").tabs("option", "active", 0);
 
-            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+    $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
 
-            });
+    });
 
-            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+    $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
 
-            });
+    });
 
-            $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+    $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
 
-            });
+    });
 
 
-            if (localStorage["body_research_state_seconds"] == undefined) {
-                localStorage["body_research_state_seconds"] = 600;
-            }
+    var res_time = 600;
 
-            ShowLoading('tabs_left');
-            LoadAllObjects(function () {
-                DoResearchAll(player_all_researched,true, function () {
-                    DrawResearchSlider("research_slider",
-                        localStorage["body_research_state_seconds"],
-                        function (value) {
-                            if (value != localStorage["body_research_state_seconds"]) {
-                                localStorage["body_research_state_seconds"] = value;
-                                ShowLoading('tabs_left');
-                                DrawStructuresLists();
-                                HideLoading('tabs_left');
-                            }
-                        });
-                    DrawStructuresLists();
-                    HideLoading('tabs_left');
+    ShowLoading('tabs_left');
+    DrawSection_type1_html("intro_content", "Intoduction");
+    LoadAllObjects(function () {
+        DoResearchAll(player_all_researched,true, function () {
+            DrawResearchSlider("research_slider",
+                res_time,
+                function (value) {
+                    DoResearch(value, player, function () {
+                        DrawStructuresLists();
+                    }, false);
                 });
-            });
-
-        });
-
-        function DrawStructuresLists() {
-
-            var res_time = localStorage["body_research_state_seconds"];
-            if (res_time == undefined) {
-                return;
-            }
             DoResearch(res_time, player, function () {
-                var collected_strucs = {};
+                DrawStructuresLists();
+            }, false);
+            HideLoading('tabs_left');
+        });
+    });
 
-                DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
-                //Construction
-                var grid_trucks = $('<table id="trucks_grid"></table>');
-                $('#truck_stats_container').append(grid_trucks);
-                grid_data = [Construction.loaded_data_hash["Spade1Mk1"], Construction.loaded_data_hash["CyborgSpade"]];
-                grid_trucks.jqGrid
-                ({
-                    datatype: "local",
-                    data: grid_data,
-                    rowNum: grid_data.length,
-                    height: 'auto',
-                    colModel: [{
-                        name: 'pic',
-                        width: '65px',
-                        sortable: false,
-                        search: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            if (Construction.GetIconHtml_Function == undefined) {
-                                return '';
-                            }
-                            return Construction.GetIconHtml_Function(rowObject);
-                        }
-                    }].concat(Construction.grid_colModel),
-                    loadonce: true,
-                });
+});
 
-                var base_struc = DrawSection_type2_html("base_struc_header", "Base buildings");
-                var walls = DrawSection_type2_html("walls_header", "Walls");
-                var towers = DrawSection_type2_html("towers_header","Towers");
-                var bunkers = DrawSection_type2_html("bunkers_header","Bunkers");
-                var hardpoints = DrawSection_type2_html("hardpoints_header","Hardpoints");
-                var forts = DrawSection_type2_html("forts_header","Fortresses");
-                var arty = DrawSection_type2_html("arty_header", "Artillery emplacements");
-                var aa_ = DrawSection_type2_html("aa_header", "Anti-Air batteries");
-                var other_def = DrawSection_type2_html("other_def_header","Other defenses");
-                var nonres_struc = DrawSection_type2_html("other_struc_header","Unavailable buildings");
+function DrawStructuresLists() {
 
-                /* Base Structures */
+    var collected_strucs = {};
+    $('#base_struc_header').html('');
+    $('#walls_header').html('');
+    $('#towers_header').html('');
+    $('#bunkers_header').html('');
+    $('#hardpoints_header').html('');
+    $('#forts_header').html('');
+    $('#arty_header').html('');
+    $('#aa_header').html('');
+    $('#other_def_header').html('');
+    $('#other_struc_header').html('');
+    var base_struc = DrawSection_type2_html("base_struc_header", "Base buildings");
+    var walls = DrawSection_type2_html("walls_header", "Walls");
+    var towers = DrawSection_type2_html("towers_header", "Towers");
+    var bunkers = DrawSection_type2_html("bunkers_header", "Bunkers");
+    var hardpoints = DrawSection_type2_html("hardpoints_header", "Hardpoints");
+    var forts = DrawSection_type2_html("forts_header", "Fortresses");
+    var arty = DrawSection_type2_html("arty_header", "Artillery emplacements");
+    var aa_ = DrawSection_type2_html("aa_header", "Anti-Air batteries");
+    var other_def = DrawSection_type2_html("other_def_header", "Other defenses");
+    var nonres_struc = DrawSection_type2_html("other_struc_header", "Unavailable buildings");
 
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Command Center");
-                    DrawStructures(elem.attr('id'), ["A0CommandCentre"], null);
-                    elem.append("The Command Center is the heart of every Warzone base. It's needed for three things: To design units, to show the minimap and to research any defensive structures.");
+    
+    var grid_trucks = $(ResetGridContainer("truck_stats_container"));
+    grid_data = [Construction.loaded_data_hash["Spade1Mk1"], Construction.loaded_data_hash["CyborgSpade"]];
+    grid_trucks.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel: [{
+            name: 'pic',
+            width: '65px',
+            sortable: false,
+            search: false,
+            formatter: function (cellvalue, options, rowObject) {
+                if (Construction.GetIconHtml_Function == undefined) {
+                    return '';
+                }
+                return Construction.GetIconHtml_Function(rowObject);
+            }
+        }].concat(Construction.grid_colModel),
+        loadonce: true,
+    });
+
+
+
+    /* Base Structures */
+
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Command Center");
+        DrawStructures(elem.attr('id'), ["A0CommandCentre"], null);
+        elem.append("The Command Center is the heart of every Warzone base. It's needed for three things: To design units, to show the minimap and to research any defensive structures.");
                     
-                }
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Power Generator");
-                    DrawStructures(elem.attr('id'), ["A0PowerGenerator", "A0PowMod1"], null);
-                    elem.append("The power generator in conjunction with oil derricks gives the player power. One power generator is needed for every four oil derricks, or the oil derricks will not function. Additional power generators will not generate any more power.\
-                                <br />The power module gives power faster (+50.9% to the power multipliers - note that this is in addition to the fact that researching Power Module sets the base multiplier to 125%).");
+    }
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Power Generator");
+        DrawStructures(elem.attr('id'), ["A0PowerGenerator", "A0PowMod1"], null);
+        elem.append("The power generator in conjunction with oil derricks gives the player power. One power generator is needed for every four oil derricks, or the oil derricks will not function. Additional power generators will not generate any more power.\
+                    <br />The power module gives power faster (+50.9% to the power multipliers - note that this is in addition to the fact that researching Power Module sets the base multiplier to 125%).");
                     
-                }
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Researh Facility");
-                    DrawStructures(elem.attr('id'), ["A0ResearchFacility", "A0ResearchModule1"], null);
-                    elem.append("The research facility allows the player to research upgrades and new technologies. One research facility can research one technology at a time, and research cannot be queued.\
-                                <br />The research module allows for faster research (+85.7% to the current research multiplier).");
+    }
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Researh Facility");
+        DrawStructures(elem.attr('id'), ["A0ResearchFacility", "A0ResearchModule1"], null);
+        elem.append("The research facility allows the player to research upgrades and new technologies. One research facility can research one technology at a time, and research cannot be queued.\
+                    <br />The research module allows for faster research (+85.7% to the current research multiplier).");
                     
-                }
+    }
 
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Factories");
-                    DrawStructures(elem.attr('id'), ["A0LightFactory", "A0FacMod1", "A0CyborgFactory", "A0VTolFactory1"], null);
-                    elem.append($("#factories_description"));
-                }
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Factories");
+        DrawStructures(elem.attr('id'), ["A0LightFactory", "A0FacMod1", "A0CyborgFactory", "A0VTolFactory1"], null);
+        elem.append($("#factories_description"));
+    }
 
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Command Relay Center");
-                    elem.append("The Command Relay Center is required to make Commanders (tanks with Command Turrets). Commanders provide bonuses to units assigned to them.");
-                    DrawStructures(elem.attr('id'), ["A0ComDroidControl"], null);
-                }
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Command Relay Center");
+        elem.append("The Command Relay Center is required to make Commanders (tanks with Command Turrets). Commanders provide bonuses to units assigned to them.");
+        DrawStructures(elem.attr('id'), ["A0ComDroidControl"], null);
+    }
                
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Other");
-                    DrawStructures(elem.attr('id'), ["A0RepairCentre3", "A0VtolPad", "A0ResourceExtractor"], null);
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Other");
+        DrawStructures(elem.attr('id'), ["A0RepairCentre3", "A0VtolPad", "A0ResourceExtractor"], null);
+    }
+
+    {
+        var elem = DrawSection_type1_html(base_struc.attr('id'), "Sensor Structures");
+        elem.append("Sensor structures are used to reveal map. Sensor towers are useful at aiming artillery fire at enemies at long range.<br/><i>Satellite Uplink</i> is unique structure which reveals whole map.");
+        var func_sensor_struc = function (struc) {
+            if (struc.sensorID != undefined) {
+                if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check Body can be researched */ {
+                    return false;
                 }
-
-                {
-                    var elem = DrawSection_type1_html(base_struc.attr('id'), "Sensor Structures");
-                    elem.append("Sensor structures are used to reveal map. Sensor towers are useful at aiming artillery fire at enemies at long range.<br/><i>Satellite Uplink</i> is unique structure which reveals whole map.");
-                    var func_sensor_struc = function (struc) {
-                        if (struc.sensorID != undefined) {
-                            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check Body can be researched */ {
-                                return false;
-                            }
-                            var sens = Sensor.loaded_data_hash[struc.sensorID];
-                            if (sens != undefined) {
-                                if (sens.location != undefined) {
-                                    return sens.location == "TURRET";
-                                }
-                            }
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_sensor_struc);
-                }
-
-                /* DEFENSIVE STRUCTURES */
-
-                var damage_columns = [
-                    {
-                        name: "Weapon_name",
-                        label: "weapon",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return rowObject.hitpoints;
-                        },
-                    },
-
-                ];
-
-                var collected_defenses = {};
-
-                /* Walls */
-                {
-                    var elem = DrawSection_type1_html(walls.attr('id'), "");
-                    elem.append("Walls is cheap and well armored but sometimes better use bunkers lines instead walls :)");
-                    var func_tower_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons != undefined) {
-                            return false;
-                        }
-
-                        if (struc.type == "WALL" || struc.type == "GATE" || struc.type  == "CORNER WALL") {
-                            collected_defenses[struc.grid_id] = 1;
-                            return true;
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_tower_struc);
-                }
-
-                /* Towers */
-                {
-                    var elem = DrawSection_type1_html(towers.attr('id'), "");
-                    elem.append("Towers are weaken than hardpoints and bunkers, but some weapons available only on towers.");
-                    var func_tower_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-                        
-                        if (struc.name.toLowerCase().indexOf("tower") >= 0) {
-                            collected_defenses[struc.grid_id] = 1;
-                            return true;
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_tower_struc);
-                }
-
-                /* Bunkers */
-                {
-                    var elem = DrawSection_type1_html(bunkers.attr('id'), "");
-                    elem.append("Bunkers have best armor, but bunkers very vulnerable to flamers and other incendiary weapons.");
-                    var func_bunker_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        if (struc.strength == "BUNKER") {
-                            collected_defenses[struc.grid_id] = 1;
-                            return true;
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_bunker_struc);
-                }
-
-                /* Hardpoints */
-                {
-                    var elem = DrawSection_type1_html(hardpoints.attr('id'), "");
-                    elem.append("Hardpoints are most common defense in Warzone2100.");
-                    var func_hardpoints_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        //var weap = Weapons.loaded_data_hash[struc.weapons]; //need skip "whirlwind hardpoint" because its is belongs to AA-
-                        //if (weap != undefined) {
-                        //    var abils = Weapon_GetAbilities(weap);
-                        //    if (abils.CanHitVtols && abils.CannotHitGround) {
-                        //        return false;
-                        //    }
-                        //}
-
-                        if (struc.name.toLowerCase().indexOf("hardpoint") >= 0) {
-                            collected_defenses[struc.grid_id] = 1;
-                            return true;
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_hardpoints_struc);
-                }
-
-                /* Fortresses */
-                {
-                    var elem = DrawSection_type1_html(forts.attr('id'), "");
-                    elem.append("Fortresses are equipped with most powerful weapons. Fortresses are really scary!");
-                    var func_forts_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        if (struc.name.toLowerCase().indexOf("fortress") >= 0 || struc.structureModel == "STWPFCAN.PIE") {
-                            collected_defenses[struc.grid_id] = 1;
-                            return true;
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_forts_struc);
-                }
-
-                /* Artillery emplacements */
-                {
-                    var elem = DrawSection_type1_html(arty.attr('id'), "");
-                    elem.append("Artillery have long range. Artillery batteries very useful in warzone, but they have weak armor and you need to cover artillery with another defenses.");
-                    var func_arty_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        var weap = Weapons.loaded_data_hash[struc.weapons];
-                        if (weap != undefined) {
-                            var abils = Weapon_GetAbilities(weap);
-                            if (abils.Indirect) {
-                                collected_defenses[struc.grid_id] = 1;
-                                return true;
-                            }
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_arty_struc);
-                }
-                
-
-                /* AA */
-                {
-                    var elem = DrawSection_type1_html(aa_.attr('id'), "");
-                    elem.append("Defenses against enemy air forces (anti-VTOL)");
-                    var func_arty_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        if (struc.weapons == undefined) {
-                            return false;
-                        }
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        var weap = Weapons.loaded_data_hash[struc.weapons];
-                        if (weap != undefined) {
-                            var abils = Weapon_GetAbilities(weap);
-                            if (abils.CanHitVtols && abils.CannotHitGround) {
-                                collected_defenses[struc.grid_id] = 1;
-                                return true;
-                            }
-                        }
-                        return false;
-                    };
-                    DrawStructures(elem.attr('id'), null, func_arty_struc);
-                }
-
-                /* Other defenses */
-                {
-                    var elem = DrawSection_type1_html(other_def.attr('id'), "");
-                    elem.append("Defenses which were not included in above sections.");
-                    var func_other_struc = function (struc) {
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
-                            return false;
-                        }
-                        //if (struc.weapons == undefined) {
-                        //    return false;
-                        //}
-                        if (collected_defenses[struc.grid_id] != undefined) {
-                            return false;
-                        }
-
-                        if (listed_buildings[struc.grid_id] != undefined) {
-                            return false;
-                        }
-                        collected_defenses[struc.grid_id] = 1;
-                        return true;
-
-                    };
-                    DrawStructures(elem.attr('id'), null, func_other_struc);
-                }
-
-                /* Unavailable buildings */
-                {
-                    var elem = DrawSection_type1_html(nonres_struc.attr('id'), "");
-                    elem.append("List of buildings which are not available in common game.");
-                    var func_forts_struc = function (struc) {
-                        if (listed_buildings[struc.grid_id] != undefined)
-                        {
-                            return false;
-                        }
-                        if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) {
-                            return true;
-                        }
-                    };
-                    DrawStructures(elem.attr('id'), null, func_forts_struc);
-                }
-            });
-        }
-
-        var tmp_uniq_index = 0;
-
-        var listed_buildings = {};
-        function DrawStructures(container_id, struc_id_list, structure_filter_function, col_model_additions) {
-            /* prepare list of structures depending on function parameters */
-            var grid_data = [];
-            if (struc_id_list == null) {
-                for (var struc_id in Structures.loaded_data_hash) {
-                    if (structure_filter_function(Structures.loaded_data_hash[struc_id])) {
-                        grid_data.push(Structures.loaded_data_hash[struc_id]);
+                var sens = Sensor.loaded_data_hash[struc.sensorID];
+                if (sens != undefined) {
+                    if (sens.location != undefined) {
+                        return sens.location == "TURRET";
                     }
                 }
-            }else
-            {
-                for (var i = 0; i < struc_id_list.length; i++) {
-                    grid_data.push(Structures.loaded_data_hash[struc_id_list[i]]);
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_sensor_struc);
+    }
+
+    /* DEFENSIVE STRUCTURES */
+
+    var damage_columns = [
+        {
+            name: "Weapon_name",
+            label: "weapon",
+            formatter: function (cellvalue, options, rowObject) {
+                return rowObject.hitpoints;
+            },
+        },
+
+    ];
+
+    var collected_defenses = {};
+
+    /* Walls */
+    {
+        var elem = DrawSection_type1_html(walls.attr('id'), "");
+        elem.append("Walls is cheap and well armored but sometimes better use bunkers lines instead walls :)");
+        var func_tower_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons != undefined) {
+                return false;
+            }
+
+            if (struc.type == "WALL" || struc.type == "GATE" || struc.type  == "CORNER WALL") {
+                collected_defenses[struc.grid_id] = 1;
+                return true;
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_tower_struc);
+    }
+
+    /* Towers */
+    {
+        var elem = DrawSection_type1_html(towers.attr('id'), "");
+        elem.append("Towers are weaken than hardpoints and bunkers, but some weapons available only on towers.");
+        var func_tower_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
+                        
+            if (struc.name.toLowerCase().indexOf("tower") >= 0) {
+                collected_defenses[struc.grid_id] = 1;
+                return true;
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_tower_struc);
+    }
+
+    /* Bunkers */
+    {
+        var elem = DrawSection_type1_html(bunkers.attr('id'), "");
+        elem.append("Bunkers have best armor, but bunkers very vulnerable to flamers and other incendiary weapons.");
+        var func_bunker_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
+
+            if (struc.strength == "BUNKER") {
+                collected_defenses[struc.grid_id] = 1;
+                return true;
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_bunker_struc);
+    }
+
+    /* Hardpoints */
+    {
+        var elem = DrawSection_type1_html(hardpoints.attr('id'), "");
+        elem.append("Hardpoints are most common defense in Warzone2100.");
+        var func_hardpoints_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
+
+            //var weap = Weapons.loaded_data_hash[struc.weapons]; //need skip "whirlwind hardpoint" because its is belongs to AA-
+            //if (weap != undefined) {
+            //    var abils = Weapon_GetAbilities(weap);
+            //    if (abils.CanHitVtols && abils.CannotHitGround) {
+            //        return false;
+            //    }
+            //}
+
+            if (struc.name.toLowerCase().indexOf("hardpoint") >= 0) {
+                collected_defenses[struc.grid_id] = 1;
+                return true;
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_hardpoints_struc);
+    }
+
+    /* Fortresses */
+    {
+        var elem = DrawSection_type1_html(forts.attr('id'), "");
+        elem.append("Fortresses are equipped with most powerful weapons. Fortresses are really scary!");
+        var func_forts_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
+
+            if (struc.name.toLowerCase().indexOf("fortress") >= 0 || struc.structureModel == "STWPFCAN.PIE") {
+                collected_defenses[struc.grid_id] = 1;
+                return true;
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_forts_struc);
+    }
+
+    /* Artillery emplacements */
+    {
+        var elem = DrawSection_type1_html(arty.attr('id'), "");
+        elem.append("Artillery have long range. Artillery batteries very useful in warzone, but they have weak armor and you need to cover artillery with another defenses.");
+        var func_arty_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
+
+            var weap = Weapons.loaded_data_hash[struc.weapons];
+            if (weap != undefined) {
+                var abils = Weapon_GetAbilities(weap);
+                if (abils.Indirect) {
+                    collected_defenses[struc.grid_id] = 1;
+                    return true;
                 }
             }
-            
-            /* calculate parameters of structures */
-            for (var i = 0; i < grid_data.length; i++) {
-                var StucDesign = CalculateBuilding(player, grid_data[i]);
-                grid_data[i].design_data = StucDesign;
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_arty_struc);
+    }
+                
 
-                /* save listed buildings */
-                listed_buildings[grid_data[i].grid_id] = 1;
+    /* AA */
+    {
+        var elem = DrawSection_type1_html(aa_.attr('id'), "");
+        elem.append("Defenses against enemy air forces (anti-VTOL)");
+        var func_arty_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            if (struc.weapons == undefined) {
+                return false;
+            }
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
             }
 
-            grid_data.sort(function (a, b) {
-                return a.minResearchTime - b.minResearchTime;
-            });
+            var weap = Weapons.loaded_data_hash[struc.weapons];
+            if (weap != undefined) {
+                var abils = Weapon_GetAbilities(weap);
+                if (abils.CanHitVtols && abils.CannotHitGround) {
+                    collected_defenses[struc.grid_id] = 1;
+                    return true;
+                }
+            }
+            return false;
+        };
+        DrawStructures(elem.attr('id'), null, func_arty_struc);
+    }
 
-            if (col_model_additions == undefined)
-                col_model_additions = [];
+    /* Other defenses */
+    {
+        var elem = DrawSection_type1_html(other_def.attr('id'), "");
+        elem.append("Defenses which were not included in above sections.");
+        var func_other_struc = function (struc) {
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) /* Check structures can be researched */ {
+                return false;
+            }
+            //if (struc.weapons == undefined) {
+            //    return false;
+            //}
+            if (collected_defenses[struc.grid_id] != undefined) {
+                return false;
+            }
 
-            /* draw grid with given list of structures */
-            var table_id = container_id + '_table';
-            var html = '<table id="' + table_id + '" ></table>';
-            $('#' + container_id).append('<div style="margin-top:5px">' + html + '</div>');
-            var grid = $('#' + table_id);
-            grid.jqGrid
-            ({
-                datatype: "local",
-                data: grid_data,
-                rowNum: grid_data.length,
-                height: 'auto',
-                colModel:
-                [
+            if (listed_buildings[struc.grid_id] != undefined) {
+                return false;
+            }
+            collected_defenses[struc.grid_id] = 1;
+            return true;
 
-                    { label: "", name: "grid_id", key: true, hidden: true },
-                    {
-                        label: " ",
-                        name: 'pic',
-                        width: '65px',
-                        sortable: false,
-                        search: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + Structures.GetIconHtml_Function(rowObject) + '</a>';
-                        },
-                    },
-                    {
-                        label: " ", name: "name",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
-                        },
-                    },
-                    {
-                        label: "Armor", sortable: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            var res_html = '<label style="color:blue" title="Kinetic Armor">' + (rowObject.armour == undefined ? '?' : rowObject.armour) + '</label> / ';
+        };
+        DrawStructures(elem.attr('id'), null, func_other_struc);
+    }
 
-                            res_html += '<label style="color:red" title="Thermal Armor">' + (rowObject.armour == undefined ? '?' : rowObject.armour) + '</label>';
-                            return res_html;
-                        },
-                        width: 70,
-                    },
-                    {
-                        label: "HP", sortable: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            return rowObject.hitpoints;
-                        },
-                        width: 70,
-                    },
-                    {
-                        label: PropDescr('sensorRange').name, sortable: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            return PropDescr('sensorRange').format_str(rowObject.design_data.sensorRange);
-                        },
-                        width: 100,
-                    },
-                    {
-                        label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
-                            return '<label style="color:#116611">$' + cellvalue + '</label>';
-                        }, sorttype: "int"
-                    },
-                    {
-                        label: "Research",
-                        name: "minResearchTime",
-                        width: 80,
-                        sorttype: "int",
-                        formatter: function (cellvalue, options, rowObject) {
-                            if (cellvalue != undefined) {
-                                if (cellvalue < 3600) {
-                                    return cellvalue.toMMSS();
-                                } else {
-                                    return cellvalue.toHHMMSS();
-                                }
-                            }
-                            return ' - ';
-                        },
-                    },
-                    {
-                        label: "Build Time by 2 trucks", name: "buildTimeSeconds_2_trucks",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return Math.ceil(rowObject.design_data.buildTimeSeconds_2_trucks) + ' sec ';
-                        },
-                        align: 'center',
-                        width: 100,
-                    },
-                ].concat(col_model_additions),
-                onSelectRow: function (rowid) {
+    /* Unavailable buildings */
+    {
+        var elem = DrawSection_type1_html(nonres_struc.attr('id'), "");
+        elem.append("List of buildings which are not available in common game.");
+        var func_forts_struc = function (struc) {
+            if (listed_buildings[struc.grid_id] != undefined)
+            {
+                return false;
+            }
+            if (ResearchedComponents[player_all_researched][struc.grid_id] == undefined) {
+                return true;
+            }
+        };
+        DrawStructures(elem.attr('id'), null, func_forts_struc);
+    }
+
+}
+
+var tmp_uniq_index = 0;
+
+var listed_buildings = {};
+function DrawStructures(container_id, struc_id_list, structure_filter_function, col_model_additions) {
+    /* prepare list of structures depending on function parameters */
+    var grid_data = [];
+    if (struc_id_list == null) {
+        for (var struc_id in Structures.loaded_data_hash) {
+            if (structure_filter_function(Structures.loaded_data_hash[struc_id])) {
+                grid_data.push(Structures.loaded_data_hash[struc_id]);
+            }
+        }
+    }else
+    {
+        for (var i = 0; i < struc_id_list.length; i++) {
+            grid_data.push(Structures.loaded_data_hash[struc_id_list[i]]);
+        }
+    }
+            
+    /* calculate parameters of structures */
+    for (var i = 0; i < grid_data.length; i++) {
+        var StucDesign = CalculateBuilding(player, grid_data[i]);
+        grid_data[i].design_data = StucDesign;
+
+        /* save listed buildings */
+        listed_buildings[grid_data[i].grid_id] = 1;
+    }
+
+    grid_data.sort(function (a, b) {
+        return a.minResearchTime - b.minResearchTime;
+    });
+
+    if (col_model_additions == undefined)
+        col_model_additions = [];
+
+    /* draw grid with given list of structures */
+    var table_id = container_id + '_table';
+    var html = '<table id="' + table_id + '" ></table>';
+    $('#' + container_id).append('<div style="margin-top:5px">' + html + '</div>');
+    var grid = $('#' + table_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+        [
+
+            { label: "", name: "grid_id", key: true, hidden: true },
+            {
+                label: " ",
+                name: 'pic',
+                width: '65px',
+                sortable: false,
+                search: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + Structures.GetIconHtml_Function(rowObject) + '</a>';
                 },
-                loadonce: true,
-                ignoreCase: true, //make search case insensitive
-            });
-        }
+            },
+            {
+                label: " ", name: "name",
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                },
+            },
+            {
+                label: "Armor", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    var res_html = '<label style="color:blue" title="Kinetic Armor">' + PropDescr('armourKinetic').format_str(rowObject.design_data.armourKinetic) + '</label> / ';
+
+                    res_html += '<label style="color:red" title="Thermal Armor">' + PropDescr('armourKinetic').format_str(rowObject.design_data.armourHeat) + '</label>';
+                    return res_html;
+                },
+                width: 70,
+            },
+            {
+                label: "HP", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return rowObject.hitpoints;
+                },
+                width: 70,
+            },
+            {
+                label: PropDescr('sensorRange').name, sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return PropDescr('sensorRange').format_str(rowObject.design_data.sensorRange);
+                },
+                width: 100,
+            },
+            {
+                label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                    return '<label style="color:#116611">$' + cellvalue + '</label>';
+                }, sorttype: "int"
+            },
+            {
+                label: "Research",
+                name: "minResearchTime",
+                width: 80,
+                sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue != undefined) {
+                        if (cellvalue < 3600) {
+                            return cellvalue.toMMSS();
+                        } else {
+                            return cellvalue.toHHMMSS();
+                        }
+                    }
+                    return ' - ';
+                },
+            },
+            {
+                label: "Build Time by 2 trucks", name: "buildTimeSeconds_2_trucks",
+                formatter: function (cellvalue, options, rowObject) {
+                    return Math.ceil(rowObject.design_data.buildTimeSeconds_2_trucks) + ' sec ';
+                },
+                align: 'center',
+                width: 100,
+            },
+        ].concat(col_model_additions),
+        onSelectRow: function (rowid) {
+        },
+        loadonce: true,
+        ignoreCase: true, //make search case insensitive
+    });
+}
 
 
-        function openStructureDetails(body_id) {
-            alert(body_id);
-        }
+function openStructureDetails(body_id) {
+    alert(body_id);
+}
 
-    </script>
+</script>
 </head>
 <body style="background:#eeeeee;">
     <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">

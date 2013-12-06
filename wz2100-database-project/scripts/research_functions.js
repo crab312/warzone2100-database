@@ -129,12 +129,17 @@ function eventResearched(research, player) {
                 if (Stats.Weapon[i][s[1]] > 0 && Stats.Weapon[i].weaponSubClass === s[0]) {
                     if (firePause) {
                         if (Upgrades[player].Weapon[i]['reloadTime'] == undefined || Upgrades[player].Weapon[i]['reloadTime'] == 0) {
-                            Upgrades[player].Weapon[i]['firePause'] += Stats.Weapon[i]['firePause'] * int_value / 100;
+                            var hint = 'firePause';
+                            Upgrades[player].Weapon[i][hint] += Stats.Weapon[i][hint] * int_value / 100;
+                            log_upgrade(Upgrades[player].Weapon[i], research.grid_id, hint, int_value);
                         } else {
-                            Upgrades[player].Weapon[i]['reloadTime'] += Stats.Weapon[i]['reloadTime'] * int_value / 100;
+                            var hint = 'reloadTime';
+                            Upgrades[player].Weapon[i][hint] += Stats.Weapon[i][hint] * int_value / 100;
+                            log_upgrade(Upgrades[player].Weapon[i], research.grid_id, hint, int_value);
                         }
                     } else {
                         Upgrades[player].Weapon[i][s[1]] += Stats.Weapon[i][s[1]] * int_value / 100;
+                        log_upgrade(Upgrades[player].Weapon[i], research.grid_id, s[1], int_value);
                     }
                 }
             }
@@ -145,6 +150,16 @@ function eventResearched(research, player) {
     }
 }
 
+function log_upgrade(upgrade_obj, research_id, hint, value) {
+    if (upgrade_obj.upgrade_history == undefined) {
+        upgrade_obj.upgrade_history = [];
+    }
+    upgrade_obj.upgrade_history.push({
+        research_id: research_id,
+        hint: hint,
+        value: value,
+    });
+}
 
 function EnableResearch(research_id) {
 

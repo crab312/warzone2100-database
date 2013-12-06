@@ -18,6 +18,8 @@
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
 
+    <script src="scripts/properties_desription.js"></script>
+
     <title></title>
 
     <script>
@@ -43,213 +45,203 @@
             });
 
 
-            if (localStorage["body_research_state_seconds"] == undefined) {
-                localStorage["body_research_state_seconds"] = 600;
-            }
+            var res_time = 600;
 
             ShowLoading('tabs_left');
             LoadAllObjects(function () {
                 DoResearchAll(player_all_researched,true, function () {
                     DrawResearchSlider("research_slider",
-                        localStorage["body_research_state_seconds"],
+                        res_time,
                         function (value) {
-                            if (value != localStorage["body_research_state_seconds"]) {
-                                localStorage["body_research_state_seconds"] = value;
-                                ShowLoading('tabs_left');
+                            DoResearch(value, player, function () {
                                 DrawBodyLists();
-                                HideLoading('tabs_left');
-                            }
                         });
-                    DrawBodyLists();
+                    });
+                    DoResearch(res_time, player, function () {
+                        DrawBodyLists();
+                    });
                     HideLoading('tabs_left');
                 });
             });
 
         });
 
-        function DrawBodyLists() {
-            var res_time = localStorage["body_research_state_seconds"];
-            if (res_time == undefined) {
-                return;
-            }
-            DoResearch(res_time, player, function () {
-                var collected_bodies = {};
 
-                /* Tank Bodies */
-                var func_tank_bodies = function (body) {
-                    if (body.designable == undefined) {/* Check Body designable */
-                        return false;
-                    }
-                    if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
-                        return false;
-                    }
-                    if (body.class != "Droids") {
-                        return false;
-                    }
-                    collected_bodies[body.grid_id] = 1;
-                    return true;
-                };
-                var func_tank_light = function (body) {
-                    if (body.size != undefined) {
-                        if (body.size.toLowerCase() == "light") {
-                            return func_tank_bodies(body);
-                        }
-                    }
-                    return false;
-                }
-                DrawBodies('tank_bodies_light', func_tank_light);
+function DrawBodyLists() {
 
-                var func_tank_medium = function (body) {
-                    if (body.size != undefined) {
-                        if (body.size.toLowerCase() == "medium") {
-                            return func_tank_bodies(body);
-                        }
-                    }
-                    return false;
-                }
-                DrawBodies('tank_bodies_medium', func_tank_medium);
+    var collected_bodies = {};
 
-                var func_tank_heavy = function (body) {
-                    if (body.size != undefined) {
-                        if (body.size.toLowerCase() == "heavy") {
-                            return func_tank_bodies(body);
-                        }
-                    }
-                    if (collected_bodies[body.grid_id] == undefined) {
-                        return func_tank_bodies(body); //..in case when we have some new size strings (like "HEAVY2")
-                    }
-                    return false;
-                }
-                DrawBodies('tank_bodies_heavy', func_tank_heavy);
-
-
-                /* Cyborgs Bodies */
-                var func_cyborgs_bodies = function (body) {
-                    if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
-                        return false;
-                    }
-                    if (body.class != "Cyborgs") {
-                        return false;
-                    }
-                    collected_bodies[body.grid_id] = 1;
-                    return true;
-                };
-                DrawBodies('cyborg_bodies', func_cyborgs_bodies);
-
-                /* Other Bodies */
-                var func_other_bodies = function (body) {
-                    return collected_bodies[body.grid_id] == undefined;  // skip bodies which was listed already
-
-                };
-                DrawBodies('other_bodies', func_other_bodies);
-
-
-            });
+    /* Tank Bodies */
+    var func_tank_bodies = function (body) {
+        if (body.designable == undefined) {/* Check Body designable */
+            return false;
         }
+        if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
+            return false;
+        }
+        if (body.class != "Droids") {
+            return false;
+        }
+        collected_bodies[body.grid_id] = 1;
+        return true;
+    };
+    var func_tank_light = function (body) {
+        if (body.size != undefined) {
+            if (body.size.toLowerCase() == "light") {
+                return func_tank_bodies(body);
+            }
+        }
+        return false;
+    }
+    DrawBodies('tank_bodies_light', func_tank_light);
+
+    var func_tank_medium = function (body) {
+        if (body.size != undefined) {
+            if (body.size.toLowerCase() == "medium") {
+                return func_tank_bodies(body);
+            }
+        }
+        return false;
+    }
+    DrawBodies('tank_bodies_medium', func_tank_medium);
+
+    var func_tank_heavy = function (body) {
+        if (body.size != undefined) {
+            if (body.size.toLowerCase() == "heavy") {
+                return func_tank_bodies(body);
+            }
+        }
+        if (collected_bodies[body.grid_id] == undefined) {
+            return func_tank_bodies(body); //..in case when we have some new size strings (like "HEAVY2")
+        }
+        return false;
+    }
+    DrawBodies('tank_bodies_heavy', func_tank_heavy);
+
+
+    /* Cyborgs Bodies */
+    var func_cyborgs_bodies = function (body) {
+        if (ResearchedComponents[player_all_researched][body.grid_id] == undefined) /* Check Body can be researched */ {
+            return false;
+        }
+        if (body.class != "Cyborgs") {
+            return false;
+        }
+        collected_bodies[body.grid_id] = 1;
+        return true;
+    };
+    DrawBodies('cyborg_bodies', func_cyborgs_bodies);
+
+    /* Other Bodies */
+    var func_other_bodies = function (body) {
+        return collected_bodies[body.grid_id] == undefined;  // skip bodies which was listed already
+
+    };
+    DrawBodies('other_bodies', func_other_bodies);
+}
 
         var tmp_uniq_index = 0;
 
 
-        function DrawBodies(container_id, body_filter_function) {
+function DrawBodies(container_id, body_filter_function) {
 
-        var grid_data = [];
-        for (var body_id in Bodies.loaded_data_hash) {
-            if (body_filter_function(Bodies.loaded_data_hash[body_id]))
+    var grid_data = [];
+    for (var body_id in Bodies.loaded_data_hash) {
+        var body = Bodies.loaded_data_hash[body_id];
+        if (body_filter_function(body))
+        {
+            var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow]));
+            grid_data.push(body_upgraded);
+        }
+    }
+
+
+    grid_data.sort(function (a, b) {
+        if(a.size != undefined && b.size != undefined)
+        {
+            if(a.size == b.size)
             {
-                grid_data.push(Bodies.loaded_data_hash[body_id]);
+                return a.minResearchTime > b.minResearchTime ? 1 : -1;
+            }else
+            {
+                return a.size > b.size  ? 1 : -1;
             }
         }
+        return (a.minResearchTime > b.minResearchTime ? 1 : -1) == undefined ? 1 : -1;
+    });
 
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+        [
 
-        grid_data.sort(function (a, b) {
-            if(a.size != undefined && b.size != undefined)
+            { label: "", name: "grid_id", key: true, hidden: true },
             {
-                if(a.size == b.size)
-                {
-                    return a.minResearchTime > b.minResearchTime ? 1 : -1;
-                }else
-                {
-                    return a.size > b.size  ? 1 : -1;
-                }
-            }
-            return (a.minResearchTime > b.minResearchTime ? 1 : -1) == undefined ? 1 : -1;
-        });
-
-        var grid_element_id = ResetGridContainer(container_id);
-        var grid = $(grid_element_id);
-        grid.jqGrid
-        ({
-            datatype: "local",
-            data: grid_data,
-            rowNum: grid_data.length,
-            height: 'auto',
-            colModel:
-            [
-
-                { label: "", name: "grid_id", key: true, hidden: true },
-                {
-                    label: " ",
-                    name: 'pic',
-                    width: '65px',
-                    sortable: false,
-                    search: false,
-                    formatter: function (cellvalue, options, rowObject) {
-                        return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Bodies.GetIconHtml_Function(rowObject) + '</a>';
-                    },
+                label: " ",
+                name: 'pic',
+                width: '65px',
+                sortable: false,
+                search: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Bodies.GetIconHtml_Function(rowObject) + '</a>';
                 },
-                {
-                    label: " ", name: "name",
-                    formatter: function (cellvalue, options, rowObject) {
-                        return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
-                    },
-                },
-                {
-                    label: "Armor", sortable: false,
-                    formatter: function (cellvalue, options, rowObject) {
-                        var res_html = '<label style="color:blue" title="Kinetic Armor">' + (rowObject.armourKinetic == undefined ? '?' : rowObject.armourKinetic) + '</label> / ';
-
-                        res_html += '<label style="color:red" title="Thermal Armor">' + (rowObject.armourHeat == undefined ? '?' : rowObject.armourHeat) + '</label>';
-                        return res_html;
-                    },
-                    width: 70,
-                },
-                {
-                    label: "HP", sortable: false,
-                    formatter: function (cellvalue, options, rowObject) {
-                        return rowObject.hitpoints;
-                    },
-                    width: 70,
-                },
-                {
-                    label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
-                        return '<label style="color:#116611">$' + cellvalue + '</label>';
-                    }, sorttype: "int"
-                },
-                {
-                    label: "Research",
-                    name: "minResearchTime",
-                    width: 80,
-                    sorttype: "int",
-                    formatter: function (cellvalue, options, rowObject) {
-                        if (cellvalue != undefined) {
-                            if (cellvalue < 3600) {
-                                return cellvalue.toMMSS();
-                            } else {
-                                return cellvalue.toHHMMSS();
-                            }
-                        }
-                        return ' - ';
-                    },
-                },
-            ],
-            onSelectRow: function (rowid) {
             },
-            loadonce: true,
-            ignoreCase: true, //make search case insensitive
-        });
-
-
-    }
+            {
+                label: " ", name: "name",
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                },
+            },
+            {
+                label: "Armor", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    var res_html = '<label style="color:blue" title="Kinetic Armor">' + PropDescr('armourKinetic').format_str(rowObject.armourKinetic) + '</label> / ';
+                    res_html += '<label style="color:red" title="Thermal Armor">' + PropDescr('armourHeat').format_str(rowObject.armourHeat) + '</label>';
+                    return res_html;
+                },
+                width: 70,
+            },
+            {
+                label: "HP", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return PropDescr('hitpoints').format_str(rowObject.hitpoints);
+                },
+                width: 70,
+            },
+            {
+                label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                    return '<label style="color:#116611">$' + cellvalue + '</label>';
+                }, sorttype: "int"
+            },
+            {
+                label: "Research",
+                name: "minResearchTime",
+                width: 80,
+                sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue != undefined) {
+                        if (cellvalue < 3600) {
+                            return cellvalue.toMMSS();
+                        } else {
+                            return cellvalue.toHHMMSS();
+                        }
+                    }
+                    return ' - ';
+                },
+            },
+        ],
+        onSelectRow: function (rowid) {
+        },
+        loadonce: true,
+        ignoreCase: true, //make search case insensitive
+    });
+}
 
 
         function openBodyDetails(body_id) {

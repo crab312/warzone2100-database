@@ -28,7 +28,6 @@
 
             InitDataObjects();
 
-            SelectedObject = TankDesigner;
             $("#tabs_left").tabs();
             $("#tabs_left").tabs("option", "active", 0);
 
@@ -40,7 +39,11 @@
             //    });
             //}
 
-            SelectedObject.LoadLeftGridFunction();
+            //ankDesigner
+            $('body').block({
+                message: null,
+            });
+            Designer_PreLoad(function () { $('body').unblock(); });
 
             $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
 
@@ -181,7 +184,7 @@
 
                             </td>
                             <td style="padding-top:10px">
-                                <input id="designer_body" placeholder="please select body..." style="width:300px" data-value=""/> 
+                                <input id="designer_body" placeholder="please select body..." style="width:300px;font-size:1.1em" data-value=""/> 
                                 <button type="button" id="designer_select_body_button">Select body</button>
                             </td>
                             <td style="width:30%; vertical-align:bottom">
@@ -198,7 +201,7 @@
 
                             </td>
                             <td>
-                                <input id="designer_propulsion" placeholder="please select propulsion..." style="width:300px" data-value=""/>
+                                <input id="designer_propulsion" placeholder="please select propulsion..." style="width:300px;font-size:1.1em" data-value=""/>
                                 <button type="button" id="designer_select_propulsion_button">Select propulsion</button>
                             </td>
                         </tr>
@@ -208,8 +211,20 @@
 
                             </td>
                             <td>
-                                <input id="designer_weapon" placeholder="please select weapon..." style="width:300px" data-value=""/>
+                                <input id="designer_weapon" placeholder="please select weapon..." style="width:300px;font-size:1.1em"/>
                                 <button type="button" id="designer_select_weapon_button">Select weapon</button>
+                                <button type="button" id="designer_select_system_turret_button">Select system turret</button>
+                            </td>
+                        </tr>
+                        <tr id="designer_weapon2_row">
+                            <td><label for="designer_weapon2">Weapon 2:</label></td>
+                            <td id="designer_weapon2_icon">
+
+                            </td>
+                            <td>
+                                <input id="designer_weapon2" placeholder="please select weapon 2..." style="width:300px;font-size:1.1em"/>
+                                <button type="button" id="designer_select_weapon2_button">Select weapon 2</button>
+                                <button type="button" id="designer_select_weapon2_button_clear">Remove weapon 2</button>
                             </td>
                         </tr>
                         <tr>

@@ -32,7 +32,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.23";
+    var current_site_version = "1.26";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -61,6 +61,7 @@ function InitDataObjects() {
         obj.path_ini = data_directory + "propulsiontype.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () { };
+        obj.non_researchable = true;
         PropulsionType = obj;
         Objects.push(obj);
     }
@@ -70,7 +71,15 @@ function InitDataObjects() {
         obj.sysid = "TerrainTable";
         obj.path_ini = data_directory + "terraintable.ini";
         obj.LoadDataFunction = LoadDataObject;
-        obj.LoadLeftGridFunction = function () { };
+        obj.LoadLeftGridFunction = function () {
+            var data_obj = this;
+            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+        };
+        obj.grid_colModel = [
+            { label: "TerrainType", name: "grid_id", key: true, width: "80px", fixed:true },
+            { label: "Speed Factors (per propulsion type)", name: "speedFactor",width:300 },
+        ];
+        obj.non_researchable = true;
         TerrainTable = obj;
         Objects.push(obj);
     }
@@ -583,7 +592,6 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "ECM";
         obj.path_ini = data_directory + "ecm.ini";
-        obj.tab_index = 11;
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -602,7 +610,6 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Features";
         obj.path_ini = data_directory + "features.ini";
-        obj.tab_index = 12;
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -611,8 +618,8 @@ function InitDataObjects() {
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
-            { label: "Range", name: "range" },
         ];
+        obj.non_researchable = true;
         Features = obj;
         Objects.push(obj);
     }
@@ -621,7 +628,6 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Templates";
         obj.path_ini = data_directory + "templates.ini";
-        obj.tab_index = 12;
         obj.LoadDataFunction = LoadDataObject;
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
@@ -746,8 +752,8 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
         datatype: "local",
         data: grid_data,
         rowNum: grid_data.length,
-        heigh: 'auto',
-        height: $("#" + container_id).height() - 110,
+        //height: "100%",
+        height: Math.max($("#" + container_id).height() - 110, 400),
         scrollerbar: true,
         colModel:
             [
@@ -775,6 +781,7 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
         ignoreCase: true, //make search case insensitive
         grouping: DataObject.groupingView != undefined,
         groupingView: DataObject.groupingView,
+        scrollrows: true,
     });
 
     myAddButton = function (options) {
@@ -1151,3 +1158,70 @@ function DrawSection_type2_html(container_id, caption) {
     return $('#' + sub_container_name);
 }
 
+function FindTurretById(comp_id) {
+    if (Weapons.loaded_data_hash[comp_id] != undefined) {
+        return Weapons.loaded_data_hash[comp_id];
+    }
+    if (Repair.loaded_data_hash[comp_id] != undefined) {
+        return Repair.loaded_data_hash[comp_id];
+    }
+    if (Construction.loaded_data_hash[comp_id] != undefined) {
+        return Construction.loaded_data_hash[comp_id];
+    }
+    if (ECM.loaded_data_hash[comp_id] != undefined) {
+        return ECM.loaded_data_hash[comp_id];
+    }
+    if (Sensor.loaded_data_hash[comp_id] != undefined) {
+        return Sensor.loaded_data_hash[comp_id];
+    }
+    return null;
+}
+
+function FindComponentDataObject(comp_id) {
+    if (Weapons.loaded_data_hash[comp_id] != undefined) {
+        return Weapons;
+    }
+    if (Repair.loaded_data_hash[comp_id] != undefined) {
+        return Repair;
+    }
+    if (Construction.loaded_data_hash[comp_id] != undefined) {
+        return Construction;
+    }
+    if (ECM.loaded_data_hash[comp_id] != undefined) {
+        return ECM;
+    }
+    if (Sensor.loaded_data_hash[comp_id] != undefined) {
+        return Sensor;
+    }
+    return null;
+}
+
+function scrollToRow(targetGrid, id) {
+
+    $('html, body').animate({
+        scrollTop: $("#" + id).offset().top
+    }, {
+        duration: 800,
+        complete: function () {
+
+        }
+    });
+}
+
+/*
+var Weapons;
+var Bodies;
+var Propulsion;
+var Structures;
+var PropulsionModifiers;
+var StructureModifiers;
+var PropulsionType;
+var TerrainTable;
+var Researches;
+var Repair;
+var Construction;
+var ECM;
+var Sensor;
+var Features;
+var TankDesigner;
+var Templates;*/
