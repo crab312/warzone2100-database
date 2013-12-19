@@ -149,8 +149,10 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
     var grid_data = [];
     if (cyb_id_list == null) {
         for (var i = 0; i < CyborgDesigns.length; i++) {
-            if (cyborg_filter_function(CyborgDesigns[i])) {
-                grid_data.push(CyborgDesigns[i]);
+            if (CyborgDesigns[i].available == 1) {
+                if (cyborg_filter_function(CyborgDesigns[i])) {
+                    grid_data.push(CyborgDesigns[i]);
+                }
             }
         }
     } else {
@@ -238,13 +240,13 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
             },
             {
                 label: "Range", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
-                    return PropDescr('longRange_tiles').format_str(rowObject.design_data.longRange);
+                    return PropDescr('longRange_tiles').format_str(rowObject.design_data.turrets_upgraded[0].longRange);
                 }, width: 40
             },
             {
                 label: "Damage", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return WeaponDamage_htmlCell(rowObject.design_data);
+                    return WeaponDamage_htmlCell(rowObject.design_data.turrets_upgraded[0]);
                 },
                 width: 130
             },
@@ -252,11 +254,11 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
                 label: "Rate of Fire", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
                     if (rowObject.armed) {
-                        return Weapon_ShotsPerMinute(rowObject.design_data).toFixed(1) + " /min";
+                        return Weapon_ShotsPerMinute(rowObject.design_data.turrets_upgraded[0]).toFixed(1) + ' <span style="font-size:0.9em">/min</span>';
                     } else {
                         return '';
                     }
-                }, width: 70,//
+                }, width: 75,//
             },
             {
                 label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
@@ -296,7 +298,7 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
                 width: 300,
                 formatter: function (cellvalue, options, rowObject) {
                     if (rowObject.armed) {
-                        var abils = Weapon_GetAbilities(rowObject.design_data.weapon);
+                        var abils = Weapon_GetAbilities(rowObject.design_data.turrets[0]);
                         var res_html = "<ul style='margin:2px; font-size:0.9em'>";
                         for (var ability in abils) {
                             if (abils[ability]) {

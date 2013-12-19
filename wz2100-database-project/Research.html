@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+
+    <title></title>
+
+<script>
+
+var player = 0;
+
+$(function () {
+
+    InitDataObjects();
+
+    LoadAllObjects(function () {
+        DoResearchAll(player_all_researched, function () {
+            DrawResearchTree();
+        });
+    })
+
+
+
+
+});
+
+function DrawResearchTree() {
+    for (var i in Researches.loaded_data) {
+
+    }
+}
+
+</script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+
+            </td>
+        </tr>
+        <tr>
+            <td id="page_caption" data-caption="Research Tree">
+
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+           <div id="canva">
+
+                <svg width="300" height="200">
+                  <polygon points="100,10 40,180 190,60 10,60 160,180"
+                  style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" />
+                </svg>
+           </div>
+        </td>
+    </tr>
+    </table>
+
+    <div id="modifiers_container" style="display:none">
+
+    </div>
+
+        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+</body>
+</html>

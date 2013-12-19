@@ -30,6 +30,9 @@
     <Compile Include="propulsion.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Research.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\search.php">
       <SubType>Code</SubType>
     </Compile>
@@ -127,6 +130,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="propulsion.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Research.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="scripts\common_objects.js">

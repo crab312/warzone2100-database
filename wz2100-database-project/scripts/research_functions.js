@@ -69,6 +69,7 @@ function eventResearched(research, player) {
                         Upgrades[player].Body[i][s[1] + "_percentage"] = 0;
                     }
                     Upgrades[player].Body[i][s[1] + "_percentage"] += int_value;
+                    log_upgrade(Upgrades[player].Body[i], research.grid_id, s[1], int_value);
                 }
             }
         }

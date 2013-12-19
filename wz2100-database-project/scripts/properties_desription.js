@@ -413,3 +413,9 @@ function PropDescr(prop) {
         return properties_description[prop];
     }
 }
+
+//$(function () {
+//    var WeaponFieldsDescr = {};
+//    WeaponFieldsDescr.damage = '';
+
+//});

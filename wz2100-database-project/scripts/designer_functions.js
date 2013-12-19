@@ -411,6 +411,14 @@ BodyAbilities.prototype = (function () {
     return me;
 })();
 
+var List_of_HitRun_Weapons = 
+{
+    CyborgRocket: 0, //LancerCyborg
+    'Cyb-Hvywpn-TK': 0,
+    'Cyb-Wpn-Atmiss': 0,
+    'Cyb-Hvywpn-A-T': 0
+}
+
 function Weapon_GetAbilities(weapon) {
     var res = new WeaponAbilities();
     res.CanHitVtols = weapon.flags == undefined ? false : weapon.flags.indexOf("ShootAir") >= 0 || weapon.flags.indexOf("AirOnly") >= 0;
@@ -426,7 +434,11 @@ function Weapon_GetAbilities(weapon) {
     res.ShortRanged = weapon.longRange / 128 < 6;
     //res.UpgradeLine = weapon.weaponSubClass;
     res.VTOLWeapon = weapon.numAttackRuns == undefined ? false : parseInt(weapon.numAttackRuns) > 0;
-    res.HitRun = (weapon.numRounds == undefined ? false : parseInt(weapon.numRounds) > 1) && (weapon.firePause == undefined ? false : parseInt(weapon.firePause) < 20);
+    res.HitRun = List_of_HitRun_Weapons[weapon.grid_id] != undefined
+                || ((weapon.numRounds == undefined ? false : parseInt(weapon.numRounds) > 1)
+                && (weapon.firePause == undefined ? false : parseInt(weapon.firePause) < 20)
+                && (weapon.reloadTime == undefined ? false : parseInt(weapon.reloadTime) > 50) //reload time > 5 sec.
+                );
     return res;
 }
 
@@ -779,10 +791,10 @@ function calculate_damage(TankWeapons, TankTo, time_seconds) {
 }
 
 function CalculateDesign_fromIDs(player, weapon_id, body_id, propulsion_id, non_weapon_design) {
-    var weapon = GetTurretDataRow(weapon_id, non_weapon_design);
+    var turret = GetTurretDataRow(weapon_id, non_weapon_design);
     var body = Bodies.loaded_data_hash[body_id];
     var propulsion = Propulsion.loaded_data_hash[propulsion_id];
-    return CalculateTankDesign(player, weapon, body, propulsion, non_weapon_design);
+    return CalculateTankDesign(player, [turret], body, propulsion, non_weapon_design);
 }
 
 var designer_player = 0;
@@ -796,7 +808,7 @@ function TryCalculateDesign(callback_function) {
         HideLoading('tabs_left');
         
         var turret1_id = $("#designer_weapon").attr('data-value');
-        var turret1 = FindComponentDataObject(turret1_id).loaded_data_hash[turret1_id];
+        var turret1 = turret1_id != null && turret1_id != undefined ? FindComponentDataObject(turret1_id).loaded_data_hash[turret1_id] : undefined;
 
         var turret2_id = $("#designer_weapon2").attr('data-value');
         var turret2 = turret2_id != null && turret2_id != undefined ? FindComponentDataObject(turret2_id).loaded_data_hash[turret2_id] : undefined;
@@ -837,7 +849,8 @@ function TryCalculateDesign(callback_function) {
                 row.name = 'Tank price';
                 row.base = Tank.baseStats.price.toFixed(0);
                 row.upgraded = Tank.price.toFixed(0);
-                row.group = ++group_prefix +': ' + 'Price';
+                row.group = ++group_prefix + ': ' + 'Price';
+                row.descr = 'Total price of this tank (cyborg) design.';
                 grid_data.push(row);
             }
 
@@ -848,6 +861,7 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_nomodules - Tank.baseStats.buildTimeSeconds_factory_nomodules) / Tank.baseStats.buildTimeSeconds_factory_nomodules;
                 row.group = ++group_prefix + ': ' + 'Build time';
+                row.descr = 'Time needed to product this tank (cyborg) design in factory without additional factory modules.';
                 grid_data.push(row);
             }
 
@@ -858,6 +872,7 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.buildTimeSeconds_factory_with2modules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_with2modules - Tank.baseStats.buildTimeSeconds_factory_with2modules) / Tank.baseStats.buildTimeSeconds_factory_with2modules;
                 row.group = group_prefix + ': ' + 'Build time';
+                row.descr = 'Time needed to product this tank (cyborg) design in factory with 2 additional factory modules';
                 grid_data.push(row);
             }
 
@@ -868,6 +883,7 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.buildPoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = group_prefix + ': ' + 'Build time';
+                row.descr = 'Build points are equal to production time.';
                 grid_data.push(row);
             }
 
@@ -879,24 +895,27 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.hitpoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = ++group_prefix + ': ' + 'Armor';
+                row.descr = 'How much damage this tank(cyborgs) can take before death.';
                 grid_data.push(row);
             }
             {
                 var row = new Object;
                 row.name = 'Kinetic armor';
                 row.base = Tank.baseStats.armourKinetic;
-                row.upgraded = Tank.armourKinetic;
-                row.upgrade_change = (row.upgraded - row.base) / row.base;
+                row.upgraded = Tank.armourKinetic.toInt();
+                row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
                 row.group = group_prefix + ': ' + 'Armor';
+                row.descr = 'Armor reduces damage to minimum level 33% of damage. Kinetic armor affects damage with type KINETIC.';
                 grid_data.push(row);
             }
             {
                 var row = new Object;
                 row.name = 'Thermal armor';
-                row.base = Tank.baseStats.armourHeat.toFixed(0);
-                row.upgraded = Tank.armourHeat.toFixed(0);
-                row.upgrade_change = ((row.upgraded - row.base) / row.base).toFixed(0);
+                row.base = Tank.baseStats.armourHeat;
+                row.upgraded = Tank.armourHeat.toInt();
+                row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
                 row.group = group_prefix + ': ' + 'Armor';
+                row.descr = 'Armor reduces damage to minimum level 33% of damage. Thermal armor affects damage with type HEAT.';
                 grid_data.push(row);
             }
 
@@ -936,6 +955,7 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.speed_road;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = group_name
+                row.descr = 'How fast this tank can move on road (concrete) surface.';
                 grid_data.push(row);
             }
             {
@@ -945,6 +965,7 @@ function TryCalculateDesign(callback_function) {
                 row.upgraded = Tank.speed_offroad;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = group_name;
+                row.descr = 'Off-Road speed can be different. This parameter shows off-road speed for only one surface (SANDY_BUSH)';
                 grid_data.push(row);
             }
 
@@ -1037,7 +1058,7 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
                 { name: "", width: '20px', sortable: false, search: false },
                 { name: "name", label: 'Parameter', key: true, width: '200px' },
                 {
-                    name: "base", label: 'Base value', width: '50px', fixed: true,
+                    name: "base", label: 'Base value', width: '60px', fixed: true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (typeof cellvalue != "string" && isNaN(cellvalue)) {
                             return '';
@@ -1047,19 +1068,21 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
                 },
                 { name: "group", label: 'group', width: '100px' },
                 {
-                    name: "upgraded", label: 'Upgraded value', width: '50px', fixed: true,
+                    name: "upgraded", label: 'Upgraded value', width: '60px', fixed: true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                            //return '<div style="width:100%;height:100%;background: lightgray;></div>'
                             return '';
                         }
                         if (cellvalue == rowObject.base) {
+                            //return '<div style="width:100%;height:100%;background: lightgray;></div>'
                             return '';
                         }
                         return cellvalue;
                     }
                 },
                 {
-                    name: "upgrade_change", label: 'Upgrade Change', width: '50px',fixed:true,
+                    name: "upgrade_change", label: 'Upgrade Change', width: '60px',fixed:true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (isNaN(cellvalue)) {
                             return '';
@@ -1071,6 +1094,16 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
                                 return "<label>" + fl + "%</label>";
                             }
                         }
+                    },
+
+                },
+                {
+                    name: "descr", label: 'Description', width: '300px', fixed: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue == undefined) {
+                            cellvalue = ' - ';
+                        }
+                        return '<label style="color:gray;font-size:0.9em">' + cellvalue +'</label>'
                     },
 
                 },
@@ -1102,6 +1135,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.upgraded = turret_upgraded.damage;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Damage dealt to enemy unit with each one shot.';
         grid_data.push(row);
     }
     {
@@ -1110,8 +1144,10 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.base = turret.weaponClass;
         row.upgraded = '';
         row.group = damage1_label;
+        row.descr = 'Type of damage. KINETIC damage affected by Kinetic armor. HEAT damage affected by Thermal armor.';
         grid_data.push(row);
     }
+    if(turret.radiusDamage != undefined)
     {
         var row = new Object;
         row.name = 'Splash Damage';
@@ -1119,8 +1155,10 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.upgraded = turret_upgraded.radiusDamage;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Damage dealt to area. This damage does not affect main target of attack.';
         grid_data.push(row);
     }
+    if (turret.radius != undefined)
     {
         var row = new Object;
         row.name = 'Splash Radius (tiles)';
@@ -1128,45 +1166,62 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.upgraded = turret_upgraded.radius / 128;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Radius of splash damage. Bigger readium means Splash damage will affect more enemy units.';
         grid_data.push(row);
     }
     {
         var row = new Object;
-        row.name = 'Shots per Minute <br />(Firepause)';
+        row.name = 'Shots per min (rate-of-fire)';
         row.base = Weapon_ShotsPerMinute(turret).toFixed(2);
         row.upgraded = Weapon_ShotsPerMinute(turret_upgraded).toFixed(2);
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Rate-of-fire.';
+        grid_data.push(row);
+    }
+    if (turret.reloadTime != undefined)
+    {
+        var row = new Object;
+        row.name = 'Salvo reload (sec)';
+        row.base = turret.reloadTime/10;
+        row.upgraded = turret_upgraded.reloadTime / 10;
+        row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
+        row.group = damage1_label;
+        row.descr = 'Time to reload salvo weapon (seconds)';
         grid_data.push(row);
     }
 
+    if (turret.periodicalDamage != undefined)
     {
         var row = new Object;
-        row.name = 'Periodical damage';
+        row.name = 'Period. damage';
         row.base = turret.periodicalDamage;
         row.upgraded = turret_upgraded.periodicalDamage;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Additional damage per second. Note: periodical damage affects only enemy units which are stay in \'inflamed area\'';
         grid_data.push(row);
     }
-
+    if (turret.periodicalDamageTime != undefined)
     {
         var row = new Object;
-        row.name = 'Periodical damage duration <br />(seconds)';
+        row.name = 'Period. time (seconds)';
         row.base = turret.periodicalDamageTime / 10;
         row.upgraded = turret_upgraded.periodicalDamageTime / 10;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Duration of periodical damage.';
         grid_data.push(row);
     }
-
+    if (turret.periodicalDamageRadius != undefined)
     {
         var row = new Object;
-        row.name = 'Periodical damage radius (tiles)';
+        row.name = 'Period. radius (tiles)';
         row.base = turret.periodicalDamageRadius / 128;
         row.upgraded = turret_upgraded.periodicalDamageRadius / 128;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
+        row.descr = 'Radius of periodical damage.';
         grid_data.push(row);
     }
     /* RANGE */
@@ -1177,6 +1232,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.upgraded = turret_upgraded.longRange / 128;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = range_label;
+        row.descr = 'Maximum range of fire.';
         grid_data.push(row);
     }
     return grid_data;

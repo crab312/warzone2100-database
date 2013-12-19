@@ -32,7 +32,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.26";
+    var current_site_version = "1.29";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;

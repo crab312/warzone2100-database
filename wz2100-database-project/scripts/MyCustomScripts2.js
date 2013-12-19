@@ -53,7 +53,16 @@ Number.prototype.toMMSS = function () {
     return minutes + ':' + seconds;
 }
 
+Number.prototype.toInt = function () {
+    return Math.floor(this);
+}
+
 function setCharAt(str, index, chr) {
     if (index > str.length - 1) return str;
     return str.substr(0, index) + chr + str.substr(index + 1);
+}
+
+function url_pushState(querystr) {
+    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + querystr;
+    window.history.pushState({ path: newurl }, '', newurl)
 }

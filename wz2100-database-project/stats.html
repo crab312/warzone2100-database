@@ -20,92 +20,103 @@
 
     <title></title>
 
-    <script>
+<script>
 
-        $(function () {
+$(function () {
             
-            InitDataObjects();
+    InitDataObjects();
 
-            Weapons.tab_index = 0;
-            Bodies.tab_index = 1;
-            Propulsion.tab_index = 2;
-            Structures.tab_index =3;
-            PropulsionModifiers.tab_index = 4;
-            StructureModifiers.tab_index = 5;
-            Researches.tab_index = 6;
-            Sensor.tab_index = 7;
-            Repair.tab_index = 8;
-            Construction.tab_index = 9;
-            ECM.tab_index = 10;
-            Features.tab_index = 11;
-            TerrainTable.tab_index = 12;
+    Weapons.tab_index = 0;
+    Bodies.tab_index = 1;
+    Propulsion.tab_index = 2;
+    Structures.tab_index =3;
+    PropulsionModifiers.tab_index = 4;
+    StructureModifiers.tab_index = 5;
+    Researches.tab_index = 6;
+    Sensor.tab_index = 7;
+    Repair.tab_index = 8;
+    Construction.tab_index = 9;
+    ECM.tab_index = 10;
+    Features.tab_index = 11;
+    TerrainTable.tab_index = 12;
 
-            var tab_index = 0;
-            SelectedObject = Weapons;
-            $("#tabs_left").tabs();
-            var viewId = getUrlVars()["view"];
-            if (viewId != undefined) {
-                for (var i = 0; i < Objects.length; i++) {
-                    if (Objects[i].sysid == viewId) {
-                        tab_index = Objects[i].tab_index;
-                        SelectedObject = Objects[i];
-                        break;
-                    }
-                }
-            }
-            $("#tabs_left").tabs("option", "active", tab_index);
+    var tab_index = 0;
+    SelectedObject = Weapons;
+    $("#tabs_left").tabs();
+    var viewId = getUrlVars()["view"];
+    if (viewId != undefined) {
+        SelectedObject = SelectObjectByid(viewId);
+    }
+    $("#tabs_left").tabs("option", "active", SelectedObject.tab_index);
 
-            //attach click events to each tab
+    //attach click events to each tab
+    for (var i = 0; i < Objects.length; i++) {
+        $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
+            var DataObject = event.data;
+            DataObject.LoadLeftGridFunction();
+            url_pushState('?view=' + DataObject.sysid);
+        });
+    }
+
+
+    LoadAllObjects(function () {
+        /* add calculated column - research time ro each component*/
+        DoResearchAll(player_all_researched,true, function () {
             for (var i = 0; i < Objects.length; i++) {
-                $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
-                    var DataObject = event.data;
-                    DataObject.LoadLeftGridFunction();
-                });
-            }
-
-
-            LoadAllObjects(function () {
-                /* add calculated column - research time ro each component*/
-                DoResearchAll(player_all_researched,true, function () {
-                    for (var i = 0; i < Objects.length; i++) {
-                        if (Objects[i].loaded_data != undefined) {
-                            for(var id in Objects[i].loaded_data_hash)
-                            {
-                                if (Objects[i] == Researches) {
-                                    var resesearch_obj = ResearchTime[player_all_researched][id];
-                                    if (resesearch_obj != undefined) {
-                                        Objects[i].loaded_data_hash[id].minResearchTime = ResearchTime[player_all_researched][id];
-                                    }
-                                }
+                if (Objects[i].loaded_data != undefined) {
+                    for(var id in Objects[i].loaded_data_hash)
+                    {
+                        if (Objects[i] == Researches) {
+                            var resesearch_obj = ResearchTime[player_all_researched][id];
+                            if (resesearch_obj != undefined) {
+                                Objects[i].loaded_data_hash[id].minResearchTime = ResearchTime[player_all_researched][id];
                             }
                         }
-                        if (Objects[i].grid_colModel != undefined && Objects[i].non_researchable != true) {
-                            Objects[i].grid_colModel.push({
-                                label: "Research Time (min)",
-                                name: "minResearchTime",
-                                width: 80,
-                                formatter: function (cellvalue, options, rowObject) {
-                                    if (cellvalue == undefined) {
-                                        return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
-                                    }
-                                    if (cellvalue < 3600) {
-                                        return cellvalue.toMMSS();
-                                    } else {
-                                        return cellvalue.toHHMMSS();
-                                    }
-                                },
-                                sorttype: "int",
-                            });
-                        }
                     }
+                }
+                if (Objects[i].grid_colModel != undefined && Objects[i].non_researchable != true) {
+                    Objects[i].grid_colModel.push({
+                        label: "Research Time (min)",
+                        name: "minResearchTime",
+                        width: 80,
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (cellvalue == undefined) {
+                                return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                            }
+                            if (cellvalue < 3600) {
+                                return cellvalue.toMMSS();
+                            } else {
+                                return cellvalue.toHHMMSS();
+                            }
+                        },
+                        sorttype: "int",
+                    });
+                }
+            }
 
 
-                    SelectedObject.LoadLeftGridFunction();
-                });
-            });
-
+            SelectedObject.LoadLeftGridFunction();
         });
-    </script>
+    });
+
+});
+
+function SelectObjectByid(sys_id) {
+    for (var i = 0; i < Objects.length; i++) {
+        if (Objects[i].sysid == sys_id) {
+            return Objects[i];
+        }
+    }
+}
+
+$(window).on("popstate", function () {
+    if (getUrlVars()["view"] == undefined) {
+        SelectedObject = Weapons;
+    } else {
+        SelectedObject = SelectObjectByid(getUrlVars()["view"]);
+    }
+});
+</script>
 </head>
 <body style="background:#eeeeee;">
 

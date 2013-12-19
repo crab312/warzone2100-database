@@ -34,7 +34,7 @@ $(function () {
     $("#tabs_left").tabs("option", "active", 0);
 
     $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
-                
+        url_pushState('');
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
@@ -43,8 +43,8 @@ $(function () {
 
 
     $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+        url_pushState('');
         OpenDamageModifiers();
-
     });
 
     if (localStorage["weapons_research_state_seconds"] == undefined) {
@@ -57,35 +57,46 @@ $(function () {
     //}
     res_time = 600;
 
+    var load_common = function () {
+        DrawResearchSlider("research_slider",
+            res_time,
+            function (value) {
+                DoResearch(value, player, function () {
+                    DrawWeaponList();
+                });
+            });
+        DoResearch(res_time, player, function () {
+            DrawWeaponList();
+        });
+    }
+
     ShowLoading('tabs_left');
     LoadAllObjects(function () {
-        DoResearchAll(player_all_researched,true, function () {
-            DrawResearchSlider("research_slider",
-                res_time,
-                function (value) {
-                        DoResearch(value, player, function () {
-                            DrawWeaponList();
-                    });
-                });
-            DoResearch(res_time, player, function () {
-                DrawWeaponList();
-            });
-            HideLoading('tabs_left');
+        DoResearchAll(player_all_researched, true, function () {
+
+            load_common();
+
+
+            if (getUrlVars()["details_id"] == undefined) {
+                
+            } else {
+                DrawDetailsTab_Init(getUrlVars()["details_id"]);
+            }
         });
+        HideLoading('tabs_left');
     });
 
-
-
-    //attach click events to each tab
-    //for (var i = 0; i < Objects.length; i++) {
-    //    $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
-    //        var DataObject = event.data;
-    //        DataObject.LoadLeftGridFunction();
-    //    });
-    //}
-
-    //SelectedObject.LoadLeftGridFunction();
 });
+
+
+$(window).on("popstate", function () {
+    if (getUrlVars()["details_id"] == undefined) {
+        $("#tabs_left").tabs("option", "active", 0);
+    } else {
+        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    }
+});
+
 
 function OpenDamageModifiers() {
     $("#tabs_left").tabs("option", "active", 2);
@@ -602,23 +613,25 @@ function showOverpowred() {
 }
 
 function openWeaponDetails(weapon_id) {
-    $("#tabs_left").tabs("option", "active", 1);
     DrawDetailsTab_Init(weapon_id);
+    url_pushState('?details_id=' + weapon_id);
 }
 
 
 function DrawDetailsTab_Init(weapon_id) {
+
+    $("#tabs_left").tabs("option", "active", 1);
+
     var res_time = 600;
 
     DrawResearchSlider("research_slider_details",
         res_time,
-        //localStorage["weapons_research_state_seconds"],
         function (value) {
-            //if (value != localStorage["weapons_research_state_seconds"]) {
-            //    localStorage["weapons_research_state_seconds"] = value;
-            //}
 
             DoResearch(value, 0, function () {
+                if (weapon_id == undefined) {
+                    weapon_id = getUrlVars()["details_id"]; //in case when tab was opened without selected weapon
+                }
                 DrawWeaponDetailsParameters(weapon_id);
             });
         });
@@ -629,6 +642,19 @@ function DrawDetailsTab_Init(weapon_id) {
             DrawWeaponStaticData(weapon_id);
         });
     }
+
+    $("#select_weapon_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Weapons, null, function (weap_id_new) {
+            DrawWeaponDetailsParameters(weap_id_new);
+            DrawWeaponStaticData(weap_id_new);
+            url_pushState('?details_id=' + weap_id_new);
+        });
+    });
 }
 
 function DrawWeaponDetailsParameters(weap_id) {
@@ -644,6 +670,7 @@ function DrawWeaponDetailsParameters(weap_id) {
         ShowSeletDialog_forDataObject(Weapons, weap_id, function (weap_id_new) {
             DrawWeaponDetailsParameters(weap_id_new);
             DrawWeaponStaticData(weap_id_new);
+            url_pushState('?details_id=' + weap_id_new);
         });
     });
 
@@ -651,9 +678,62 @@ function DrawWeaponDetailsParameters(weap_id) {
     $("#weapon_name_label").text(weapon.name);
     $("#abilities_container").html(Form_Weapon_Abilities_html(weapon));
     
-
+    /* Draw parameters of weapon */
     $('#weapon_details_details').html('<div id="weapon_details_details_container"></div>');
-    var grid_data = CalcWeaponRelatedParameters(weapon, weapon_upgraded);
+    grid_data = [];
+    {
+        var row = new Object;
+        row.name = 'Price';
+        row.base = weapon.buildPower;
+        row.upgraded = weapon_upgraded.buildPower;
+        row.group = '';
+        row.descr = 'Price added to total price of tank design.';
+        grid_data.push(row);
+    }
+    {
+        var abils = Weapon_GetAbilities(weapon);
+        var fact_build_points;
+        var fact_build_points_upgraded;
+
+        if (abils.VTOLWeapon) {
+            fact_build_points = Structures.loaded_data_hash['A0VTolFactory1'].productionPoints; // per second
+            fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0VTolFactory1'].index_of_datarow].productionPoints; // per second
+        } else if (abils.CyborgWeapon) {
+            fact_build_points = Structures.loaded_data_hash['A0CyborgFactory'].productionPoints; // per second
+            fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0CyborgFactory'].index_of_datarow].productionPoints; // per second
+        } else {
+            fact_build_points = Structures.loaded_data_hash['A0LightFactory'].productionPoints; // per second
+            fact_build_points_upgraded = Upgrades[player].Building[Structures.loaded_data_hash['A0LightFactory'].index_of_datarow].productionPoints; // per second
+        }
+
+        var row = new Object;
+        row.name = 'Build Time (factory with 1 module)';
+        row.base = (weapon.buildPower / fact_build_points).toMMSS();
+        row.upgraded = (weapon_upgraded.buildPower / fact_build_points_upgraded).toMMSS();
+        row.group = '';
+        row.descr = 'This time adds to total build time of tank design.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Weight';
+        row.base = weapon.weight;
+        row.upgraded = weapon_upgraded.weight;
+        row.group = '';
+        row.descr = 'This weight adds to total weight of tank design';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Hit Points';
+        row.base = weapon.hitpoints;
+        row.upgraded = weapon_upgraded.hitpoints;
+        row.group = '';
+        row.descr = 'Hit points are added to total hitpoint of tank design. Note: weapon hitpoints become increased with each composite alloys upgrade.';
+        grid_data.push(row);
+    }
+    grid_data = grid_data.concat(CalcWeaponRelatedParameters(weapon, weapon_upgraded));
+
     DrawComponentDetailsGrid(grid_data, "weapon_details_details_container");
 
     Designer_Draw_DPSTable("dps_table_container", [weapon_upgraded], player);
@@ -702,11 +782,11 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
     var weapon_upgraded = GetTurretUpgrade(player_all_researched, weapon_id, false)[weapon.index_of_datarow];
     var upgrade_log = weapon_upgraded.upgrade_history;
     var grid_data = [];
-    var summ = 100;
+    var summ = 0;
     for (var i in upgrade_log) {
         var log_rec = upgrade_log[i];
         var research = Researches.loaded_data_hash[log_rec.research_id];
-        if (log_rec.hint.toLowerCase() == research_hint) {
+        if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
             summ = summ + log_rec.value;
             grid_data.push({
                 name: research.name,
@@ -744,7 +824,7 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                     },
                 },
                 //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
-                { name: "summ", label: "Summ Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
             ],
         sortname: "time_int",
         loadonce: true,
@@ -828,7 +908,7 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                 <div id="left-tabs-detail">
                     <table style="width:100%">
                         <tr>
-                            <td colspan="2">
+                            <td>
                                 <div id="selected_weapon_header">
                                     <span id="weapon_icon"></span>
                                     <label id="weapon_name_label" style="font-size:1.2em">[...]</label>
@@ -844,26 +924,32 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
-	                                <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
-                                        <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                                        Description
-	                                </h3>
-                                    <div id="Div4" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block;">
-                                    <div id="research_slider_details">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="width:65%">
+                                            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                                            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                                                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                                                    Description
+	                                            </h3>
+                                                <div id="Div4" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width:35%">
+                                            <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block;">
+                                            <div id="research_slider_details">
 
-                                    </div>
-                                    <label style="font-size:0.9em; color:gray;">Use slider to see numeric values for different states of research.</label>
-                                </div>
+                                            </div>
+                                            <label style="font-size:0.9em; color:gray;">Use slider to see numeric values for different states of research.</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
-                            <td style="vertical-align:top; width:45%">
+                            <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
@@ -873,19 +959,19 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="dps_table_container"></div>
                             </td>
-                            <td style="vertical-align:top; width:35%">
+                            <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px;">Abilities</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
 
-                            </td>
-                            <td style="vertical-align:top; width:20%">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Rate of Fire Upgrades</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="rof_upgrades_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
+
                             </td>
                         </tr>
                     </table>
