@@ -20,180 +20,360 @@
 
     <title></title>
 
-    <script>
+<script>
 
-        var player = 0;
+var player = 0;
 
-        $(function () {
+$(function () {
 
-            InitDataObjects();
-            $("#tabs_left").tabs();
-            $("#tabs_left").tabs("option", "active", 0);
+    InitDataObjects();
+    $("#tabs_left").tabs();
+    $("#tabs_left").tabs("option", "active", 0);
 
-            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+    $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+        url_pushState('');
+    });
 
-            });
+    $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+        DrawDetailsTab_Init();
+    });
 
-            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-
-            });
-
-            $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
-
-            });
+    $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+        url_pushState('');
+    });
 
 
-            if (localStorage["body_research_state_seconds"] == undefined) {
-                localStorage["body_research_state_seconds"] = 600;
+    //if (localStorage["propulsion_research_state_seconds"] == undefined) {
+    //    localStorage["propulsion_research_state_seconds"] = 600;
+    //}
+
+    ShowLoading('tabs_left');
+    LoadAllObjects(function () {
+        DoResearchAll(player_all_researched,true, function () {
+            DrawPropulsion('propulsion_container', true);
+            DrawPropulsion('nonres_propulsion_container', false);
+            HideLoading('tabs_left');
+
+            if (getUrlVars()["details_id"] == undefined) {
+
+            } else {
+                DrawDetailsTab_Init(getUrlVars()["details_id"]);
             }
 
-            ShowLoading('tabs_left');
-            LoadAllObjects(function () {
-                DoResearchAll(player_all_researched,true, function () {
-                    DrawPropulsion('propulsion_container', true);
-                    DrawPropulsion('nonres_propulsion_container', false);
-                    HideLoading('tabs_left');
-                });
-            });
+            page_loaded = true;
 
         });
+    });
 
-        
+});
 
-        var tmp_uniq_index = 0;
 
-        function DrawPropulsion(container_id, show_enabled) {
+$(window).on("popstate", function () {
+    if (page_loaded) {  //this called also on PAGE FIRST LOAD
+        if (getUrlVars()["details_id"] == undefined) {
+            $("#tabs_left").tabs("option", "active", 0);
+        } else {
+            DrawDetailsTab_Init(getUrlVars()["details_id"]);
+        }
+    }
+});
+    
+var tmp_uniq_index = 0;
 
-            var grid_data = [];
-            for (var propulsion_id in Propulsion.loaded_data_hash) {
-                var res_comp_item = ResearchedComponents[player_all_researched][propulsion_id];
-                if (show_enabled) {
-                    if (res_comp_item == undefined) {
-                        continue;
-                    }
-                } else {
-                    if (res_comp_item != undefined) {
-                        continue;
-                    }
-                }
+function DrawPropulsion(container_id, show_enabled) {
 
-                //if (res_comp_item != undefined) {
-                //    Propulsion.loaded_data_hash[propulsion_id].minResearchTime = res_comp_item.time_seconds;
-                //}
-                grid_data.push(Propulsion.loaded_data_hash[propulsion_id]);
-
+    var grid_data = [];
+    for (var propulsion_id in Propulsion.loaded_data_hash) {
+        var res_comp_item = ResearchedComponents[player_all_researched][propulsion_id];
+        if (show_enabled) {
+            if (res_comp_item == undefined) {
+                continue;
             }
+        } else {
+            if (res_comp_item != undefined) {
+                continue;
+            }
+        }
 
-            grid_data.sort(function (a, b) {
-                if (a.minResearchTime == undefined)
-                    return 1;
-                if (b.minResearchTime == undefined)
-                    return -1;
-                return a.minResearchTime > b.minResearchTime ? 1 : -1;
-            });
+        //if (res_comp_item != undefined) {
+        //    Propulsion.loaded_data_hash[propulsion_id].minResearchTime = res_comp_item.time_seconds;
+        //}
+        grid_data.push(Propulsion.loaded_data_hash[propulsion_id]);
 
-            var grid_element_id = ResetGridContainer(container_id);
-            var grid = $(grid_element_id);
-            grid.jqGrid
-            ({
-                datatype: "local",
-                data: grid_data,
-                rowNum: grid_data.length,
-                height: 'auto',
-                colModel:
-                [
+    }
 
-                    { label: "", name: "grid_id", key: true, hidden: true },
-                    {
-                        label: " ",
-                        name: 'pic',
-                        width: '65px',
-                        sortable: false,
-                        search: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Propulsion.GetIconHtml_Function(rowObject) + '</a>';
-                        },
-                    },
-                    {
-                        label: " ", name: "name",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
-                        },
-                    },
-                    {
-                        label: "Max. Speed", name: "speed", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
-                            return (cellvalue / 128).toFixed(2)
-                        }, width: 40
-                    },
-                    {
-                        label: "HP Modifier",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return rowObject.hitpoints + '%';
-                        },
-                        width: 70,
-                    },
-                    {
-                        label: "Armor Modifiers", sortable: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            var res_html = "";
-                            for (var weap_type in PropulsionModifiers.loaded_data_hash) {
-                                var mod = PropulsionModifiers.loaded_data_hash[weap_type][rowObject.type];
-                                mod = mod == undefined ? '-' : Math.ceil(100*100/mod - 100);
-                                res_html += '<div style="width:40px;display:inline-block;" title="' + weap_type + '">' + mod + "% </div>";
-                            }
-                            res_html += "";
-                            return res_html;
-                        },
-                        width: 310,
-                    },
+    grid_data.sort(function (a, b) {
+        if (a.minResearchTime == undefined)
+            return 1;
+        if (b.minResearchTime == undefined)
+            return -1;
+        return a.minResearchTime > b.minResearchTime ? 1 : -1;
+    });
 
-                    {
-                        label: "Speed Modifier",
-                        formatter: function (cellvalue, options, rowObject) {
-                            if (PropulsionType.loaded_data != undefined) {
-                                return PropulsionType.loaded_data_hash[rowObject.type].multiplier + '%';
-                            }
-                            return ' - ';
-                        },
-                        width: 70,
-                    },
-                    {
-                        label: "Price Modifier", name: "buildPower", width: 55, formatter: function (cellvalue, options, rowObject) {
-                            return '<label style="color:#116611">' + cellvalue + '%</label>';
-                        }, sorttype: "int"
-                    },
-                    {
-                        label: "Research",
-                        name: "minResearchTime",
-                        width: 80,
-                        sorttype: "int",
-                        formatter: function (cellvalue, options, rowObject) {
-                            if (cellvalue != undefined) {
-                                if (cellvalue < 3600) {
-                                    return cellvalue.toMMSS();
-                                } else {
-                                    return cellvalue.toHHMMSS();
-                                }
-                            }
-                            return ' - ';
-                        },
-                    },
-                ],
-                onSelectRow: function (rowid) {
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+        [
+
+            { label: "", name: "grid_id", key: true, hidden: true },
+            {
+                label: " ",
+                name: 'pic',
+                width: '65px',
+                sortable: false,
+                search: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openpropulsionDetails(\'' + rowObject.grid_id + '\')">' + Propulsion.GetIconHtml_Function(rowObject) + '</a>';
                 },
-                loadonce: true,
-                ignoreCase: true, //make search case insensitive
-            });
+            },
+            {
+                label: " ", name: "name",
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:openpropulsionDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                },
+            },
+            {
+                label: "Max. Speed", name: "speed", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
+                    return (cellvalue / 128).toFixed(2)
+                }, width: 40
+            },
+            {
+                label: "HP Modifier",
+                formatter: function (cellvalue, options, rowObject) {
+                    return rowObject.hitpoints + '%';
+                },
+                width: 70,
+            },
+            {
+                label: "Armor Modifiers", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    var res_html = "";
+                    for (var weap_type in PropulsionModifiers.loaded_data_hash) {
+                        var mod = PropulsionModifiers.loaded_data_hash[weap_type][rowObject.type];
+                        mod = mod == undefined ? '-' : Math.ceil(100*100/mod - 100);
+                        res_html += '<div style="width:40px;display:inline-block;" title="' + weap_type + '">' + mod + "% </div>";
+                    }
+                    res_html += "";
+                    return res_html;
+                },
+                width: 310,
+            },
+
+            {
+                label: "Speed Modifier",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (PropulsionType.loaded_data != undefined) {
+                        return PropulsionType.loaded_data_hash[rowObject.type].multiplier + '%';
+                    }
+                    return ' - ';
+                },
+                width: 70,
+            },
+            {
+                label: "Price Modifier", name: "buildPower", width: 55, formatter: function (cellvalue, options, rowObject) {
+                    return '<label style="color:#116611">' + cellvalue + '%</label>';
+                }, sorttype: "int"
+            },
+            {
+                label: "Research",
+                name: "minResearchTime",
+                width: 80,
+                sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue != undefined) {
+                        if (cellvalue < 3600) {
+                            return cellvalue.toMMSS();
+                        } else {
+                            return cellvalue.toHHMMSS();
+                        }
+                    }
+                    return ' - ';
+                },
+            },
+        ],
+        onSelectRow: function (rowid) {
+        },
+        loadonce: true,
+        ignoreCase: true, //make search case insensitive
+    });
 
 
+}
+
+
+function openpropulsionDetails(propulsion_id) {
+    DrawDetailsTab_Init(propulsion_id);
+    url_pushState('?details_id=' + propulsion_id);
+}
+
+function DrawDetailsTab_Init(propulsion_id) {
+
+    $("#tabs_left").tabs("option", "active", 1);
+
+    var res_time = 600;
+
+    if (propulsion_id != undefined) {
+        DoResearch(res_time, 0, function () {
+            DrawPropulsionDetailsParameters(propulsion_id);
+            DrawPropulsionStaticData(propulsion_id);
+        });
+    }
+
+    $("#select_propulsion_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
         }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Propulsion, null, function (propulsion_id_new) {
+            DrawPropulsionDetailsParameters(propulsion_id_new);
+            DrawPropulsionStaticData(propulsion_id_new);
+            url_pushState('?details_id=' + propulsion_id_new);
+        });
+    });
+}
 
+function DrawPropulsionStaticData(propulsion_id) {
 
-        function openBodyDetails(body_id) {
-            alert(body_id);
+    var propulsion = Propulsion.loaded_data_hash[propulsion_id];
+
+    /* Draw Research Path */
+    var res_path_data = GetResearchPath_SubTree(propulsion_id, player_all_researched, 4);
+    DrawResearchPath_Tree("research_path_container", res_path_data);
+
+}
+
+function DrawPropulsionDetailsParameters(propulsion_id) {
+    var propulsion = Propulsion.loaded_data_hash[propulsion_id];
+
+    if (propulsion != undefined) {
+        $("#propulsion_detail_data_container").show();
+        scrollToId('body');
+    }
+
+    $("#select_propulsion_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
         }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Propulsion, propulsion_id, function (propulsion_id_new) {
+            DrawPropulsionDetailsParameters(propulsion_id_new);
+            DrawPropulsionStaticData(propulsion_id_new);
+            url_pushState('?details_id=' + propulsion_id_new);
+        });
+    });
 
-    </script>
+    $("#propulsion_icon").html(Propulsion.GetIconHtml_Function(propulsion));
+    $("#propulsion_name_label").text(propulsion.name);
+
+    /* Draw parameters of propulsion */
+    $('#propulsion_details_details').html('<div id="propulsion_details_details_container"></div>');
+    grid_data = [];
+    {
+        var row = new Object;
+        row.name = 'Max. speed';
+        row.base = (propulsion.speed / 128).toFixed(2);
+        row.group = '';
+        row.descr = 'Maximum speed';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Type';
+        row.base = PropulsionType.loaded_data_hash[propulsion.type].flightName
+        row.group = '';
+        row.descr = '';
+        grid_data.push(row);
+    }
+
+    {
+        var row = new Object;
+        row.name = 'Price modifier';
+        row.base = propulsion.buildPower;
+        row.group = '';
+        row.descr = 'Body price multiplied by produlsion price modifier.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Hit Points modifier';
+        row.base = propulsion.hitpoints;
+        row.group = '';
+        row.descr = 'Body hit points (HP) multiplied by produlsion HP modifier.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Build time modifier';
+        row.base = propulsion.buildPoints;
+        row.group = '';
+        row.descr = 'Body build time (build points) multiplied by produlsion build time modifier.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Weight modifier';
+        row.base = propulsion.weight;
+        row.group = '';
+        row.descr = 'Body weight multiplied by produlsion weight modifier.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Engine modifier';
+        row.base = PropulsionType.loaded_data_hash[propulsion.type].multiplier;
+        row.group = '';
+        row.descr = 'Engine (speed) modifier for this type of propulsion. Body engine power multiplied by propulsion engine modifier.';
+        grid_data.push(row);
+    }
+    //grid_data = grid_data.concat(CalcWeaponRelatedParameters(weapon, weapon_upgraded));
+
+    DrawComponentDetailsGrid(grid_data, "propulsion_details_details_container");
+
+    DrawPropulsionResistance('resistances_table_container', propulsion_id);
+    DrawPropulsionTerrainModifiers('terrain_table_container', propulsion_id);
+}
+
+
+
+function DrawPropulsionTerrainModifiers(container_id, propulsion_id) {
+    var propulsion = Propulsion.loaded_data_hash[propulsion_id];
+    var grid_data = [];
+    for (var terrainIndex in TerrainTable.loaded_data_hash) {
+        var modifiers_array = TerrainTable.loaded_data_hash[terrainIndex].speedFactor.split(',');
+        var prop_type_index = PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow;
+        grid_data.push({
+            terran_name: TerrainTypesIndexes[terrainIndex],
+            modifier: modifiers_array[prop_type_index] + '%',
+        });
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    $('<div style="padding:5px">Propulsion type: <b>' + propulsion.type + '</b></div>').insertBefore(grid_element_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "terran_name", label: "Terrain", width: '150px', fixed: true },
+                { name: "modifier", label: "Modifier", width: '80px', fixed: true },
+            ],
+        loadonce: true,
+    });
+}
+
+</script>
 </head>
 <body style="background:#eeeeee;">
     <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
@@ -212,8 +392,7 @@
             <div id="tabs_left" >
                 <ul>
                     <li><a href="#left-tabs-1">Propulsion Guide</a></li>
-                    <li><a href="#left-tabs-1">Propulsion Detail</a></li>
-                    <li><a href="#left-tabs-1">Propulsion Damage Modifiers</a></li>
+                    <li><a href="#left-tabs-detail">Propulsion Detail</a></li>
                 </ul>
 
                 <div id="left-tabs-1">
@@ -248,6 +427,77 @@
                     </div>                   
 
                 </div>
+                <div id="left-tabs-detail">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                <div id="selected_propulsion_header">
+                                    <span id="propulsion_icon"></span>
+                                    <label id="propulsion_name_label" style="font-size:1.2em">[...]</label>
+                                </div>
+                            </td>
+                            <td>
+                                You can see details for any propulsion, just select another propulsion. <br />
+                                <div style="width:100%;text-align:center">
+                                    <button id="select_propulsion_button" type="button" style="display:inline-block">Select propulsion...</button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="width:65%">
+                                            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                                            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                                                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                                                    Description
+	                                            </h3>
+                                                <div id="description_container" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width:35%">
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr id="propulsion_detail_data_container"  style="display:none">
+                            <td style="vertical-align:top; width:50%">
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="propulsion_details_details"></div>
+                                <table>
+                                    <tr>
+                                        <td style="vertical-align:top">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Resistances</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="resistances_table_container"></div>
+                                        </td>
+                                        <td style="vertical-align:top">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Terrain speed modifiers</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="terrain_table_container"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+                            </td>
+                            <td style="vertical-align:top; width:50%">
+
+
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
             </div>
         </td>
     </tr>

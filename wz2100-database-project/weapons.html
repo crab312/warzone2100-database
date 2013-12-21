@@ -22,14 +22,16 @@
 
     <title></title>
 
-    <script>
+<script>
 
 var player = 0;
+var page_loaded = false;
 
 var res_time;
 $(function () {
 
     InitDataObjects();
+
     $("#tabs_left").tabs();
     $("#tabs_left").tabs("option", "active", 0);
 
@@ -47,9 +49,9 @@ $(function () {
         OpenDamageModifiers();
     });
 
-    if (localStorage["weapons_research_state_seconds"] == undefined) {
-        localStorage["weapons_research_state_seconds"] = 600;
-    }
+    //if (localStorage["weapons_research_state_seconds"] == undefined) {
+    //    localStorage["weapons_research_state_seconds"] = 600;
+    //}
 
     //var res_time = localStorage["weapons_research_state_seconds"];
     //if (res_time == undefined) {
@@ -57,31 +59,28 @@ $(function () {
     //}
     res_time = 600;
 
-    var load_common = function () {
-        DrawResearchSlider("research_slider",
-            res_time,
-            function (value) {
-                DoResearch(value, player, function () {
-                    DrawWeaponList();
-                });
-            });
-        DoResearch(res_time, player, function () {
-            DrawWeaponList();
-        });
-    }
-
     ShowLoading('tabs_left');
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched, true, function () {
 
-            load_common();
+            DrawResearchSlider("research_slider",
+                res_time,
+                function (value) {
+                    DoResearch(value, player, function () {
+                        DrawWeaponList();
+                    });
+                });
+            DoResearch(res_time, player, function () {
+                DrawWeaponList();
 
+                if (getUrlVars()["details_id"] == undefined) {
+                } else {
+                    DrawDetailsTab_Init(getUrlVars()["details_id"]);
+                }
+            });
 
-            if (getUrlVars()["details_id"] == undefined) {
-                
-            } else {
-                DrawDetailsTab_Init(getUrlVars()["details_id"]);
-            }
+            page_loaded = true;
+
         });
         HideLoading('tabs_left');
     });
@@ -90,10 +89,12 @@ $(function () {
 
 
 $(window).on("popstate", function () {
-    if (getUrlVars()["details_id"] == undefined) {
-        $("#tabs_left").tabs("option", "active", 0);
-    } else {
-        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    if (page_loaded) {  //this called also on PAGE FIRST LOAD
+        if (getUrlVars()["details_id"] == undefined) {
+            $("#tabs_left").tabs("option", "active", 0);
+        } else {
+            DrawDetailsTab_Init(getUrlVars()["details_id"]);
+        }
     }
 });
 
@@ -413,7 +414,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
             },
             {
                 label: "Rate of Fire", sortable: false,
-                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + " /min"; }, width: 70,//
+                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + " /min"; }, width: 78,//
             },
             {
                 label: "HP", sortable: false,
@@ -600,7 +601,7 @@ function showOverpowred() {
         DoResearch(res_time, player, function () {
             {
                 var low_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at low-oil games");
-                var op_list1 = ["MG4ROTARYMk1", "Bomb4-VTOL-HvyINC", "Flame1Mk1", "Flame2"];
+                var op_list1 = ["MG4ROTARYMk1"];
                 DrawWeapons(low_sect.attr('id'), op_list1);
 
                 var hi_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at high-oil games");
@@ -621,14 +622,13 @@ function openWeaponDetails(weapon_id) {
 function DrawDetailsTab_Init(weapon_id) {
 
     $("#tabs_left").tabs("option", "active", 1);
-
     var res_time = 600;
 
     DrawResearchSlider("research_slider_details",
         res_time,
         function (value) {
 
-            DoResearch(value, 0, function () {
+            DoResearch(value, player, function () {
                 if (weapon_id == undefined) {
                     weapon_id = getUrlVars()["details_id"]; //in case when tab was opened without selected weapon
                 }
@@ -637,7 +637,7 @@ function DrawDetailsTab_Init(weapon_id) {
         });
 
     if (weapon_id != undefined) {
-        DoResearch(res_time, 0, function () {
+        DoResearch(res_time, player, function () {
             DrawWeaponDetailsParameters(weapon_id);
             DrawWeaponStaticData(weapon_id);
         });
@@ -659,6 +659,12 @@ function DrawDetailsTab_Init(weapon_id) {
 
 function DrawWeaponDetailsParameters(weap_id) {
     var weapon = Weapons.loaded_data_hash[weap_id];
+
+    if (weapon != undefined) {
+        $("#weapon_detail_data_container").show();
+        scrollToId('body');
+    }
+
     var weapon_upgraded = GetTurretUpgrade(player, weap_id, false)[weapon.index_of_datarow];
 
     $("#select_weapon_button").button({
@@ -743,38 +749,19 @@ function DrawWeaponStaticData(weapon_id) {
 
     var weapon = Weapons.loaded_data_hash[weapon_id];
 
-    /* Draw Damage modifiers table */
-    var grid_data_mdf = [];
-    var modif = PropulsionModifiers.loaded_data_hash[weapon.weaponEffect];
-    for (var prop_type in PropulsionType.loaded_data_hash) {
-        grid_data_mdf.push({
-            propulsion: prop_type,
-            modifier: modif[prop_type] == undefined ? ' - ' : modif[prop_type] + '%',
-        });
-    }
-    var grid_element_id = ResetGridContainer("weapon_details_damage_modifiers");
-    var grid = $(grid_element_id);
-    grid.jqGrid
-    ({
-        datatype: "local",
-        data: grid_data_mdf,
-        rowNum: grid_data_mdf.length,
-        height: '100%',
-        colModel:
-            [
-                { name: "propulsion", width: '100px', fixed: true },
-                { name: "modifier", width: '50px', fixed: true },
-            ],
-        loadonce: true,
-    });
+    /* Show auto-generated description of weapon */
+    var auto_descr = ('[' + weapon.weaponClass + ' ' + weapon.weaponEffect + ' ' + weapon.weaponSubClass + ']').toLowerCase();
+    $('#details_description').html(auto_descr);
 
+    /* Draw Damage modifiers table */
+    DrawWeaponPropulsionModifiers("weapon_details_damage_modifiers", weapon_id);
     /* Draw Research Path */
     var res_path_data = GetResearchPath_SubTree(weapon_id, player_all_researched, 5);
     DrawResearchPath_Tree("research_path_container", res_path_data);
 
     /* Draw damage upgrades table */
     DrawUpgradeTable("damage_upgrades_container", weapon_id, "damage");
-    DrawUpgradeTable("rof_upgrades_container", weapon_id, "firepause");
+    DrawUpgradeTable("rof_upgrades_container", weapon_id, "firePause");
 }
 
 function DrawUpgradeTable(container_id, weapon_id, research_hint) {
@@ -788,11 +775,17 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
         var research = Researches.loaded_data_hash[log_rec.research_id];
         if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
             summ = summ + log_rec.value;
+            var shown_val;
+            if (research_hint == "firePause") {
+                shown_val = Math.floor(100 / (100 + summ) * 100 - 100); //assume firePause setter as negative value
+            } else {
+                shown_val = summ;
+            }
             grid_data.push({
                 name: research.name,
                 time_int: ResearchTime[player_all_researched][log_rec.research_id],
                 value: log_rec.value,
-                summ: summ,
+                summ: shown_val,
             });
         }
     }
@@ -932,7 +925,7 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                                                     <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
                                                     Description
 	                                            </h3>
-                                                <div id="Div4" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                                <div id="details_description" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                                                 </div>
                                             </div>
                                         </td>
@@ -948,7 +941,7 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                                 </table>
                             </td>
                         </tr>
-                        <tr>
+                        <tr id="weapon_detail_data_container" style="display:none">
                             <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 

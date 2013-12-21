@@ -66,3 +66,9 @@ function url_pushState(querystr) {
     var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + querystr;
     window.history.pushState({ path: newurl }, '', newurl)
 }
+
+function scrollToId(elem_id) {
+    $('html, body').animate({
+        scrollTop: $(elem_id).offset().top
+    }, 1000);
+}

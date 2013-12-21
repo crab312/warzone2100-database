@@ -22,6 +22,8 @@
 
 <script>
 
+var page_loaded = false;
+
 $(function () {
             
     InitDataObjects();
@@ -94,7 +96,7 @@ $(function () {
                 }
             }
 
-
+            page_loaded = true;
             SelectedObject.LoadLeftGridFunction();
         });
     });
@@ -110,10 +112,12 @@ function SelectObjectByid(sys_id) {
 }
 
 $(window).on("popstate", function () {
-    if (getUrlVars()["view"] == undefined) {
-        SelectedObject = Weapons;
-    } else {
-        SelectedObject = SelectObjectByid(getUrlVars()["view"]);
+    if (page_loaded) {
+        if (getUrlVars()["view"] == undefined) {
+            SelectedObject = Weapons;
+        } else {
+            SelectedObject = SelectObjectByid(getUrlVars()["view"]);
+        }
     }
 });
 </script>

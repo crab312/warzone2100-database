@@ -25,6 +25,8 @@
 <script>
 
 var player = 0;
+var page_loaded = false;
+
 
 $(function () {
 
@@ -33,15 +35,15 @@ $(function () {
     $("#tabs_left").tabs("option", "active", 0);
 
     $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
-
+        url_pushState('');
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-
+        DrawDetailsTab_Init();
     });
 
     $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
-
+        url_pushState('');
     });
 
 
@@ -68,7 +70,7 @@ $(function () {
                 DrawDetailsTab_Init(getUrlVars()["details_id"]);
             }
 
-
+            page_loaded = true;
             HideLoading('tabs_left');
         });
     });
@@ -76,10 +78,12 @@ $(function () {
 });
 
 $(window).on("popstate", function () {
-    if (getUrlVars()["details_id"] == undefined) {
-        $("#tabs_left").tabs("option", "active", 0);
-    } else {
-        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    if (page_loaded) {  //this called also on PAGE FIRST LOAD
+        if (getUrlVars()["details_id"] == undefined) {
+            $("#tabs_left").tabs("option", "active", 0);
+        } else {
+            DrawDetailsTab_Init(getUrlVars()["details_id"]);
+        }
     }
 });
 
@@ -291,7 +295,7 @@ function DrawDetailsTab_Init(body_id) {
         });
     }
 
-    $("#select_weapon_button").button({
+    $("#select_body_button").button({
         icons: {
             primary: "ui-icon-triangle-1-s",
         }
@@ -310,7 +314,7 @@ function DrawBodyStaticData(body_id) {
     var body = Bodies.loaded_data_hash[body_id];
 
     /* Draw Research Path */
-    var res_path_data = GetResearchPath_SubTree(body_id, player_all_researched, 5);
+    var res_path_data = GetResearchPath_SubTree(body_id, player_all_researched, 4);
     DrawResearchPath_Tree("research_path_container", res_path_data);
 
     /* Draw upgrades tables */
@@ -323,11 +327,16 @@ function DrawBodyDetailsParameters(body_id) {
     var body = Bodies.loaded_data_hash[body_id];
     var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
 
+    if (body != undefined) {
+        $("#body_detail_data_container").show();
+        scrollToId('body');
+    }
+
     if (body.weaponSlots > 1) {
         $('#description_container').html("This body can hold " + body.weaponSlots + " turrets at once!");
     }
 
-    $("#select_weapon_button").button({
+    $("#select_body_button").button({
         icons: {
             primary: "ui-icon-triangle-1-s",
         }
@@ -638,7 +647,7 @@ function DrawBodyUpgradesTable(container_id, body_id, research_hint) {
                                 </table>
                             </td>
                         </tr>
-                        <tr>
+                        <tr id="body_detail_data_container"  style="display:none">
                             <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 

@@ -323,8 +323,19 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
 }
 
 
-function openCyborgDetails(body_id) {
-    alert(body_id);
+function openCyborgDetails(template_id) {
+    var template = Templates.loaded_data_hash[template_id];
+    var turret_id = null;
+    if (template.weapons != undefined) {
+        turret_id = template.weapons.split(',')[0];
+    } else if (template.compConstruct != undefined) {
+        turret_id = template.compConstruct;
+    } else if (template.compRepair != undefined) {
+        turret_id = template.compRepair;
+    }
+    if (turret_id != null) {
+        window.open("design.php?body_id=" + template.compBody + "&propulsion_id=" + template.compPropulsion + "&turret1_id=" + turret_id);
+    }
 }
 
 var CyborgDesigns;
@@ -387,7 +398,7 @@ function LoadCyborgDesigns(callback_function) {
             <div id="tabs_left" >
                 <ul>
                     <li><a href="#left-tabs-1">Cyborgs Guide</a></li>
-                    <li><a href="#left-tabs-1">Cyborgs detail</a></li>
+                   
                 </ul>
 
                 <div id="left-tabs-1">

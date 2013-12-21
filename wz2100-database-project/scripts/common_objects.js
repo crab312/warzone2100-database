@@ -21,6 +21,21 @@ var Templates;
 var SelectedObject;
 var Objects = new Array;
 
+var TerrainTypesIndexes = [
+    'TER_SAND',
+    'TER_SANDYBRUSH',
+    'TER_BAKEDEARTH',
+    'TER_GREENMUD',
+    'TER_REDBRUSH',
+    'TER_PINKROCK',
+    'TER_ROAD',
+    'TER_WATER',
+    'TER_CLIFFFACE',
+    'TER_RUBBLE',
+    'TER_SHEETICE',
+    'TER_SLUSH',
+];
+
 
 $(function () {
     DrawPageHeader();
@@ -32,7 +47,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.29";
+    var current_site_version = "1.58";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -1104,6 +1119,7 @@ function DrawPageCaption() {
 
 function DrawResearchSlider(container_id, init_value, slide_function) {
 
+    $('#' + container_id).html('');
     var slider_id = container_id + "_research_slider";
     var input_id = container_id + "_research_slider_input";
     var slider_elem = $('<label for="' + input_id + '">Research time:</label><input type="text" id="' + input_id + '" style="border: 0; font-weight: bold;" /><div id="' + slider_id + '"></div>');

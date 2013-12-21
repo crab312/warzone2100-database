@@ -44,6 +44,9 @@ var techlist = new Array(
 
 function eventResearched(research, player) {
     //debug("RESEARCH : " + research.fullname + "(" + research.name + ") for " + player + " results=" + research.results);
+    if (research.results == undefined) {
+        return;
+    }
     for (var v = 0; v < research.results.length; v++) {
         var s = research.results[v].split(":");
         if (['Droids', 'Cyborgs'].indexOf(s[0]) >= 0) // research result applies to droids and cyborgs
@@ -121,7 +124,7 @@ function eventResearched(research, player) {
         else if (Stats.WeaponClass.indexOf(s[0]) >= 0) // if first field is a weapon class
         {
             s[1] = setCharAt(s[1], 0, s[1][0].toLowerCase());  // <<<< SHIT
-            var firePause = s[1] == 'firePause';
+            var firePause = s[1].toLowerCase() == 'firepause';
             if (s[1] == "repeatDamage") {
                 s[1] = "periodicalDamage";
             }
@@ -132,21 +135,21 @@ function eventResearched(research, player) {
                         if (Upgrades[player].Weapon[i]['reloadTime'] == undefined || Upgrades[player].Weapon[i]['reloadTime'] == 0) {
                             var hint = 'firePause';
                             Upgrades[player].Weapon[i][hint] += Stats.Weapon[i][hint] * int_value / 100;
-                            log_upgrade(Upgrades[player].Weapon[i], research.grid_id, hint, int_value);
                         } else {
                             var hint = 'reloadTime';
                             Upgrades[player].Weapon[i][hint] += Stats.Weapon[i][hint] * int_value / 100;
-                            log_upgrade(Upgrades[player].Weapon[i], research.grid_id, hint, int_value);
                         }
+                        log_upgrade(Upgrades[player].Weapon[i], research.grid_id, 'firePause', int_value);
                     } else {
                         Upgrades[player].Weapon[i][s[1]] += Stats.Weapon[i][s[1]] * int_value / 100;
                         log_upgrade(Upgrades[player].Weapon[i], research.grid_id, s[1], int_value);
                     }
+                    
                 }
             }
         }
         else {
-            debug("(error) Unrecognized research hint=" + s[0]);
+            console.log("(error) Unrecognized research hint=" + s[0]);
         }
     }
 }

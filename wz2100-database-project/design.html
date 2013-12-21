@@ -24,53 +24,53 @@
 
     <script>
 
-        $(function () {
+$(function () {
 
-            InitDataObjects();
+    InitDataObjects();
 
-            $("#tabs_left").tabs();
-            $("#tabs_left").tabs("option", "active", 0);
+    $("#tabs_left").tabs();
+    $("#tabs_left").tabs("option", "active", 0);
 
-            //attach click events to each tab
-            //for (var i = 0; i < Objects.length; i++) {
-            //    $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
-            //        var DataObject = event.data;
-            //        DataObject.LoadLeftGridFunction();
-            //    });
-            //}
+    //attach click events to each tab
+    //for (var i = 0; i < Objects.length; i++) {
+    //    $('#tabs_left ul:first li:eq(' + Objects[i].tab_index + ') a').click(Objects[i], function (event) {
+    //        var DataObject = event.data;
+    //        DataObject.LoadLeftGridFunction();
+    //    });
+    //}
 
-            //ankDesigner
-            $('body').block({
-                message: null,
-            });
-            Designer_PreLoad(function () { $('body').unblock(); });
+    //ankDesigner
+    $('body').block({
+        message: null,
+    });
+    Designer_PreLoad(function () { $('body').unblock(); });
 
-            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+    $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
 
-            });
+    });
 
-            $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-                DrawDesignComparison();
-            });
+    $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+        DrawDesignComparison();
+    });
 
-            $("#designer_save_button").button({
-                icons: {
-                    primary: "ui-icon-heart",
-                }
-            }).click(function (event) {
-                event.preventDefault();
-                var saved_designs = [];
-                if (localStorage["designer_saved_designs"] != undefined) {
-                    saved_designs = JSON.parse(localStorage["designer_saved_designs"]);
-                }
-                var design = {};
-                design.weapon_id = $("#designer_weapon").attr('data-value');
-                design.body_id = $("#designer_body").attr('data-value');
-                design.propulsion_id = $("#designer_propulsion").attr('data-value');
-                saved_designs.push(design);
-                localStorage["designer_saved_designs"] = JSON.stringify(saved_designs);
-            });
-        });
+    $("#designer_save_button").button({
+        icons: {
+            primary: "ui-icon-heart",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        var saved_designs = [];
+        if (localStorage["designer_saved_designs"] != undefined) {
+            saved_designs = JSON.parse(localStorage["designer_saved_designs"]);
+        }
+        var design = {};
+        design.weapon_id = $("#designer_weapon").attr('data-value');
+        design.body_id = $("#designer_body").attr('data-value');
+        design.propulsion_id = $("#designer_propulsion").attr('data-value');
+        saved_designs.push(design);
+        localStorage["designer_saved_designs"] = JSON.stringify(saved_designs);
+    });
+});
 
         function DrawDesignComparison() {
             var grid_element_id = ResetGridContainer('left-tabs-comparison');
@@ -240,6 +240,25 @@
                             <td style="vertical-align: top">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Paramaters of tank</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_parameters_container"></div>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Resistances</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="resistances_table_container"></div>
+                                        </td>
+                                        <td id="damage_modifier_container_weapon1" style="display:none">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 1)</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_1"></div>
+                                        </td>
+                                        <td id="damage_modifier_container_weapon2" style="display:none">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 2)</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_2"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+
                                 <div id="res_paths_block">
                                     <div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top: 10px;">Research Paths</div>
                                     <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_researchpath_container">

@@ -2,6 +2,8 @@
 
 function InitDesigner() {
     
+    $('#designer_all_data_container').hide();
+
     $("#designer_select_body_button").button({
         icons: {
             primary: "ui-icon-triangle-1-s",
@@ -12,7 +14,6 @@ function InitDesigner() {
             if (selectedRowId == null) {
                 alert('Sorry but you have not selected a row. Nothing will happen.');
             } else {
-
                 var body_id = localStorage["designer_designer_body"];
                 var body = Bodies.loaded_data_hash[selectedRowId];
                 if (body != undefined) {
@@ -216,18 +217,53 @@ var player_current_design = 0;
 function Designer_PreLoad(callback_function) {
     InitDesigner();
     LoadAllObjects(function () {
-        DoResearchAll(player_all_researched,true, function () {
-            if (localStorage["designer_designer_weapon"] != undefined) {
-                var turret_id =  localStorage["designer_designer_weapon"];
-                setInput(FindComponentDataObject(turret_id), $("#designer_weapon"), turret_id, $("#designer_weapon_icon"));
+        DoResearchAll(player_all_researched, true, function () {
+
+            var predefined_body_id = null;
+            var predefined_propulsion_id = null;
+            var predefined_turret1_id = null;
+            var predefined_turret2_id = null;
+            if (getUrlVars()["body_id"] == undefined) {
+                if (localStorage["designer_designer_body"] != undefined) {
+                    predefined_body_id = localStorage["designer_designer_body"];
+                }
+            } else {
+                predefined_body_id = getUrlVars()["body_id"];
             }
-            if (localStorage["designer_designer_weapon2"] != undefined) {
-                var turret_id = localStorage["designer_designer_weapon2"];
-                setInput(FindComponentDataObject(turret_id), $("#designer_weapon2"), turret_id, $("#designer_weapon2_icon"));
+
+            if (getUrlVars()["propulsion_id"] == undefined) {
+                if (localStorage["designer_designer_propulsion"] != undefined) {
+                    predefined_propulsion_id = localStorage["designer_designer_propulsion"];
+                }
+            } else {
+                predefined_propulsion_id = getUrlVars()["propulsion_id"];
             }
-            if (localStorage["designer_designer_body"] != undefined) {
-                var body_id = localStorage["designer_designer_body"];
-                var body = Bodies.loaded_data_hash[body_id];
+
+            if (getUrlVars()["turret1_id"] == undefined) {
+                if (localStorage["designer_designer_weapon"] != undefined) {
+                    predefined_turret1_id = localStorage["designer_designer_weapon"];
+                }
+            } else {
+                predefined_turret1_id = getUrlVars()["turret1_id"];
+            }
+
+            if (getUrlVars()["turret2_id"] == undefined) {
+                if (localStorage["designer_designer_weapon2"] != undefined) {
+                    predefined_turret2_id = localStorage["designer_designer_weapon2"];
+                }
+            } else {
+                predefined_turret2_id = getUrlVars()["turret2_id"];
+            }
+
+            if (predefined_turret1_id != null) {
+                setInput(FindComponentDataObject(predefined_turret1_id), $("#designer_weapon"), predefined_turret1_id, $("#designer_weapon_icon"));
+            }
+            if (predefined_turret2_id != null) {
+                setInput(FindComponentDataObject(predefined_turret2_id), $("#designer_weapon2"), predefined_turret2_id, $("#designer_weapon2_icon"));
+            }
+
+            if (predefined_body_id != null) {
+                var body = Bodies.loaded_data_hash[predefined_body_id];
                 if (body != undefined) {
                     if (body.weaponSlots >= 2) {
                         if (body.weaponSlots >= 3) {
@@ -237,12 +273,12 @@ function Designer_PreLoad(callback_function) {
                     } else {
                         $('#designer_weapon2_row').hide();
                     }
-                    setInput(Bodies, $("#designer_body"), body_id, $("#designer_body_icon"));
+                    setInput(Bodies, $("#designer_body"), predefined_body_id, $("#designer_body_icon"));
                 }
                 
             }
-            if (localStorage["designer_designer_propulsion"] != undefined) {
-                setInput(Propulsion, $("#designer_propulsion"), localStorage["designer_designer_propulsion"], $("#designer_propulsion_icon"));
+            if (predefined_propulsion_id != null) {
+                setInput(Propulsion, $("#designer_propulsion"), predefined_propulsion_id, $("#designer_propulsion_icon"));
             }
 
             if (localStorage["designer_research_slider"] != undefined) {
@@ -372,12 +408,13 @@ function ShowSeletDialog_forDataObject(DataObject, selected_value, callback_func
 
 
 function Weapon_ShotsPerMinute(weapon) {
-    if (weapon.firePause == undefined)
+    if (weapon.firePause == undefined && weapon.reloadTime == undefined)
         return 0;
+    var firepause = weapon.firePause == undefined ? 1 : weapon.firePause; //fire pause can be skipped in weapons.ini for some weapons (VTOL Scourge Missile)
     var reloadTime = weapon.reloadTime == undefined ? 0 : weapon.reloadTime;
     var num_rounds = weapon.numRounds == undefined ? 1 : weapon.numRounds;
     if (num_rounds == 0) num_rounds = 1;
-    return 600 / (weapon.firePause * num_rounds + reloadTime) * num_rounds;
+    return 600 / (firepause * num_rounds + reloadTime) * num_rounds;
 }
 
 var WeaponAbilities = function () { };
@@ -976,7 +1013,26 @@ function TryCalculateDesign(callback_function) {
 
             var container_id = "designer_parameters_container";
             DrawComponentDetailsGrid(grid_data, container_id);
+            DrawPropulsionResistance('resistances_table_container', propulsion_id);
 
+            /* Draw damage modifier for weapon turrets */
+            if (Weapons.loaded_data_hash[turrets_ids[0]] == undefined) {
+                $('#damage_modifier_container_weapon1').hide();
+            }else
+            {
+                $('#damage_modifier_container_weapon1').show();
+                DrawWeaponPropulsionModifiers('weapon_damage_modifiers_1', turrets_ids[0]);
+            }
+            if(num_turrets > 1)
+            {
+                if (Weapons.loaded_data_hash[turrets_ids[0]] == undefined) {
+                    $('#damage_modifier_container_weapon2').hide();
+                }
+                {
+                    $('#damage_modifier_container_weapon2').show();
+                    DrawWeaponPropulsionModifiers('weapon_damage_modifiers_2', turrets_ids[1]);
+                }
+            }
         };
 
         var show_research_path_method = function (turrets_ids, body_id, propulsion_id) {
@@ -1036,6 +1092,11 @@ function TryCalculateDesign(callback_function) {
             }
             $("#designer_research_requirements").html(Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id));
             show_research_path_method(turrets_ids, body_id, propulsion_id);
+        }
+
+        if (!is_unfinished_design) {
+            $('#designer_all_data_container').show(); //design finished, can show parameters
+            UpdateDesignurl(body_id, propulsion_id, turrets_ids);
         }
 
         if (callback_function != undefined) {
@@ -1393,7 +1454,7 @@ function GetTurretDataRow(turret_id, non_weapon_design) {
 }
 
 function GetTurretUpgrade(player, turret_id, non_weapon_design) {
-    if (non_weapon_design == true) {
+    if (non_weapon_design == true || non_weapon_design == undefined) {
         for (var i = 0; i < Objects.length; i++) {
             if (Objects[i].loaded_data_hash != undefined) {
                 var t = Objects[i].loaded_data_hash[turret_id];
@@ -1409,6 +1470,9 @@ function GetTurretUpgrade(player, turret_id, non_weapon_design) {
                     }
                     if (Objects[i] == ECM) {
                         return Upgrades[player].ECM;
+                    }
+                    if (Objects[i] == Weapons) {
+                        return Upgrades[player].Weapon;
                     }
                 }
             }
@@ -1706,4 +1770,72 @@ function WeaponDamage_htmlCell(rowObject) {
 
 function CalcVTOL_numshots(weapon) {
     return (weapon.numAttackRuns == undefined ? 0 : weapon.numAttackRuns) * (weapon.numRounds == undefined ? 1 : weapon.numRounds);
+}
+
+function UpdateDesignurl(body_id, propulsion_id, turrets_ids) {
+    var turret1_id = turrets_ids[0]
+    if(turrets_ids.length > 1)
+    {
+        var turret2_id = turrets_ids[1]
+        url_pushState('?body_id=' + body_id + '&propulsion_id=' + propulsion_id + '&turret1_id=' + turret1_id + '&turret2_id=' + turret2_id);
+    }else
+    {
+        url_pushState('?body_id=' + body_id + '&propulsion_id=' + propulsion_id + '&turret1_id=' + turret1_id);
+    }
+}
+
+
+function DrawPropulsionResistance(container_id, propulsion_id) {
+    var propulsion = Propulsion.loaded_data_hash[propulsion_id];
+    var grid_data_mdf = [];
+    for (var weap_class in PropulsionModifiers.loaded_data_hash) {
+        grid_data_mdf.push({
+            weap_class: weap_class,
+            resist: Math.floor(100 / PropulsionModifiers.loaded_data_hash[weap_class][propulsion.type] * 100 - 100) + '%',
+        });
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    $('<div style="padding:5px">Propulsion type: <b>' + propulsion.type + '</b></div>').insertBefore(grid_element_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data_mdf,
+        rowNum: grid_data_mdf.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "weap_class", label: "Weapon class", width: '150px', fixed: true },
+                { name: "resist", label: "Resistance", width: '80px', fixed: true },
+            ],
+        loadonce: true,
+    });
+}
+function DrawWeaponPropulsionModifiers(container_id, weapon_id) {
+    var weapon = Weapons.loaded_data_hash[weapon_id];
+    var grid_data_mdf = [];
+    var modif = PropulsionModifiers.loaded_data_hash[weapon.weaponEffect];
+    for (var prop_type in PropulsionType.loaded_data_hash) {
+        grid_data_mdf.push({
+            propulsion: prop_type,
+            modifier: modif[prop_type] == undefined ? ' - ' : modif[prop_type] + '%',
+        });
+    }
+    var grid_element_id = ResetGridContainer(container_id);
+    $('<div style="padding:5px">Weapon type: <b>' + weapon.weaponEffect + '</b></div>').insertBefore(grid_element_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data_mdf,
+        rowNum: grid_data_mdf.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "propulsion", width: '150px', fixed: true },
+                { name: "modifier", width: '50px', fixed: true },
+            ],
+        loadonce: true,
+    });
 }
