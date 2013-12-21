@@ -47,7 +47,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.58";
+    var current_site_version = "1.67";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -88,11 +88,28 @@ function InitDataObjects() {
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+            data_obj.LoadDataFunction(data_obj, function () {
+                /* Make terrain table more readable */
+                for (var terrainIndex in data_obj.loaded_data_hash) {
+                    data_obj.loaded_data_hash[terrainIndex].terrain_name = TerrainTypesIndexes[terrainIndex];
+                    var vect = data_obj.loaded_data_hash[terrainIndex].speedFactor.split(',');
+                    for (var prop_index in vect) {
+                        var prop_type = PropulsionType.loaded_data[prop_index].grid_id;
+                        data_obj.loaded_data_hash[terrainIndex][prop_type] = vect[prop_index];
+                    }
+                }
+                for (var prop_type in PropulsionType.loaded_data_hash) {
+                    data_obj.grid_colModel.push(
+                    {
+                        name: prop_type, width: "55px", fixed: true
+                    });
+                }
+                DrawLeftGrid(data_obj);
+            });
         };
         obj.grid_colModel = [
-            { label: "TerrainType", name: "grid_id", key: true, width: "80px", fixed:true },
-            { label: "Speed Factors (per propulsion type)", name: "speedFactor",width:300 },
+            { label: "Ter.Id", name: "grid_id", key: true, width: "40px", fixed: true },
+            { label: "Terrain Name", name: "terrain_name", width: "150px", fixed: true },
         ];
         obj.non_researchable = true;
         TerrainTable = obj;
@@ -560,7 +577,7 @@ function InitDataObjects() {
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
-            { label: "Range", name: "range" },
+            { label: "repairPoints", name: "repairPoints" },
         ];
         Repair = obj;
         Objects.push(obj);
@@ -633,6 +650,8 @@ function InitDataObjects() {
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
+            { label: "Armour", name: "armour" },
+            { label: "Hit Points", name: "hitpoints" },
         ];
         obj.non_researchable = true;
         Features = obj;

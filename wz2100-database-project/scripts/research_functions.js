@@ -83,6 +83,7 @@ function eventResearched(research, player) {
                 if (Stats.Building[i][s[0]] > 0) // only applies if building has this stat already
                 {
                     Upgrades[player].Building[i][s[0]] += Stats.Building[i][s[0]] * int_value / 100;
+                    log_upgrade(Upgrades[player].Building[i], research.grid_id, s[0], int_value);
                 }
             }
         }
@@ -91,7 +92,7 @@ function eventResearched(research, player) {
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player].Building) {
                 var hardcoded_type = "";
-                if (Stats.Building[i].Type == "DEFENSE") {
+                if (Stats.Building[i].type == "DEFENSE") {
                     hardcoded_type = "Wall";
                 } else {
                     hardcoded_type = "Structure";
@@ -101,9 +102,10 @@ function eventResearched(research, player) {
                     s[1] = 'hitpoints';
                 }
 
-                if (Stats.Building[i].Type === s[0]) // applies to specific building type
+                if (hardcoded_type === s[0]) // applies to specific building type
                 {
                     Upgrades[player].Building[i][s[1]] += Stats.Building[i][s[1]] * int_value / 100;
+                    log_upgrade(Upgrades[player].Building[i], research.grid_id, s[1], int_value);
                 }
             }
         }
@@ -119,6 +121,7 @@ function eventResearched(research, player) {
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player][s[0]]) {
                 Upgrades[player][s[0]][i][s[1]] += Stats[s[0]][i][s[1]] * int_value / 100;
+                log_upgrade(Upgrades[player][s[0]][i], research.grid_id, s[1], int_value);
             }
         }
         else if (Stats.WeaponClass.indexOf(s[0]) >= 0) // if first field is a weapon class

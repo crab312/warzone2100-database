@@ -760,68 +760,8 @@ function DrawWeaponStaticData(weapon_id) {
     DrawResearchPath_Tree("research_path_container", res_path_data);
 
     /* Draw damage upgrades table */
-    DrawUpgradeTable("damage_upgrades_container", weapon_id, "damage");
-    DrawUpgradeTable("rof_upgrades_container", weapon_id, "firePause");
-}
-
-function DrawUpgradeTable(container_id, weapon_id, research_hint) {
-    var weapon = Weapons.loaded_data_hash[weapon_id];
-    var weapon_upgraded = GetTurretUpgrade(player_all_researched, weapon_id, false)[weapon.index_of_datarow];
-    var upgrade_log = weapon_upgraded.upgrade_history;
-    var grid_data = [];
-    var summ = 0;
-    for (var i in upgrade_log) {
-        var log_rec = upgrade_log[i];
-        var research = Researches.loaded_data_hash[log_rec.research_id];
-        if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
-            summ = summ + log_rec.value;
-            var shown_val;
-            if (research_hint == "firePause") {
-                shown_val = Math.floor(100 / (100 + summ) * 100 - 100); //assume firePause setter as negative value
-            } else {
-                shown_val = summ;
-            }
-            grid_data.push({
-                name: research.name,
-                time_int: ResearchTime[player_all_researched][log_rec.research_id],
-                value: log_rec.value,
-                summ: shown_val,
-            });
-        }
-    }
-
-    var grid_element_id = ResetGridContainer(container_id);
-    var grid = $(grid_element_id);
-    grid.jqGrid
-    ({
-        datatype: "local",
-        data: grid_data,
-        rowNum: grid_data.length,
-        height: '100%',
-        colModel:
-            [
-                { name: "name", label: "Research", width: '200px', fixed: true },
-                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
-                {
-                    label: "Research Time (min)",
-                    width: 80,
-                    formatter: function (cellvalue, options, rowObject) {
-                        if (rowObject.time_int == undefined) {
-                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
-                        }
-                        if (rowObject.time_int < 3600) {
-                            return rowObject.time_int.toMMSS();
-                        } else {
-                            return rowObject.time_int.toHHMMSS();
-                        }
-                    },
-                },
-                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
-                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
-            ],
-        sortname: "time_int",
-        loadonce: true,
-    });
+    DrawWeaponUpgradeTable("damage_upgrades_container", weapon_id, "damage");
+    DrawWeaponUpgradeTable("rof_upgrades_container", weapon_id, "firePause");
 }
 
     </script>
@@ -903,8 +843,16 @@ function DrawUpgradeTable(container_id, weapon_id, research_hint) {
                         <tr>
                             <td>
                                 <div id="selected_weapon_header">
-                                    <span id="weapon_icon"></span>
-                                    <label id="weapon_name_label" style="font-size:1.2em">[...]</label>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span style="float:left" id="weapon_icon"></span>
+                                            </td>
+                                            <td>
+                                                <span id="weapon_name_label" style="font-size:1.2em">[...]</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </td>
                             <td>

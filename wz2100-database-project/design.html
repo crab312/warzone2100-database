@@ -70,7 +70,142 @@ $(function () {
         saved_designs.push(design);
         localStorage["designer_saved_designs"] = JSON.stringify(saved_designs);
     });
+
+    /* Open details of design components from designer */
+    attachOpenDetailEvents();
+    
 });
+
+function attachOpenDetailEvents() {
+    /* BODY */
+    $("#designer_body").hover(
+      function () {
+          $(this).tooltip({
+              show: true,
+              position: {
+                  my: "center middle",
+                  at: "right bottom"
+              },
+              content: "Click to open Body Details",
+          });
+          var tmp_id = $(this).attr('data-value');
+          if (Bodies.loaded_data_hash[tmp_id] == undefined) {
+              $(this).tooltip("disable");
+          } else {
+              $(this).addClass('design_input_hovered');
+              $(this).tooltip("enable");
+              $(this).tooltip("open");
+          }
+      }, function () {
+          $(this).removeClass('design_input_hovered');
+      }
+    );
+    $("#designer_body").click(
+      function () {
+          var tmp_id = $(this).attr('data-value');
+          if (Bodies.loaded_data_hash[tmp_id] == undefined) {
+              return;
+          }
+          window.open("Body.php?details_id=" + $(this).attr('data-value'));
+      });
+
+    /* PROPULSION */
+    $("#designer_propulsion").hover(
+      function () {
+          $(this).tooltip({
+              show: true,
+              position: {
+                  my: "center middle",
+                  at: "right bottom"
+              },
+              content: "Click to open Propulsion Details",
+          });
+          var tmp_id = $(this).attr('data-value');
+          if (Propulsion.loaded_data_hash[tmp_id] == undefined) {
+              $(this).tooltip("disable");
+          } else {
+              $(this).addClass('design_input_hovered');
+              $(this).tooltip("enable");
+              $(this).tooltip("open");
+          }
+      }, function () {
+          $(this).removeClass('design_input_hovered');
+      }
+    );
+    $("#designer_propulsion").click(
+      function () {
+          var tmp_id = $(this).attr('data-value');
+          if (Propulsion.loaded_data_hash[tmp_id] == undefined) {
+              return;
+          }
+          window.open("propulsion.php?details_id=" + $(this).attr('data-value'));
+      });
+
+    /* WEAPON 1 */
+    $("#designer_weapon").hover(
+      function () {
+          $(this).tooltip({
+              show: true,
+              position: {
+                  my: "center middle",
+                  at: "right bottom"
+              },
+              content: "Click to open Turret Details",
+          });
+          var tmp_id = $(this).attr('data-value');
+          if (Weapons.loaded_data_hash[tmp_id] == undefined) {
+              $(this).tooltip("disable");
+          } else {
+              $(this).addClass('design_input_hovered');
+              $(this).tooltip("enable")
+              $(this).tooltip("open");
+          }
+      }, function () {
+          $(this).removeClass('design_input_hovered');
+      }
+    );
+    $("#designer_weapon").click(
+      function () {
+          var tmp_id = $(this).attr('data-value');
+          if (Weapons.loaded_data_hash[tmp_id] == undefined) {
+              return;
+          }
+          window.open("weapons.php?details_id=" + $(this).attr('data-value'));
+      });
+
+    /* WEAPON 2 */
+    $("#designer_weapon2").hover(
+      function () {
+          $(this).tooltip({
+              show: true,
+              position: {
+                  my: "center middle",
+                  at: "right bottom"
+              },
+              content: "Click to open Turret Details",
+          });
+          var tmp_id = $(this).attr('data-value');
+          if (Weapons.loaded_data_hash[tmp_id] == undefined) {
+              $(this).tooltip("disable");
+          } else {
+              $(this).addClass('design_input_hovered');
+              $(this).tooltip("enable")
+              $(this).tooltip("open");
+          }
+      }, function () {
+          $(this).removeClass('design_input_hovered');
+      }
+    );
+    $("#designer_weapon2").click(
+      function () {
+          var tmp_id = $(this).attr('data-value');
+          if (Weapons.loaded_data_hash[tmp_id] == undefined) {
+              return;
+          }
+          window.open("weapons.php?details_id=" + $(this).attr('data-value'));
+      });
+
+}
 
         function DrawDesignComparison() {
             var grid_element_id = ResetGridContainer('left-tabs-comparison');
@@ -184,7 +319,7 @@ $(function () {
 
                             </td>
                             <td style="padding-top:10px">
-                                <input id="designer_body" placeholder="please select body..." style="width:300px;font-size:1.1em" data-value=""/> 
+                                <input id="designer_body" placeholder="please select body..." style="width:300px;font-size:1.1em" data-value="" readonly="readonly" title="Unit body"/> 
                                 <button type="button" id="designer_select_body_button">Select body</button>
                             </td>
                             <td style="width:30%; vertical-align:bottom">
@@ -201,7 +336,7 @@ $(function () {
 
                             </td>
                             <td>
-                                <input id="designer_propulsion" placeholder="please select propulsion..." style="width:300px;font-size:1.1em" data-value=""/>
+                                <input id="designer_propulsion" placeholder="please select propulsion..." style="width:300px;font-size:1.1em" data-value="" readonly="readonly" title="Unit propulsion"/>
                                 <button type="button" id="designer_select_propulsion_button">Select propulsion</button>
                             </td>
                         </tr>
@@ -211,7 +346,7 @@ $(function () {
 
                             </td>
                             <td>
-                                <input id="designer_weapon" placeholder="please select weapon..." style="width:300px;font-size:1.1em"/>
+                                <input id="designer_weapon" placeholder="please select weapon..." style="width:300px;font-size:1.1em" readonly="readonly" title="Unit turret 1"/>
                                 <button type="button" id="designer_select_weapon_button">Select weapon</button>
                                 <button type="button" id="designer_select_system_turret_button">Select system turret</button>
                             </td>
@@ -222,7 +357,7 @@ $(function () {
 
                             </td>
                             <td>
-                                <input id="designer_weapon2" placeholder="please select weapon 2..." style="width:300px;font-size:1.1em"/>
+                                <input id="designer_weapon2" placeholder="please select weapon 2..." style="width:300px;font-size:1.1em" readonly="readonly" title="Unit turret 2"/>
                                 <button type="button" id="designer_select_weapon2_button">Select weapon 2</button>
                                 <button type="button" id="designer_select_weapon2_button_clear">Remove weapon 2</button>
                             </td>
@@ -242,15 +377,15 @@ $(function () {
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_parameters_container"></div>
                                 <table>
                                     <tr>
-                                        <td>
+                                        <td style="vertical-align:top">
                                             <div class="ui-widget-header ui-corner-top" style="padding:2px">Resistances</div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="resistances_table_container"></div>
                                         </td>
-                                        <td id="damage_modifier_container_weapon1" style="display:none">
+                                        <td id="damage_modifier_container_weapon1" style="display:none;vertical-align:top">
                                             <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 1)</div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_1"></div>
                                         </td>
-                                        <td id="damage_modifier_container_weapon2" style="display:none">
+                                        <td id="damage_modifier_container_weapon2" style="display:none;vertical-align:top">
                                             <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 2)</div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_2"></div>
                                         </td>

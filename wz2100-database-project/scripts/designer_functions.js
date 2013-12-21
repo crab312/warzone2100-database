@@ -1822,6 +1822,20 @@ function DrawWeaponPropulsionModifiers(container_id, weapon_id) {
             modifier: modif[prop_type] == undefined ? ' - ' : modif[prop_type] + '%',
         });
     }
+
+    grid_data_mdf.push({
+        propulsion: 'MEDIUM',
+        modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['MEDIUM'] + '%',
+    });
+    grid_data_mdf.push({
+        propulsion: 'HARD',
+        modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['HARD'] + '%',
+    });
+    grid_data_mdf.push({
+        propulsion: 'BUNKER',
+        modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['BUNKER'] + '%',
+    });
+
     var grid_element_id = ResetGridContainer(container_id);
     $('<div style="padding:5px">Weapon type: <b>' + weapon.weaponEffect + '</b></div>').insertBefore(grid_element_id);
     var grid = $(grid_element_id);
@@ -1833,9 +1847,69 @@ function DrawWeaponPropulsionModifiers(container_id, weapon_id) {
         height: '100%',
         colModel:
             [
-                { name: "propulsion", width: '150px', fixed: true },
+                { name: "propulsion", label:' ', width: '150px', fixed: true },
                 { name: "modifier", width: '50px', fixed: true },
             ],
+        loadonce: true,
+    });
+}
+
+function DrawWeaponUpgradeTable(container_id, weapon_id, research_hint) {
+    var weapon = Weapons.loaded_data_hash[weapon_id];
+    var weapon_upgraded = GetTurretUpgrade(player_all_researched, weapon_id, false)[weapon.index_of_datarow];
+    var upgrade_log = weapon_upgraded.upgrade_history;
+    var grid_data = [];
+    var summ = 0;
+    for (var i in upgrade_log) {
+        var log_rec = upgrade_log[i];
+        var research = Researches.loaded_data_hash[log_rec.research_id];
+        if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
+            summ = summ + log_rec.value;
+            var shown_val;
+            if (research_hint == "firePause") {
+                shown_val = Math.floor(100 / (100 + summ) * 100 - 100); //assume firePause setter as negative value
+            } else {
+                shown_val = summ;
+            }
+            grid_data.push({
+                name: research.name,
+                time_int: ResearchTime[player_all_researched][log_rec.research_id],
+                value: log_rec.value,
+                summ: shown_val,
+            });
+        }
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
+                {
+                    label: "Research Time (min)",
+                    width: 80,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.time_int == undefined) {
+                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                        }
+                        if (rowObject.time_int < 3600) {
+                            return rowObject.time_int.toMMSS();
+                        } else {
+                            return rowObject.time_int.toHHMMSS();
+                        }
+                    },
+                },
+                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+            ],
+        sortname: "time_int",
         loadonce: true,
     });
 }

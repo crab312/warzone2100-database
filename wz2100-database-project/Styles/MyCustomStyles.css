@@ -234,3 +234,9 @@ input:-moz-placeholder, textarea:-moz-placeholder {
     outline: 1px solid #ffcc8e !important;
     outline-offset: -1px !important;
 }
+
+.design_input_hovered {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}

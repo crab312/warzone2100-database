@@ -22,9 +22,10 @@
 
     <title></title>
 
-    <script>
+<script>
 
-        var player = 0;
+var player = 0;
+var page_loaded = false;
 
 $(function () {
 
@@ -33,17 +34,12 @@ $(function () {
     $("#tabs_left").tabs("option", "active", 0);
 
     $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
-
+        url_pushState('');
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
-
+        DrawDetailsTab_Init();
     });
-
-    $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
-
-    });
-
 
     var res_time = 600;
 
@@ -62,9 +58,24 @@ $(function () {
                 DrawStructuresLists();
             }, false);
             HideLoading('tabs_left');
+            page_loaded = true;
+            if (getUrlVars()["details_id"] == undefined) {
+            } else {
+                DrawDetailsTab_Init(getUrlVars()["details_id"]);
+            }
         });
     });
 
+});
+
+$(window).on("popstate", function () {
+    if (page_loaded) {  //this called also on PAGE FIRST LOAD
+        if (getUrlVars()["details_id"] == undefined) {
+            $("#tabs_left").tabs("option", "active", 0);
+        } else {
+            DrawDetailsTab_Init(getUrlVars()["details_id"]);
+        }
+    }
 });
 
 function DrawStructuresLists() {
@@ -544,9 +555,266 @@ function DrawStructures(container_id, struc_id_list, structure_filter_function, 
     });
 }
 
+function openStructureDetails(structure_id) {
+    DrawDetailsTab_Init(structure_id);
+    url_pushState('?details_id=' + structure_id);
+}
 
-function openStructureDetails(body_id) {
-    alert(body_id);
+function DrawDetailsTab_Init(structure_id) {
+
+    $("#tabs_left").tabs("option", "active", 1);
+    var res_time = 600;
+
+    DrawResearchSlider("research_slider_details",
+        res_time,
+        function (value) {
+
+            DoResearch(value, player, function () {
+                if (structure_id == undefined) {
+                    structure_id = getUrlVars()["details_id"]; //in case when tab was opened without selected structure
+                }
+                DrawStructureDetailsParameters(structure_id);
+            });
+        });
+
+    if (structure_id != undefined) {
+        DoResearch(res_time, player, function () {
+            DrawStructureDetailsParameters(structure_id);
+            DrawStructureStaticData(structure_id);
+        });
+    }
+
+    $("#select_structure_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Structures, null, function (structure_id_new) {
+            DrawStructureDetailsParameters(structure_id_new);
+            DrawStructureStaticData(structure_id_new);
+            url_pushState('?details_id=' + structure_id_new);
+        });
+    });
+}
+
+function DrawStructureDetailsParameters(structure_id) {
+    var structure = Structures.loaded_data_hash[structure_id];
+
+    if (structure != undefined) {
+        $("#structure_detail_data_container").show();
+        scrollToId('body');
+    }
+
+    var structure_upgraded = GetTurretUpgrade(player, structure_id, false)[structure.index_of_datarow];
+
+    $("#select_structure_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Structures, structure_id, function (structure_id_new) {
+            DrawStructureDetailsParameters(structure_id_new);
+            DrawStructureStaticData(structure_id_new);
+            url_pushState('?details_id=' + structure_id_new);
+        });
+    });
+
+    $("#structure_icon").html(Structures.GetIconHtml_Function(structure));
+    $("#structure_name_label").text(structure.name);
+    //$("#abilities_container").html(Form_Weapon_Abilities_html(structure));
+
+    /* Draw parameters of structure */
+    $('#structure_details_details').html('<div id="structure_details_details_container"></div>');
+    grid_data = [];
+    {
+        var row = new Object;
+        row.name = 'Price';
+        row.base = structure.buildPower;
+        row.upgraded = structure_upgraded.buildPower;
+        row.group = '';
+        row.descr = 'Price added to total price of tank design.';
+        grid_data.push(row);
+    }
+    //{
+
+    //    var row = new Object;
+    //    row.name = 'Build Time (factory with 1 module)';
+    //    row.base = (structure.buildPower / fact_build_points).toMMSS();
+    //    row.upgraded = (structure_upgraded.buildPower / fact_build_points_upgraded).toMMSS();
+    //    row.group = '';
+    //    row.descr = 'This time adds to total build time of tank design.';
+    //    grid_data.push(row);
+    //}
+    {
+        var row = new Object;
+        row.name = 'Hit Points';
+        row.base = structure.hitpoints;
+        row.upgraded = structure_upgraded.hitpoints;
+        row.group = '';
+        row.descr = 'Hit points are added to total hitpoint of tank design. Note: structure hitpoints become increased with each composite alloys upgrade.';
+        grid_data.push(row);
+    }
+    //grid_data = grid_data.concat(CalcWeaponRelatedParameters(structure, structure_upgraded));
+
+    DrawComponentDetailsGrid(grid_data, "structure_details_details_container");
+
+    //Designer_Draw_DPSTable("dps_table_container", [structure_upgraded], player);
+}
+
+function DrawStructureStaticData(structure_id) {
+
+    var structure = Structures.loaded_data_hash[structure_id];
+    $('#details_description').html('');
+
+
+    /* Draw Damage modifiers table */
+    //DrawStructurePropulsionModifiers("structure_details_damage_modifiers", structure_id);
+
+    /* Draw Research Path */
+    var res_path_data = GetResearchPath_SubTree(structure_id, player_all_researched, 5);
+    DrawResearchPath_Tree("research_path_container", res_path_data);
+
+    
+    /* UPGRADES */
+    $('#upgrades_container').html('');
+    if(structure.weapons != undefined)
+    {
+        var weapon = Weapons.loaded_data_hash[structure.weapons.split(',')[0]];
+
+        /* Show link to armed weapon */
+        $('#details_description').html('Weapon armed on this structure: <a href="weapons.php?details_id=' + weapon.grid_id + '">' + weapon.name + '</a>');
+
+        $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>');
+        $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>');
+        DrawWeaponUpgradeTable("damage_upgrades_container", weapon.grid_id, "damage");
+
+        $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Rate-Of-Fire Upgrades</div>');
+        $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="rof_upgrades_container"></div>');
+        DrawWeaponUpgradeTable("rof_upgrades_container", weapon.grid_id, "firePause");
+    }
+
+    /* Draw Structure Armor/HP upgrades */
+    $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Kinectic/Thermal Armor and Hit Points Upgrades</div>');
+    $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="armor_upgrades_container"></div>');
+    DrawStructureUpgradesTable("armor_upgrades_container", structure_id, "armour");
+
+    /* Draw Construction Time upgrades */
+    $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Construction Time Upgrades</div>');
+    $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="construction_upgrades_container"></div>');
+    DrawConstructionTimeUpgradesTable("construction_upgrades_container");
+}
+
+function DrawStructureUpgradesTable(container_id, structure_id, research_hint) {
+    var structure = Structures.loaded_data_hash[structure_id];
+    var structure_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player_all_researched].Building[structure.index_of_datarow])); //deep copy
+    var upgrade_log = structure_upgraded.upgrade_history;
+    var grid_data = [];
+    var summ = 0;
+    for (var i in upgrade_log) {
+        var log_rec = upgrade_log[i];
+        var research = Researches.loaded_data_hash[log_rec.research_id];
+        if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
+            summ = summ + log_rec.value;
+            grid_data.push({
+                name: research.name,
+                time_int: ResearchTime[player_all_researched][log_rec.research_id],
+                value: log_rec.value,
+                summ: summ,
+            });
+        }
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
+                {
+                    label: "Research Time (min)",
+                    width: 80,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.time_int == undefined) {
+                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                        }
+                        if (rowObject.time_int < 3600) {
+                            return rowObject.time_int.toMMSS();
+                        } else {
+                            return rowObject.time_int.toHHMMSS();
+                        }
+                    },
+                },
+                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+            ],
+        sortname: "time_int",
+        loadonce: true,
+    });
+}
+
+function DrawConstructionTimeUpgradesTable(container_id) {
+    //Construct
+    //Construct:ConstructorPoints:20
+    var truck_id = "Spade1Mk1";
+    var truck_index = Construction.loaded_data_hash[truck_id].index_of_datarow;
+    var truck_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player_all_researched].Construct[truck_index])); //deep copy
+    var upgrade_log = truck_upgraded.upgrade_history;
+    var grid_data = [];
+    var summ = 0;
+    for (var i in upgrade_log) {
+        var log_rec = upgrade_log[i];
+        var research = Researches.loaded_data_hash[log_rec.research_id];
+
+        summ = summ + log_rec.value;
+        grid_data.push({
+            name: research.name,
+            time_int: ResearchTime[player_all_researched][log_rec.research_id],
+            value: log_rec.value,
+            summ: summ,
+        });
+
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
+                {
+                    label: "Research Time (min)",
+                    width: 80,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.time_int == undefined) {
+                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                        }
+                        if (rowObject.time_int < 3600) {
+                            return rowObject.time_int.toMMSS();
+                        } else {
+                            return rowObject.time_int.toHHMMSS();
+                        }
+                    },
+                },
+                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+            ],
+        sortname: "time_int",
+        loadonce: true,
+    });
 }
 
 </script>
@@ -568,7 +836,7 @@ function openStructureDetails(body_id) {
             <div id="tabs_left" >
                 <ul>
                     <li><a href="#left-tabs-1">Buildings Guide</a></li>
-                    <li><a href="#left-tabs-1">Building detail</a></li>
+                    <li><a href="#left-tabs-detail">Building detail</a></li>
                 </ul>
 
                 <div id="left-tabs-1">
@@ -631,6 +899,79 @@ function openStructureDetails(body_id) {
                     </span>
 
                 </div>
+                <div id="left-tabs-detail">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                <div id="selected_structure_header">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span style="float:left" id="structure_icon"></span>
+                                            </td>
+                                            <td>
+                                                <span id="structure_name_label" style="font-size:1.2em">[...]</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td>
+                                You can see details for any structure, just select another structure. <br />
+                                <div style="width:100%;text-align:center">
+                                    <button id="select_structure_button" type="button" style="display:inline-block">Select structure...</button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="width:65%">
+                                            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                                            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                                                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                                                    Description
+	                                            </h3>
+                                                <div id="details_description" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width:35%">
+                                            <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block;">
+                                            <div id="research_slider_details">
+
+                                            </div>
+                                            <label style="font-size:0.9em; color:gray;">Use slider to see numeric values for different states of research.</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr id="structure_detail_data_container" style="display:none">
+                            <td style="vertical-align:top; width:50%">
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_details"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_damage_modifiers"></div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="dps_table_container"></div>
+                            </td>
+                            <td style="vertical-align:top; width:50%">
+                                <div id="upgrades_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
             </div>
         </td>
     </tr>
