@@ -64,7 +64,8 @@ $(function () {
             saved_designs = JSON.parse(localStorage["designer_saved_designs"]);
         }
         var design = {};
-        design.weapon_id = $("#designer_weapon").attr('data-value');
+        design.turret1_id = $("#designer_weapon").attr('data-value');
+        design.turret2_id = $("#designer_weapon2").attr('data-value');
         design.body_id = $("#designer_body").attr('data-value');
         design.propulsion_id = $("#designer_propulsion").attr('data-value');
         saved_designs.push(design);
@@ -217,11 +218,16 @@ function attachOpenDetailEvents() {
             }
             var grid_data = [];
             for (var i = 0; i < saved_designs.length; i++) {
-                var weapon = Weapons.loaded_data_hash[saved_designs[i].weapon_id];
-                var body = Bodies.loaded_data_hash[saved_designs[i].body_id];
-                var propulsion = Propulsion.loaded_data_hash[saved_designs[i].propulsion_id];
-                var TankDesign = CalculateTankDesign(designer_player, weapon, body, propulsion);
-                grid_data.push(TankDesign);
+                var turret1_id = saved_designs[i].turret1_id;//Weapons.loaded_data_hash[
+                var turret2_id = saved_designs[i].turret2_id
+                var weapon = Weapons.loaded_data_hash[turret1_id];
+                if(weapon != undefined)
+                {
+                    var body = Bodies.loaded_data_hash[saved_designs[i].body_id];
+                    var propulsion = Propulsion.loaded_data_hash[saved_designs[i].propulsion_id];
+                    var TankDesign = CalculateTankDesign(designer_player, weapon, body, propulsion);
+                    grid_data.push(TankDesign);
+                }
             }
 
             var cols_fixed = [
@@ -326,6 +332,7 @@ function attachOpenDetailEvents() {
                                 <div style="width:100%">
                                     <div style="float:right">
                                         <button type="button" id="designer_save_button">Save design</button>
+
                                     </div>
                                 </div>
                             </td>
