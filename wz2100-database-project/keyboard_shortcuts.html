@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+            DrawSection_type1_html("left-tabs-1", "").append('These are the default keyboard shortcuts. If you have customized your key mapping, your shortcuts may be different');
+            DrawSection_type1_html("left-tabs-1", "Game").append($('#game'));
+            DrawSection_type1_html("left-tabs-1", "Multiplayer communication").append($('#multiplayer'));
+            DrawSection_type1_html("left-tabs-1", "Groups").append($('#groups'));
+            DrawSection_type1_html("left-tabs-1", "Unit selection").append($('#by_type'));
+            DrawSection_type1_html("left-tabs-1", "Unit orders").append($('#unit_orders'));
+            DrawSection_type1_html("left-tabs-1", "Game control").append($('#game_control'));
+            DrawSection_type1_html("left-tabs-1", "View").append($('#view'));
+            DrawSection_type1_html("left-tabs-1", "Interface").append($('#interface'));
+            
+        });
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Keyboard shortcuts</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                               
+                    <div id="game">
+                        <table class="list">
+                            <tbody><tr><th><kbd>Esc</kbd></th><td>Pause/Menu</td></tr>
+                                <tr><th><kbd>F1</kbd></th><td>Factory Menu</td></tr>
+                                <tr><th><kbd>F2</kbd></th><td>Research menu</td></tr>
+                                <tr><th><kbd>F3</kbd></th><td>Build Menu</td></tr>
+                                <tr><th><kbd>F4</kbd></th><td>Unit Design</td></tr>
+                                <tr><th><kbd>F5</kbd></th><td>Intelligence</td></tr>
+                                <tr><th><kbd>F6</kbd></th><td>Commanders</td></tr>
+                                <tr><th><kbd>`</kbd></th><td>Open/close messages at top</td></tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                    <div id="multiplayer">
+                        <table class="list">
+                            <tbody><tr><th><kbd>Enter</kbd></th><td>Send message to other players</td></tr>
+                                <tr><th><kbd>F1</kbd>+<kbd>H</kbd></th><td>Drop beacon</td></tr>
+                            </tbody>
+                        </table>
+                        Note: Messages starting with <kbd>.</kbd> will be sent to allies only.
+                    </div>    
+                    <div id="groups">
+                        <table class="list">
+                            <tbody>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd><em>[number]</em></kbd></th><td>Assign group <em>[number]</em></td></tr>
+                                <tr><th><kbd><em>[number]</em></kbd></th><td>Select group <em>[number]</em></td></tr>
+                                <tr><th><kbd class="lkey">Alt</kbd>+<kbd><em>[number]</em></kbd></th><td>Select commander <em>[number]</em></td></tr>
+                            </tbody>
+                        </table>
+                    </div>    
+                    <div id="by_type">
+                        <table class="list">
+                            <tbody>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>U</kbd></th><td>Select all <u>u</u>nits</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Z</kbd></th><td>Select all similar units</td></tr>
+                                <tr><th><span class="dblclick"><span class="click">double-click</span></span></th><td>Select all similar units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>S</kbd></th><td>Select all units on <u>s</u>creen</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>D</kbd></th><td>Select all heavily <u>d</u>amaged units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>A</kbd></th><td>Select all <u>a</u>ttack units (units with weapons)</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>V</kbd></th><td>Select all <u>V</u>TOLs</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>H</kbd></th><td>Select all <u>h</u>over units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>W</kbd></th><td>Select all <u>w</u>heeled units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>F</kbd></th><td>Select all hal<u>f</u>-tracked units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>T</kbd></th><td>Select all <u>t</u>racked units</td></tr>
+                            </tbody>
+                        </table>
+                    </div>  
+                    <div id="unit_orders">
+                        <table class="list">
+                            <tbody>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<span class="click">click</span></th><td>Queue order *</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>0</kbd></th><td>Open orders menu</td></tr>
+                                <tr><th><span class="click">right-click</span></th><td>Open orders menu</td></tr>
+                                <tr><th><kbd>/</kbd></th><td>Do or Die! (Do not retreat automatically)</td></tr>
+                                <tr><th><kbd>.</kbd></th><td>Retreat at Heavy Damage</td></tr>
+                                <tr><th><kbd>,</kbd></th><td>Retreat at Medium Damage</td></tr>
+                                <tr><th><kbd>F</kbd></th><td>Fire at Will</td></tr>
+                                <tr><th><kbd>E</kbd></th><td>Return Fire</td></tr>
+                                <tr><th><kbd>C</kbd></th><td>Hold Fire</td></tr>
+                                <tr><th><kbd>S</kbd></th><td>Hold Position</td></tr>
+                                <tr><th><kbd>P</kbd></th><td>Pursue</td></tr>
+                                <tr><th><kbd>Q</kbd></th><td>Patrol</td></tr>
+                                <tr><th><kbd>I</kbd></th><td>Optimum Range</td></tr>
+                                <tr><th><kbd>U</kbd></th><td>Long Range</td></tr>
+                                <tr><th><kbd>R</kbd></th><td>Return for Repair</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>R</kbd></th><td>Return for Recycling</td></tr>
+                            </tbody>
+                        </table>
+<p>
+* "Queue order" means that when you <kbd class="lkey">Ctrl</kbd>+<span class="click">click</span>, the unit will do what it would do if you had clicked, but it will do it <em>after</em> it's finished what it's currently doing. You can hold down <kbd class="lkey">Ctrl</kbd> and tell the unit to do a whole bunch of things, and it will do them in order.
+</p>
+                    </div> 
+                    <div id="game_control">
+                        <table class="list">
+                        <tbody>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>=</kbd></th><td>Increase game speed</td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>−</kbd></th><td>Decrease game speed</td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll up</span></th><td>Increase game speed</td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll down</span></th><td>Decrease game speed</td></tr>
+                            <tr><th><span class="click">NUM</span><kbd>.</kbd></th><td>Toggle sound</td></tr>
+                        </tbody>
+                        </table>
+                    </div>         
+                    <div id="view">
+                        <table class="list">
+                            <tbody>
+                                <tr><th><kbd>B</kbd></th><td>Center view on Command Center</td></tr>
+                                <tr><th><kbd>F12</kbd></th><td>View location of previous message</td></tr>
+                            </tbody>
+                        </table>
+
+                        <table class="list">
+                            <tbody>
+                                <tr><th><span class="click">scroll up</span></th><td>Zoom in</td></tr>
+                                <tr><th><span class="click">scroll down</span></th><td>Zoom out</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>+</kbd></th><td>Zoom in</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>-</kbd></th><td>Zoom out</td></tr>
+                                <tr><th><kbd>Backspace</kbd></th><td>Snap (rotate) view to North</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>8</kbd></th><td>Pitch back (rotate up)</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>2</kbd></th><td>Pitch forward (rotate down)</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>5</kbd></th><td>Reset pitch (reset vertical rotation)</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>4</kbd></th><td>Rotate left</td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>6</kbd></th><td>Rotate right</td></tr>
+                                <tr><th><kbd><em>space</em></kbd></th><td>Tracking camera (follow selected unit)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>    
+                    <div id="interface">
+                        <table class="list">
+                            <tbody>
+                                <tr><th><kbd>Z</kbd></th><td>Toggle sensor display</td></tr>
+                                <tr><th><kbd>F10</kbd></th><td>Take screenshot</td></tr>
+                                <tr><th><kbd class="lkey">Shift</kbd>+<kbd>Tab</kbd></th><td>Toggle radar colors</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Tab</kbd></th><td>Toggle radar terrain</td></tr>
+                                <tr><th><kbd>Tab</kbd></th><td>Hide/show interface</td></tr>
+                                <tr><th>Hold down <kbd>Ctrl</kbd></th><td>See Nexus resistance</td></tr>
+                            </tbody>
+                        </table>
+                    </div>                 
+                </div>
+
+            </div>
+        </td>
+    </tr>
+    </table>
+</body>
+</html>

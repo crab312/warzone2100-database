@@ -44,7 +44,8 @@ $(function () {
     var res_time = 600;
 
     ShowLoading('tabs_left');
-    DrawSection_type1_html("intro_content", "Intoduction");
+    DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
+    //DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched,true, function () {
             DrawResearchSlider("research_slider",
@@ -79,7 +80,7 @@ $(window).on("popstate", function () {
 });
 
 function DrawStructuresLists() {
-
+    listed_buildings = {};
     var collected_strucs = {};
     $('#base_struc_header').html('');
     $('#walls_header').html('');
@@ -507,7 +508,7 @@ function DrawStructures(container_id, struc_id_list, structure_filter_function, 
             {
                 label: "HP", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return rowObject.hitpoints;
+                    return rowObject.design_data.hitpoints;
                 },
                 width: 70,
             },
@@ -606,8 +607,6 @@ function DrawStructureDetailsParameters(structure_id) {
         scrollToId('body');
     }
 
-    var structure_upgraded = GetTurretUpgrade(player, structure_id, false)[structure.index_of_datarow];
-
     $("#select_structure_button").button({
         icons: {
             primary: "ui-icon-triangle-1-s",
@@ -626,41 +625,112 @@ function DrawStructureDetailsParameters(structure_id) {
     //$("#abilities_container").html(Form_Weapon_Abilities_html(structure));
 
     /* Draw parameters of structure */
+    var design_data = CalculateBuilding(player, structure);
     $('#structure_details_details').html('<div id="structure_details_details_container"></div>');
     grid_data = [];
     {
         var row = new Object;
         row.name = 'Price';
-        row.base = structure.buildPower;
-        row.upgraded = structure_upgraded.buildPower;
-        row.group = '';
+        row.base = design_data.baseStats.price;
+        row.upgraded = design_data.price;
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
+        row.group = '1 Price';
         row.descr = 'Price added to total price of tank design.';
         grid_data.push(row);
     }
-    //{
-
-    //    var row = new Object;
-    //    row.name = 'Build Time (factory with 1 module)';
-    //    row.base = (structure.buildPower / fact_build_points).toMMSS();
-    //    row.upgraded = (structure_upgraded.buildPower / fact_build_points_upgraded).toMMSS();
-    //    row.group = '';
-    //    row.descr = 'This time adds to total build time of tank design.';
-    //    grid_data.push(row);
-    //}
+    {
+        var row = new Object;
+        row.name = 'Build Time by 2 trucks (sec)';
+        var bt_base = design_data.baseStats.buildTimeSeconds_2_trucks;
+        var bt_upg = design_data.buildTimeSeconds_2_trucks;
+        row.base = bt_base.toMMSS();
+        row.upgraded = bt_upg.toMMSS();
+        row.upgrade_change = ((bt_upg - bt_base) / bt_base);
+        row.group = '1 Price';
+        row.descr = '';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Build Time by 4 trucks (sec)';
+        var bt_base = design_data.baseStats.buildTimeSeconds_4_trucks;
+        var bt_upg = design_data.buildTimeSeconds_4_trucks;
+        row.base = bt_base.toMMSS();
+        row.upgraded = bt_upg.toMMSS();
+        row.upgrade_change = ((bt_upg - bt_base) / bt_base);
+        row.group = '1 Price';
+        row.descr = '';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Sensor range (tiles)';
+        row.base = (design_data.baseStats.sensorRange / 128).toInt();
+        row.upgraded = (design_data.sensorRange / 128).toInt();
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
+        row.group = 'Range';
+        row.descr = '';
+        grid_data.push(row);
+    }
     {
         var row = new Object;
         row.name = 'Hit Points';
-        row.base = structure.hitpoints;
-        row.upgraded = structure_upgraded.hitpoints;
-        row.group = '';
+        row.base = design_data.baseStats.hitpoints;
+        row.upgraded = design_data.hitpoints;
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
+        row.group = '2 Armour';
         row.descr = 'Hit points are added to total hitpoint of tank design. Note: structure hitpoints become increased with each composite alloys upgrade.';
         grid_data.push(row);
     }
-    //grid_data = grid_data.concat(CalcWeaponRelatedParameters(structure, structure_upgraded));
+
+    {
+        var row = new Object;
+        row.name = 'Kinetic armor';
+        row.base = design_data.baseStats.armourKinetic;
+        row.upgraded = design_data.armourKinetic.toInt();
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
+        row.group = '2 Armour';
+        row.descr = 'Armor reduces damage to minimum level 33% of damage. Kinetic armor affects damage with type KINETIC.';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Thermal armor';
+        row.base = design_data.baseStats.armourHeat;
+        row.upgraded = design_data.armourHeat.toInt();
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
+        row.group = '2 Armour';
+        row.descr = 'Armor reduces damage to minimum level 33% of damage. Thermal armor affects damage with type HEAT.';
+        grid_data.push(row);
+    }
+
+    if (structure.weapons == undefined) {
+        $('#structure_details_damage_modifier_container_weapon1').hide();
+        $('#structure_details_amage_modifier_container_weapon2').hide();
+        $('#structure_details_dps_table_container').hide();
+        $('#abilities_container').hide();
+    }else
+    {
+        var weapon = Weapons.loaded_data_hash[structure.weapons.split(',')[0]];
+        var weapon_upgraded = GetTurretUpgrade(player, weapon.grid_id, false)[weapon.index_of_datarow];
+        grid_data = grid_data.concat(CalcWeaponRelatedParameters(weapon, weapon_upgraded));
+        $('#structure_details_damage_modifier_container_weapon1').show();
+        DrawWeaponPropulsionModifiers('structure_details_weapon_damage_modifiers_1', weapon.grid_id);
+
+        $('#structure_details_dps_table_container').show();
+        Designer_Draw_DPSTable("structure_details_dps_table", [weapon_upgraded], player);
+
+        $('#abilities_container').show();
+        $("#structure_details_weapon_abilities_container").html(Form_Weapon_Abilities_html(weapon, true));
+    }
+    DrawStructureResistance('structure_details_resistances_table_container', structure_id);
+    //structure_details_resistances_table_container
+
+    //
 
     DrawComponentDetailsGrid(grid_data, "structure_details_details_container");
 
-    //Designer_Draw_DPSTable("dps_table_container", [structure_upgraded], player);
+    
 }
 
 function DrawStructureStaticData(structure_id) {
@@ -698,7 +768,7 @@ function DrawStructureStaticData(structure_id) {
     /* Draw Structure Armor/HP upgrades */
     $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Kinectic/Thermal Armor and Hit Points Upgrades</div>');
     $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="armor_upgrades_container"></div>');
-    DrawStructureUpgradesTable("armor_upgrades_container", structure_id, "armour");
+    DrawStructureUpgradesTable("armor_upgrades_container", structure_id);
 
     /* Draw Construction Time upgrades */
     $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Construction Time Upgrades</div>');
@@ -706,24 +776,38 @@ function DrawStructureStaticData(structure_id) {
     DrawConstructionTimeUpgradesTable("construction_upgrades_container");
 }
 
-function DrawStructureUpgradesTable(container_id, structure_id, research_hint) {
+function DrawStructureUpgradesTable(container_id, structure_id) {
     var structure = Structures.loaded_data_hash[structure_id];
     var structure_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player_all_researched].Building[structure.index_of_datarow])); //deep copy
     var upgrade_log = structure_upgraded.upgrade_history;
     var grid_data = [];
-    var summ = 0;
+    var research_hash_list = {};
+    var summ = {};
+    summ["armour"] = 0;
+    summ["hitpoints"] = 0;
     for (var i in upgrade_log) {
         var log_rec = upgrade_log[i];
+        if (summ[log_rec.hint] == undefined) {
+            //unsupported type of research
+            continue;
+        }
         var research = Researches.loaded_data_hash[log_rec.research_id];
-        if (log_rec.hint.toLowerCase() == research_hint.toLowerCase()) {
-            summ = summ + log_rec.value;
-            grid_data.push({
+        var row;
+        if (research_hash_list[log_rec.research_id] == undefined) {
+            row = {
                 name: research.name,
                 time_int: ResearchTime[player_all_researched][log_rec.research_id],
                 value: log_rec.value,
                 summ: summ,
-            });
+            };
+            research_hash_list[log_rec.research_id] = row;
+            grid_data.push(row);
+        }else
+        {
+            row = research_hash_list[log_rec.research_id];
         }
+        summ[log_rec.hint] = summ[log_rec.hint] + log_rec.value;
+        row[log_rec.hint] = summ[log_rec.hint];
     }
 
     var grid_element_id = ResetGridContainer(container_id);
@@ -753,7 +837,8 @@ function DrawStructureUpgradesTable(container_id, structure_id, research_hint) {
                     },
                 },
                 //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
-                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "armour", label: "Armour Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "hitpoints", label: "HP Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
             ],
         sortname: "time_int",
         loadonce: true,
@@ -761,8 +846,6 @@ function DrawStructureUpgradesTable(container_id, structure_id, research_hint) {
 }
 
 function DrawConstructionTimeUpgradesTable(container_id) {
-    //Construct
-    //Construct:ConstructorPoints:20
     var truck_id = "Spade1Mk1";
     var truck_index = Construction.loaded_data_hash[truck_id].index_of_datarow;
     var truck_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player_all_researched].Construct[truck_index])); //deep copy
@@ -843,9 +926,8 @@ function DrawConstructionTimeUpgradesTable(container_id) {
 
                     <div id="intro"></div>
                     <div id="intro_content">
-                        in Warzone2100 two groups of structures are present: defensive structures and base structures.
-                        <br />Base structures used to extract oil, produce units and research technologies. Defensive structures used to defense your base structures.
-                        <br />
+In Warzone2100 two groups of structures exist: defensive structures and base structures. 
+<br />Base structures are used to extract oil, produce units and research technologies while defensive structures are used to defend your base structures.
                         <table style="width:100%; margin-top:10px">
                             <tr>
                                 <td style="width:30%; vertical-align:top">
@@ -956,12 +1038,33 @@ function DrawConstructionTimeUpgradesTable(container_id) {
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_details"></div>
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_damage_modifiers"></div>
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="dps_table_container"></div>
+
+                                <table>
+                                    <tr>
+                                        <td style="vertical-align:top">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Resistances</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_resistances_table_container"></div>
+                                        </td>
+                                        <td id="structure_details_damage_modifier_container_weapon1" style="display:none;vertical-align:top">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 1)</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_weapon_damage_modifiers_1"></div>
+                                        </td>
+                                        <td id="structure_details_damage_modifier_container_weapon2" style="display:none;vertical-align:top">
+                                            <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers (Weapon 2)</div>
+                                            <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_weapon_damage_modifiers_2"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div id="structure_details_dps_table_container">
+                                    <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
+                                    <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_dps_table"></div>
+                                </div>
                             </td>
                             <td style="vertical-align:top; width:50%">
+                                <div id="abilities_container">
+                                    <div class="ui-widget-header ui-corner-top" style="padding:2px">Weapon abilities</div>
+                                    <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="structure_details_weapon_abilities_container"></div>
+                                </div>
                                 <div id="upgrades_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>

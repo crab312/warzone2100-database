@@ -92,7 +92,7 @@ function eventResearched(research, player) {
             var int_value = parseFloat(s[2]);
             for (var i in Upgrades[player].Building) {
                 var hardcoded_type = "";
-                if (Stats.Building[i].type == "DEFENSE") {
+                if (Stats.Building[i].type == "DEFENSE" || Stats.Building[i].type == "GENERIC") {
                     hardcoded_type = "Wall";
                 } else {
                     hardcoded_type = "Structure";

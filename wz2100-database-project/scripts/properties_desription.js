@@ -14,7 +14,7 @@ function num_format(value, precision) {
             value = parseInt(value);
         }
         var pw = Math.pow(10, precision);
-        return Math.round(value * pw) / pw;
+        return Math.floor(value * pw) / pw;
     }
 }
 
@@ -30,7 +30,8 @@ function str_format(value, precision) {
             if (isNaN(value)) {
                 return ' - ';
             }
-            return value.toFixed(precision);
+            var pw = Math.pow(10, precision);
+            return Math.floor(value * pw) / pw;
         } else {
             return value;
         }

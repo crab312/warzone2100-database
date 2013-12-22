@@ -72,3 +72,5 @@ function scrollToId(elem_id) {
         scrollTop: $(elem_id).offset().top
     }, 1000);
 }
+
+

@@ -26,6 +26,7 @@
 
 var player = 0;
 var page_loaded = false;
+var res_time = 600;
 
 var res_time;
 $(function () {
@@ -45,7 +46,6 @@ $(function () {
 
 
     $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
-        url_pushState('');
         OpenDamageModifiers();
     });
 
@@ -57,7 +57,6 @@ $(function () {
     //if (res_time == undefined) {
     //    return;
     //}
-    res_time = 600;
 
     ShowLoading('tabs_left');
     LoadAllObjects(function () {
@@ -67,6 +66,8 @@ $(function () {
                 res_time,
                 function (value) {
                     DoResearch(value, player, function () {
+                        res_time = value;
+                        $('#loadable_weapon_lists').html('');
                         DrawWeaponList();
                     });
                 });
@@ -74,6 +75,9 @@ $(function () {
                 DrawWeaponList();
 
                 if (getUrlVars()["details_id"] == undefined) {
+                    if (getUrlVars()["damageModifiers"] != undefined) {
+                        OpenDamageModifiers();
+                    }
                 } else {
                     DrawDetailsTab_Init(getUrlVars()["details_id"]);
                 }
@@ -87,11 +91,16 @@ $(function () {
 
 });
 
-
 $(window).on("popstate", function () {
     if (page_loaded) {  //this called also on PAGE FIRST LOAD
         if (getUrlVars()["details_id"] == undefined) {
-            $("#tabs_left").tabs("option", "active", 0);
+            if (getUrlVars()["damageModifiers"] == undefined)
+            {
+                $("#tabs_left").tabs("option", "active", 0);
+            }else
+            {
+                $("#tabs_left").tabs("option", "active", 2);
+            }
         } else {
             DrawDetailsTab_Init(getUrlVars()["details_id"]);
         }
@@ -100,6 +109,10 @@ $(window).on("popstate", function () {
 
 
 function OpenDamageModifiers() {
+
+    if (getUrlVars()["damageModifiers"] == undefined) {
+        url_pushState('?damageModifiers=1');
+    }
     $("#tabs_left").tabs("option", "active", 2);
     var html = "";
     html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;">Propulsion Damage Modifiers</div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
@@ -154,9 +167,7 @@ function DrawWeaponList() {
                 return true;
             };
             var elem = DrawSection_type1_html(tank_weapons.attr('id'), "");
-            elem.append("<label>Tank weapons splitted into sections by 'research line'. Each section contains list of weapons which use same upgrades, \
-                e.g. when you research machinegun damage you have increased damage of all weapons in MACHINE GUN section.\
-                <br/>Click on weapon to see detailed view.</label>");
+            elem.append('<span>Tank weapons are split into sections by the chosen "research line". Each section contains a list of weapons which use the same upgrades, e.g. when you research machinegun damage you increase the damage of all weapons in the MACHINE GUN section.<br/>Click on a weapon to see it\'s detailed view.</span>');
             DrawWeaponLines(tank_weapons.attr('id'), func_tank_weapons);
         }
 
@@ -485,7 +496,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
 function show_nonres() {
     if ($('#nonres_weaps').length == 0) {
         sect = $('<div id="nonres_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var weap_sect = DrawSection_type2_html(sect.attr('id'), "Unavailable weapons");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
@@ -503,7 +514,7 @@ function show_nonres() {
 function showAA() {
     if ($('#aa_weaps').length == 0) {
         sect = $('<div id="aa_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var aa_weap = DrawSection_type2_html(sect.attr('id'), "Anti-Air Weapons");
         var sect2 = DrawSection_type1_html(aa_weap.attr('id'), "");
         sect2.append("<label>Weapons which can attack only flying <i>VTOL units</i>. This weapons cannot hit ground objects.</label>");
@@ -527,7 +538,7 @@ function showAA() {
 function showArty() {
     if ($('#arty_weaps').length == 0) {
         sect = $('<div id="arty_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var weap_sect = DrawSection_type2_html(sect.attr('id'), "Artillery");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
@@ -550,7 +561,7 @@ function showArty() {
 function showAPWeaps() {
     if ($('#AP_weaps').length == 0) {
         sect = $('<div id="AP_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-cyborg Weapons");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
@@ -573,7 +584,7 @@ function showAPWeaps() {
 function showAntiDef() {
     if ($('#AntiDef_weaps').length == 0) {
         sect = $('<div id="AntiDef_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-defense weapons");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
@@ -596,7 +607,7 @@ function showAntiDef() {
 function showOverpowred() {
     if ($('#OP_weaps').length == 0) {
         sect = $('<div id="OP_weaps"></div>');
-        sect.insertAfter("#other_weapons");
+        $('#loadable_weapon_lists').append(sect);
         var weap_sect = DrawSection_type2_html(sect.attr('id'), "Weapons which are overpowered in Multiplayer");
         DoResearch(res_time, player, function () {
             {
@@ -792,10 +803,10 @@ function DrawWeaponStaticData(weapon_id) {
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
                            Introduction
 	                    </h3>
-                        <div id="Div2" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
-                            Weapon is most important part of Tank Design. Strong Weapon can be useful even on weak body and slow propulsion.<br />
-                            <b>First of all:</b> Weapon damage is greatly dependent on enemy propulsion type. See <a href="javascript:OpenDamageModifiers()">Weapon damage modifiers</a> for exact values.<br />
-                            Each weapon have one of two kinds of damage type: <label style="color:blue">kinetic</label> and <label style="color:red">thermal</label>.
+                        <div id="Div2" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">  
+Weapons are a very important part of tank design. Weapon types are grouped into Artillery, Anti-Tank and All-rounder with weapon damage being greatly dependent on enemy propulsion type. 
+See <a href="javascript:OpenDamageModifiers()">Weapon damage modifiers</a> for exact values.<br />
+Each weapon can have two damage types: <label style="color:blue">kinetic</label> or <label style="color:red">thermal</label>.                            
                         </div>
                     </div>
                     <table>
@@ -834,6 +845,7 @@ function DrawWeaponStaticData(weapon_id) {
                     <div id="cyborg_weapons"></div>
                     <div id="vtol_weapons"></div>
                     <div id="other_weapons"></div>
+                    <div id="loadable_weapon_lists"></div>
                 </div>
                 <div id="left-tabs-2">
 

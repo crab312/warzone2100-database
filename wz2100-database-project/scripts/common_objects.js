@@ -47,7 +47,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.67";
+    var current_site_version = "1.69";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -134,7 +134,7 @@ function InitDataObjects() {
                     if (size == undefined) {
                         return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
                     } else {
-                        return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
+                        return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' width='" + size + "' title='" + rowObject.name + "'/>";
                     }
                 }
             } else {
@@ -1171,9 +1171,10 @@ function DrawResearchSlider(container_id, init_value, slide_function) {
 
 var sub_sections_index = 1;
 function DrawSection_type1_html(container_id, caption) {
+    var capt_container_name = container_id + '_capt' + sub_sections_index++;
     var sub_container_name = container_id + '_sub' + sub_sections_index++;
     var html = '\
-    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" id="base_struc_header"> \
+    <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" id="' + capt_container_name + '"> \
         <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top"> \
             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span> \
     ' + caption + '\

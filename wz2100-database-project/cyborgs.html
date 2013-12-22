@@ -40,6 +40,8 @@
 
             });
 
+            DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
+
             var res_time = 600;
 
             ShowLoading('tabs_left');
@@ -47,7 +49,7 @@
                 DoResearchAll(player_all_researched, true, function () {
                     LoadCyborgDesigns(function () {
                         DrawResearchSlider("research_slider",
-                            localStorage["body_research_state_seconds"],
+                            res_time,
                             function (value) {
                                 DoResearch(value, player, function () {
                                     DrawCyborgsLists();
@@ -65,9 +67,8 @@
 
 function DrawCyborgsLists() {
 
-    DrawSection_type1_html("intro", "Intoduction").append($('#intro_content'));
-
-    //Factory
+    //Cyborg Factory
+    $('#factory_stats_container').html('');
     var grid_factory = $('<table id="factory_grid"></table>');
     $('#factory_stats_container').append(grid_factory); //type = CYBORG FACTORY
     grid_data = [Structures.loaded_data_hash["A0CyborgFactory"]];
@@ -405,8 +406,8 @@ function LoadCyborgDesigns(callback_function) {
 
                     <div id="intro"></div>
                     <div id="intro_content">
-                        <br />Cyborg is alternative type of troops in Warzone. Cyborgs are small, fast, and well defended against anti-tank weapons.
-                        <br />Cyborgs are suffer from Artillery and "Anti-Personell" weapons like Machineguns.
+Cyborgs are the "infantry" of Warzone. Cyborgs are small, fast, and well defended against anti-tank weapons (especially rockets). 
+<br />Cyborgs are vulnerable to artillery (mortar, howitzer, ripple rockets, etc) and machinegun type weapons.
                         <table style="width:100%; margin-top:10px">
                             <tr>
                                 <td style="width:30%; vertical-align:top">

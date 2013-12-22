@@ -565,7 +565,7 @@ function Abilities_Description(ability_name) {
             break;
         case "HitRun":
             res.name = "Hit&Run";
-            res.descr = "This weapon is usable in hit&run tactic because it can shoot more than 1 projectile per time.";
+            res.descr = "This weapon has high damage and a slow reload, making it excellent in hit&run tactics.";
             res.icon_class = "ui-icon ui-icon-star";
             break;
 
@@ -597,9 +597,12 @@ function Abilities_Description(ability_name) {
     return res;
 }
 
-function Form_Weapon_Abilities_html(weapon) {
+function Form_Weapon_Abilities_html(weapon, is_structure_weapon) {
     var abils_html = "";
     var abils = Weapon_GetAbilities(weapon);
+    if (is_structure_weapon == true) {
+        abils.HitRun = false;
+    }
     for (var ability in abils) {
         if (typeof abils[ability] == "boolean") {
             if (abils[ability]) {
@@ -883,7 +886,7 @@ function TryCalculateDesign(callback_function) {
             /* PRICE & BUILD POINTS */
             {
                 var row = new Object;
-                row.name = 'Tank price';
+                row.name = 'Unit price';
                 row.base = Tank.baseStats.price.toFixed(0);
                 row.upgraded = Tank.price.toFixed(0);
                 row.group = ++group_prefix + ': ' + 'Price';
@@ -929,7 +932,7 @@ function TryCalculateDesign(callback_function) {
                 var row = new Object;
                 row.name = 'Health Points';
                 row.base = Tank.baseStats.hitpoints;
-                row.upgraded = Tank.hitpoints;
+                row.upgraded = Tank.hitpoints.toInt();
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = ++group_prefix + ': ' + 'Armor';
                 row.descr = 'How much damage this tank(cyborgs) can take before death.';
@@ -1193,7 +1196,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         var row = new Object;
         row.name = 'Damage';
         row.base = turret.damage;
-        row.upgraded = turret_upgraded.damage;
+        row.upgraded = turret_upgraded.damage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
         row.descr = 'Damage dealt to enemy unit with each one shot.';
@@ -1213,7 +1216,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         var row = new Object;
         row.name = 'Splash Damage';
         row.base = turret.radiusDamage;
-        row.upgraded = turret_upgraded.radiusDamage;
+        row.upgraded = turret_upgraded.radiusDamage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
         row.descr = 'Damage dealt to area. This damage does not affect main target of attack.';
@@ -1246,7 +1249,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.name = 'Salvo reload (sec)';
         row.base = turret.reloadTime/10;
         row.upgraded = turret_upgraded.reloadTime / 10;
-        row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
+        row.upgrade_change = ((row.upgraded - row.base) / row.base);
         row.group = damage1_label;
         row.descr = 'Time to reload salvo weapon (seconds)';
         grid_data.push(row);
@@ -1257,7 +1260,7 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         var row = new Object;
         row.name = 'Period. damage';
         row.base = turret.periodicalDamage;
-        row.upgraded = turret_upgraded.periodicalDamage;
+        row.upgraded = turret_upgraded.periodicalDamage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
         row.descr = 'Additional damage per second. Note: periodical damage affects only enemy units which are stay in \'inflamed area\'';
@@ -1636,16 +1639,21 @@ function CalculateBuilding(player, structure) {
     }
 
     /* HP, ARMOR */
-    var hp = structure.hitpoints;
-    StructureDesign.baseStats.hitpoints = hp;
-    StructureDesign.hitpoints = hp + hp * structure_upgraded.hitpoints / 100;
+    //var hp = structure.hitpoints;
+    //StructureDesign.baseStats.hitpoints = hp;
+    //StructureDesign.hitpoints = hp + hp * structure_upgraded.hitpoints / 100;
+    StructureDesign.baseStats.hitpoints = structure.hitpoints;
+    StructureDesign.hitpoints = structure_upgraded.hitpoints;
 
-    var armor = structure.armour;
-    StructureDesign.baseStats.armourKinetic = armor;
-    StructureDesign.armourKinetic = armor + armor * structure_upgraded.armour / 100;
-
-    StructureDesign.baseStats.armourHeat = armor;
-    StructureDesign.armourHeat = armor + armor * structure_upgraded.armour / 100;
+    //var armor = structure.armour;
+    //StructureDesign.baseStats.armourKinetic = armor;
+    //StructureDesign.armourKinetic = armor + armor * structure_upgraded.armour / 100;
+    StructureDesign.baseStats.armourKinetic = structure.armour;
+    StructureDesign.armourKinetic = structure_upgraded.armour;
+    //StructureDesign.baseStats.armourHeat = armor;
+    //StructureDesign.armourHeat = armor + armor * structure_upgraded.armour / 100;
+    StructureDesign.baseStats.armourHeat = structure.armour;
+    StructureDesign.armourHeat = structure_upgraded.armour;
 
     /* PRICE, BUILD POINTS, BUILD TIME */
     var truck_build_points;
@@ -1874,7 +1882,7 @@ function DrawWeaponUpgradeTable(container_id, weapon_id, research_hint) {
             grid_data.push({
                 name: research.name,
                 time_int: ResearchTime[player_all_researched][log_rec.research_id],
-                value: log_rec.value,
+                //value: (weapon[research_hint] + weapon[research_hint] * summ/100).toInt(),
                 summ: shown_val,
             });
         }
@@ -1906,10 +1914,38 @@ function DrawWeaponUpgradeTable(container_id, weapon_id, research_hint) {
                         }
                     },
                 },
-                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
                 { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+               // { name: "value", label: "Upgrade value", width: '70px', fixed: true },
             ],
         sortname: "time_int",
+        loadonce: true,
+    });
+}
+
+function DrawStructureResistance(container_id, structure_id) {
+    var structure = Structures.loaded_data_hash[structure_id];
+    var grid_data_mdf = [];
+    for (var weap_class in StructureModifiers.loaded_data_hash) {
+        grid_data_mdf.push({
+            weap_class: weap_class,
+            resist: Math.floor(100 / StructureModifiers.loaded_data_hash[weap_class][structure.strength] * 100 - 100) + '%',
+        });
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    $('<div style="padding:5px">Structure type: <b>' + structure.strength + '</b></div>').insertBefore(grid_element_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data_mdf,
+        rowNum: grid_data_mdf.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "weap_class", label: "Weapon class", width: '150px', fixed: true },
+                { name: "resist", label: "Resistance", width: '80px', fixed: true },
+            ],
         loadonce: true,
     });
 }
