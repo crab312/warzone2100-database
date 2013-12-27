@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="scripts/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+
+
+    <title></title>
+
+    <script>
+
+        $(function () {
+
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+            DrawSection_type1_html("left-tabs-1", "").append($('#intro1'));
+            DrawSection_type1_html("left-tabs-1", "Tips").append($('#tips'));
+            DrawSection_type1_html("left-tabs-1", "Building and exploring").append($('#building_and_exploring'));
+            DrawSection_type1_html("left-tabs-1", "Researching").append($('#researching'));
+            DrawSection_type1_html("left-tabs-1", "Weapons").append($('#weapons'));
+            DrawSection_type1_html("left-tabs-1", "Offence").append($('#offense'));
+            DrawSection_type1_html("left-tabs-1", "Defense").append($('#defense'));
+            DrawSection_type1_html("left-tabs-1", "Economy").append($('#economy'));
+        });
+
+    </script>
+</head>
+<body style="background:#eeeeee;">
+    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+        <tr>
+            <td id="page_header">
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Early-game multiplayer strategy</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                    <div id="intro1">
+                        Ah, the early-game. Most games start out with very few choices, only branching off into multiple choices later on. The upshot of this is that the early-game is very well analyzed.
+                        <ul class="MyStyledLinkMenu" style="display:inline-block">
+                            <li><a href="#tips">Tips</a></li>
+                            <li><a href="#building_and_exploring">Building and exploring</a></li>
+                            <li><a href="#researching">Researching</a></li>
+                            <li><a href="#weapons">Weapons</a></li>
+                            <li><a href="#offense">Offence</a></li>
+                            <li><a href="#defense">Defense</a></li>
+                            <li><a href="#economy">Economy</a></li>
+                        </ul>
+                    </div>          
+                    <div id="tips">
+                        Before we begin, keep a few things in mind:
+                        <ul class="p">
+                        <li class="p">Use your power. If your power rises above 500 in the early or mid-game, spend more of it! Research something, build some more research facilities, build a bigger army, defend your oil derricks... <em>something!</em></li>
+                        <li class="p">Never stop researching. If you stop, you will be more and more disadvantaged as time goes on, in every area.</li>
+                        <li class="p">Get more derricks. Everything requires power! The more you have of it, the better. It's nearly impossible to win with only the four derricks in your base.</li>
+                        </ul>
+                    </div>
+                    <div id="building_and_exploring">
+                        Most players begin a multiplayer game in T1, No Bases. This starts them off with two trucks and nothing else. You can't win a game without having all four of the base structures, but what to build first?
+                        <ul>
+                        <li class="p">
+                        Many players build a <strong>Factory</strong> first (or at least second). Factories produce additional trucks, which makes building the rest of the base much faster.
+                        </li>
+                        <li class="p">
+                        <strong>Research Facilities</strong> are also important. Unlike other games, Warzone starts with zero weapons researched, so Machinegun must be researched before you have any offensive capability at all. Without a research facility, you can't do anything but make trucks and base structures.
+
+
+
+                        </li>
+                        <li class="p">
+
+                        <strong>Command Centers</strong> are also required for most normal play - they are a prerequisite for any defensive structure research, and are required to design tanks.
+
+                        </li>
+                        <li class="p">
+                        Without a <strong>Power Generator</strong>, your initial supply of power will quickly run out. Start on those oil derricks as well.
+                        </li>
+                        </ul>
+
+                        <p>
+                        As you are building up your base, you should send trucks out to capture oil resources around the map, as well as scouting for enemy activity. The four oil resources inside your base (on a standard map) will soon be insufficient, and you need to claim more to have a chance of staying in the game.
+                        </p>
+                        <p>
+
+                        While you are exploring, you should start making Machinegun tanks or cyborgs to help defend your trucks.
+                        </p>
+
+                        <p>
+
+                        Some possible orders to build your structures:
+                        </p>
+                        <p><img src="Styles/buildorders.png" alt="build orders"/></p>
+                    </div>
+                    <div id="researching">
+                        <em>
+                            This section assumes that the reader has knowledge of Warzone's research system. If you do not, see:
+                        </em> 
+                        <a href="stats.php?view=Research">Research</a>
+                        <p>
+                            In Warzone, without research, a player simply cannot survive in a game for very long. 
+                            Every research is one more advantage you have against your opponent. 
+                            It's an advantage that costs no money after it has been researched. It's an advantage that, unlike armies and structures, cannot be taken from you.
+                        </p>
+                        <p>
+                            There's no need to worry about memorizing the research tree, of course. It may seem intimidating, but a player needs to know very little of it, and will quickly pick up what to research while playing the game.
+                        </p>
+                        <p>
+                            There are different strategies about which to research first. Remember that the purpose of research is to gain an advantage on your opponent. But which advantage should you gain first? Offensive capability? Defensive capability? Economy?
+                        </p>
+                    </div>
+                    <div id="weapons">
+                        No matter if you choose to focus in offense, defense, or economy, you need to choose a few weapons to specialize in.
+                        <p>
+                            The first weapon you get in Warzone is the Machinegun. 
+                            So if you want to tank rush as early as possible, the Machinegun is the only choice. 
+                            However, if you have time to research a bit first, there are four viable early-game weapons:
+                        </p>
+                        <ul>
+                            <li>Twin Machinegun</li>
+                            <li>Light Cannon</li>
+                            <li>Flamer</li>
+                            <li>Mini-Rocket Pod</li>
+                        </ul>
+                        <p>
+                            These all cost approximately $100 to research, total, and will take two to three minutes to research. 
+                            The Mini-Rocket Pod costs slightly, but not noticeably, more than the others.
+                        </p>
+                        <p>
+                            <img src="data:image/png;base64,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" alt="Twin Machinegun"/>
+
+                        </p>
+                        <p>
+                            Getting the <strong>Twin Machinegun</strong> and going down the machinegun route will give you an early-game advantage. It's a generalist weapon, and you'll soon get the Heavy Machinegun. Many games can be won simply by focusing on this weapon.
+                        </p>
+                        <p>
+                            Some players like to neglect research after getting the Heavy Machinegun; simply amassing these tanks and rushing the enemy. Note, however, that even at this stage, massed Heavy Machineguns are still vulnerable to massed Mini-Rocket Pod tanks and towers, and that if the rush fails, you will be at a <em>very</em> significant research disadvantage.
+                        </p>
+                        <p>
+                            <img src="data:image/gif;base64,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" alt="Light Cannon"/>
+                        </p>
+                        <p>
+                            The <strong>Light Cannon</strong> is the start of the cannon tree. While the Medium and Heavy cannons don't show up as early as the Heavy Machinegun, they easily outclass it. Cannons are slower, heavier, more expensive, and have more HP than machineguns. They do more damage to armored tanks and armored structures, but less damage to cyborgs.
+                        </p>
+                        <p>
+                            While Light Cannons can be used similarly to machineguns, the weight of the more powerful cannons slows them down enough that you must plan for this liability. Users of longer-ranged weapons, such as Lancers, can easily outrun you, and harass you from afar. In situations like this, seek to corner them where they cannot escape. If you are in open space, it may be best to ignore them, and continue on to your enemy's base, instead of wasting time chasing them, which will be a losing battle.
+                        </p>
+                        <p>
+                            <img src="data:image/gif;base64,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" alt="Mini-Rocket Pod"/>
+                        </p>
+                        <p>
+                            The <strong>Mini-Rocket Pod</strong> is the start of the rocket tree. 
+                            It is a highly specialized weapon designed to fight tanks. 
+                            It also does a little damage to unarmored structures such as the Machinegun Tower and some base structures, but is nearly completely ineffective against more armored structures, as well as cyborgs.
+                        </p>
+                        <p>
+                            Mini-Rocket Pods are the longest ranged T1 direct weapon, and are fairly light, and this should be used to your advantage. Through attrition, a few of these can wear down a sizable army. If you encounter any cyborgs, however, you have no choice but to run.
+                        </p>
+                        <p>
+                            Upgrading mini-rockets will eventually lead to the Mini-Rocket Array, a weapon that can deal with the cyborgs and walls that the Mini-Rocket Pod has trouble with.
+                        </p>
+                        <p>
+                            <img src="data:image/gif;base64,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" alt="Flamer"/>
+                        </p>
+                        <p>
+                            Unlike the other weapons, the <strong>Flamer</strong> is traditionally used on cyborgs (and later, hovercraft). This makes them quite vulnerable to machineguns, but they are quite powerful against cannons and mini-rocket pods. Flamers do barely any damage to hardcrete walls and hardpoints, but significant damage to everything else, as long as you can get within range. Getting within range is a problem in the early game, as wheeled vehicles can match your speed, and slowly kill you with long-ranged weapons as they retreat.
+                        </p>
+                        <p>
+                            Later on, as players start using the slower and heavier tracked and wheeled vehicles, and you start using hovers, flamers can catch up to and annihilate armies with their fire.
+                        </p>
+                        <p>
+                            <img src="data:image/gif;base64,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" alt="Mortar"/>
+                        </p>
+                        <p>
+                            In addition to these four weapons, there is also the <strong>mortar</strong>, available a bit later.
+                            Mortars are long-ranged siege weapons, best used against enemy structures. 
+                            Used defensively, they can help soften attacking armies, but should not be relied upon. 
+                            When <a href="SensorGuide.php">assigned to sensors</a>, 
+                            they have an extremely long range, but are vulnerable to enemy units, 
+                            so they are best protected by other weapons that are more powerful at shorter ranges.
+                        </p>
+                        <p>
+                            With these weapons, it is often to your advantage to go along multiple weapon paths, which will give you additional versatility. Mini-Rocket Pods and Heavy Machinegun form a popular combination, with the machineguns taking care of the cyborgs that the rockets would otherwise be helpless against. The flamers' upgrade path is relatively inexpensive, and their ineffectiveness against early enemies makes them best paired with other weapons.
+                        </p>
+                        <p>
+                            As the game goes on, you may want to start branching out into different weapon trees. Although the cannon and rocket trees are difficult to catch up on if you haven't been researching them since the early-game (and by corollary, you should be keeping up with at least one of those trees), most other weapons are fairly easy to get if necessary. In particular, lasers require no other weapon research, and are a good choice if you find yourself in T3 but falling behind in weapon research.
+                        </p>
+                    </div>
+                    <div id="offense">
+                        When playing offensively, it's important to upgrade your weapons. Each damage upgrade adds 25% to damage, and each rate-of-fire upgrade decreases reload time by 10% or 15%, and these can really add up. Fully upgraded cannons, for instance, have ten times as much damage rate as un-upgraded cannons.
+                        <p>
+                        Unless they unlock more powerful weapons, weapon accuracy upgrades should generally be avoided until there are no other upgrades, since they grant a negligible 10% (of base accuracy) bonus to accuracy.
+                        </p>
+                        <p>
+                        Researching a new weapon type will generally unlock its damage upgrade. 
+                        <a href="1">Automated Manufacturing</a> (and its improved versions) is often needed to unlock rate-of-fire upgrades. 
+                        <a href="2">Synaptic Link Data Analysis</a> (and its improved versions) is often needed to unlock accuracy upgrades.
+                        </p>
+                        <p>
+                        Unlocking stronger weapons usually requires researching damage upgrades. Exceptions include rockets (and later Scourge Missile), which require accuracy upgrades to unlock, and rotary weapons (such as Assault Gun or Pepperpot), which require rate-of-fire upgrades.
+                        </p>
+                        <p>
+                        Armor upgrades are even more powerful, granting 30% more armor <em>and</em> 30% more HP. There are separate armor upgrades for tanks and cyborgs, so choose wisely.
+                        </p>
+                        <p>
+                        Tank armor upgrades will unlock more powerful Project bodies, while engine upgrades will unlock more powerful New Paradigm bodies. New Paradigm bodies are faster and slightly less expensive, but Project bodies have more armor.
+                        </p>
+                        <p>
+                        These upgrades will also unlock better propulsions, such as Tracks and Hover. Tracks offer increased health and armor in exchange for slower speed. Hovercrafts have only slightly more health, but are significantly faster than wheels.
+                        </p>
+                    </div>
+                    <div id="defense">
+                        Your first defensive structure is the Machinegun Tower. Despite its name, the weapon mounted on top of it is a Heavy Machinegun, which is quite a bit more powerful than the Machinegun tanks that you will be defending against.
+                        <p>
+                        Machinegun towers can also be used offensively. In Warzone, structures can be built anywhere. A player with no tanks can build towers next to enemy oil resources, to seize them, and next to friendly oil resources, to defend them. Using structures offensively is usually only viable very early in the game.
+                        </p>
+                        <p>
+                        Other defensive structures can be found by researching Hardcrete Walls. Walls and defensive structures can be upgraded with Hardcrete upgrades, which are unlocked by researching walls, and later Improved and Advanced Engineering. Although these do not unlock anything until fairly late in the game, they upgrade armor by 35% and HP by 30%, making them one of the most significant automatic upgrades in the game.
+                        </p>
+                        <p>
+                        No matter how defensively you play, you still need to upgrade weapons as well as structure armor.
+                        </p>
+                    </div>
+                    <div id="economy">
+                        While you are building and upgrading your structures and tanks, it's important to think long-term. 
+                        While providing no direct benefit, every structure module available will give you an insurmountable long-term advantage:
+                        <ul class="p">
+                        <li>Engineering
+                        <ul>
+                        <li>Fuel Injection Engine
+                        <ul>
+
+                        <li>Power Module</li>
+                        </ul></li>
+                        <li>Cyborg Factory
+
+                        <ul>
+                        <li>Factory Module</li>
+
+                        </ul></li>
+                        </ul></li>
+
+                        <li>Sensor Turret
+                        <ul>
+                        <li>Sensor Tower
+                        <ul>
+                        <li>Command Relay Post
+                        <ul>
+                        <li>Research Module</li>
+
+                        </ul></li>
+                        </ul></li>
+                        </ul></li>
+                        </ul>
+                        <p>
+                        The usual order in which these are researched are:
+
+                        </p>
+                        <ul>
+                            <li class="p">
+                            The <strong>Power Module</strong> provides an extremely large boost (1.5x) to power production, and unlike other modules, power modules are free. It is perhaps the most important upgrade, and many players get it well before any other module.
+                            </li>
+                            <li class="p">
+                            The <strong>Factory Module</strong> allows for faster production, and production of medium (and heavy) bodies. It also unlocks vehicle and cyborg armor upgrades, and is vital if you don't want your tanks to stay Viper Wheels with no upgrades.
+                            </li>
+                            <li class="p">
+                            While the Command Relay Post is unnecessary, it unlocks the <strong>Research Module</strong>, which provides a significant (nearly 2x) boost to research speed. In addition, it unlocks Synaptic Link Data Analysis (and its improved versions). Synaptic Link Data Analysis further improves research speed, but more importantly, it and its upgraded versions are required for the most powerful later-game technology, and nearly all T3 technology.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </td>
+    </tr>
+    </table>
+</body>
+</html>

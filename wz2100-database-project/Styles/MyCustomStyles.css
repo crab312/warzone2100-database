@@ -271,3 +271,7 @@ margin: 0 1px;
 border: 1px solid #999999;
 white-space: nowrap;
 }
+
+.big {
+    font-size: larger;
+}

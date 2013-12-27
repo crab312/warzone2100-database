@@ -52,6 +52,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="stuff.php" />
+    <Compile Include="SensorGuide.php">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="weapons.php">
       <SubType>Code</SubType>
     </Compile>
@@ -123,10 +126,16 @@
     <Content Include="design.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="earlygamestrategy.html">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="index.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Inroduction.html">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="keyboard_shortcuts.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="propulsion.html">
@@ -2449,6 +2458,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="scripts\research_functions.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="SensorGuide.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="stats.html">
