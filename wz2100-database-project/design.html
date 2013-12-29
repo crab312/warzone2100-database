@@ -291,7 +291,7 @@ function attachOpenDetailEvents() {
             var new_saved_designs = [];
             for(var i =0; i< saved_designs.length; i++)
             {
-                var weapon = Weapons.loaded_data_hash[saved_designs[i].weapon_id];
+                var weapon = Weapons.loaded_data_hash[saved_designs[i].turret1_id];
                 var body = Bodies.loaded_data_hash[saved_designs[i].body_id];
                 var propulsion = Propulsion.loaded_data_hash[saved_designs[i].propulsion_id];
                 var TankDesign = CalculateTankDesign(designer_player, weapon, body, propulsion);

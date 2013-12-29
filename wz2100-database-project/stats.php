@@ -1,6 +1,6 @@
 <?php
-    ob_start('ob_gzhandler'); //enables compression 
     include("stats.html");
+     ob_start('ob_gzhandler'); //enables compression    
 ?>
 
 <script type='text/javascript'>
