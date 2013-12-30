@@ -64,10 +64,92 @@
 
     });
 
-    function DrawSensorList() {
+function DrawSensorList() {
 
-        
+    var grid_data = [];
+    for (var sensor_id in Sensor.loaded_data_hash) {
+        var sensor = Sensor.loaded_data_hash[sensor_id];
+        if (ResearchedComponents[player_all_researched][sensor.grid_id] == undefined) /* Check Sensor can be researched */ {
+            continue;
+        }
+        var sensor_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Sensor[sensor.index_of_datarow]));
+        grid_data.push(sensor_upgraded);
     }
+
+    grid_data.sort(function (elm1, elm2) {
+        return elm1.minResearchTime - elm2.minResearchTime;
+    });
+    
+    var grid_element_id = ResetGridContainer("SensorListContainer");
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+        [
+
+            { label: "", name: "grid_id", key: true, hidden: true },
+            {
+                label: " ",
+                name: 'pic',
+                width: '65px',
+                sortable: false,
+                search: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return Sensor.GetIconHtml_Function(rowObject);
+                },
+            },
+            {
+                label: " ", name: "name", width: 200, fixed:true,
+                //formatter: function (cellvalue, options, rowObject) {
+                //    //return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                //},
+            },
+            {
+                label: "Range (tiles)", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return PropDescr('longRange').format_str(rowObject.range/128);
+                },
+                width: 70,
+            },
+            {
+                label: "HP", sortable: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return PropDescr('hitpoints').format_str(rowObject.hitpoints);
+                },
+                width: 70,
+            },
+            {
+                label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                    return '<label style="color:#116611">$' + cellvalue + '</label>';
+                }, sorttype: "int"
+            },
+            {
+                label: "Research",
+                name: "minResearchTime",
+                width: 80,
+                sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue != undefined) {
+                        if (cellvalue < 3600) {
+                            return cellvalue.toMMSS();
+                        } else {
+                            return cellvalue.toHHMMSS();
+                        }
+                    }
+                    return ' - ';
+                },
+            },
+        ],
+        onSelectRow: function (rowid) {
+        },
+        loadonce: true,
+        ignoreCase: true, //make search case insensitive
+    });
+}
 
    
     </script>
@@ -100,12 +182,7 @@
                         </ul>
 
                     </div>
-                    <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
-                        <div id="research_slider">
 
-                        </div>
-                        <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
-                    </div>
 
                     <div id="artillery">
                     As a review, keep in mind that "artillery" here refers to all indirect-fire weapons except the Mini-Rocket Array (MRA) and Seraph Missile Array, namely:
@@ -219,12 +296,19 @@
 
                     </div>
 
-                    <div id="SensorsList">
 
+                    <div id="SensorsList">
+                        <div  class="ui-widget ui-corner-all" style="padding: -2px; width:500px; display:inline-block; float:right">
+                            <div id="research_slider">
+
+                            </div>
+                            <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                        </div>
+                        <div id="SensorListContainer"></div>
                     </div>
 
                     <div id="ArtyList">
-
+                        See Weapon Guide <a href="weapons.php">Artillery</a>
                     </div>
                 </div>
             </div>

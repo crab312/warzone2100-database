@@ -29,7 +29,7 @@ $(function () {
     InitDataObjects();
 
     LoadAllObjects(function () {
-        DoResearchAll(player_all_researched, function () {
+        DoResearchAll(player_all_researched, true, function () {
             DrawResearchTree();
         });
     })
@@ -40,9 +40,71 @@ $(function () {
 });
 
 function DrawResearchTree() {
-    for (var i in Researches.loaded_data) {
+    //for (var i in Researches.loaded_data) {
 
+    //}
+
+    DrawCompTimeTable("time_table_container");
+}
+
+function drawLine(ctx, from, to) {
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+}
+
+function DrawCompTimeTable(container_id) {
+    //1px = 1 sec
+    var h = 2000;
+    $('#' + container_id).append('<canvas style="position:relative;z-index:1;"id="timeTableSvgCanva" width="5401" height="2001"></canvas>');
+    var ctx = $('#timeTableSvgCanva').get(0).getContext('2d');
+    for(var i=0; i<=5400; i=i+20)
+    {
+        var x = i;
+        
+
+        drawLine(ctx, { x: x, y: 0 }, { x: x, y: 2000 });
+        //$('#timeTableSvgCanva').append('<line x1="'+x+'" y1="0" x2="'+x+'" y2="2000" style="stroke:gray;stroke-width:0.4" />');
     }
+    
+
+    var weap_types = {};
+    var weap_types_count = 0;
+    var z = 1000;
+    for (var weap_id in Weapons.loaded_data_hash) {
+        var weapon = Weapons.loaded_data_hash[weap_id];
+        if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined) /* Check Weapon can be researched */ {
+            continue;
+        }
+        var weap_type = weapon.weaponSubClass;
+        if(weap_type == undefined)
+        {
+            continue;
+        }
+        if (weap_types[weap_type] == undefined) {
+            weap_types[weap_type] = {
+                num: weap_types_count,
+                elem: "",
+            }
+            weap_types_count++;
+        }
+        var line_indx = weap_types[weap_type].num;
+        var icon_html = Weapons.GetIconHtml_Function(weapon, 48);
+        var left = weapon.minResearchTime;// + $('#timeTableSvgCanva').position().left;
+        var top = line_indx * 50;// + $('#timeTableSvgCanva').position().top;
+        var imgElem = new Image();
+        z++;
+        //ctx.drawImage(imgElem, x, y);
+        $('#time_table_container').append('<div style="height:48px;width:48px;z-index:'+z+';position:relative;top:' + (-1) * top + 'px;left:' + left + 'px;float:left">' + icon_html + '</div>');
+        //$('#timeTableSvgCanva').append('<foreignObject x="' + x + '" y="' + y + '" height="50" width="50">' + icon_html + '</foreignObject>');
+    }
+    //$("body").html($("body").html());
+    //for (var comp_id in ResearchedComponents[player_all_researched]) {
+    //    var DataObject = FindComponentDataObject(comp_id);
+    //    var comp = DataObject.loaded_data_hash[comp_id];
+    //    var icon_html = DataObject.GetIconHtml_Function(comp, 48);
+    //}
 }
 
 </script>
@@ -55,26 +117,27 @@ function DrawResearchTree() {
             </td>
         </tr>
         <tr>
-            <td id="page_caption" data-caption="Research Tree">
+            <td id="page_caption" data-caption="Research Guide">
 
             </td>
         </tr>
     <tr>
         <td style="width:100%;vertical-align:top">
+           <div id="time_table_container" style="background-color:white">
+
+           </div>
            <div id="canva">
 
                 <svg width="300" height="200">
-                  <polygon points="100,10 40,180 190,60 10,60 160,180"
-                  style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" />
+                  <polygon points="100,10 40,180 190,60 10,60 160,180"style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" />
                 </svg>
            </div>
         </td>
     </tr>
     </table>
 
-    <div id="modifiers_container" style="display:none">
 
-    </div>
+
 
         <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
 </body>

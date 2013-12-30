@@ -65,7 +65,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.73";
+    var current_site_version = "1.75";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -567,24 +567,6 @@ function InitDataObjects() {
 
     {
         var obj = new Object;
-        obj.sysid = "Sensor";
-        obj.path_ini = data_directory + "sensor.ini";
-        obj.LoadDataFunction = LoadDataObject;
-        obj.LoadLeftGridFunction = function () {
-            var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
-        };
-        obj.grid_colModel = [
-            { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Range", name: "range" },
-        ];
-        Sensor = obj;
-        Objects.push(obj);
-    }
-
-    {
-        var obj = new Object;
         obj.sysid = "Repair";
         obj.path_ini = data_directory + "repair.ini";
         obj.LoadDataFunction = LoadDataObject;
@@ -596,6 +578,7 @@ function InitDataObjects() {
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
             { label: "repairPoints", name: "repairPoints" },
+            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
         ];
         Repair = obj;
         Objects.push(obj);
@@ -615,6 +598,7 @@ function InitDataObjects() {
             { label: "Name", name: "name" },
             { label: "Power of build ray", name: "buildPoints" },
             { label: "Price", name: "buildPower" },
+            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
         ];
 
         obj.GetIconHtml_Function = function (rowObject, size) {
@@ -636,6 +620,27 @@ function InitDataObjects() {
 
         Construction = obj;
         Objects.push(obj);
+    }
+
+    {
+        Sensor = {
+            sysid: "Sensor",
+            path_ini: data_directory + "sensor.ini",
+            LoadDataFunction: LoadDataObject,
+            LoadLeftGridFunction: function () {
+                var data_obj = this;
+                data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+            },
+            grid_colModel: [
+                { label: "ID", name: "grid_id", key: true, hidden: true },
+                { label: "Name", name: "name" },
+                { label: "Range", name: "range" },
+                { label: "Price", name: "buildPower" },
+                { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
+            ],
+            GetIconHtml_Function: Construction.GetIconHtml_Function,
+        };
+        Objects.push(Sensor);
     }
 
     {
