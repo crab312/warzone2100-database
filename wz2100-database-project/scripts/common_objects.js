@@ -1094,42 +1094,42 @@ function DrawPageHeader() {
             </div>\
             <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top" style=";margin-top:-85px;margin-bottom:-5px;"> \
                 <a href="index.html" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Guide\
 		            </h3>\
                 </a>\
                 <a href="weapons.php" class="ui-helper-reset" style="font-size:0.9em;">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Weapons\
 		            </h3>\
                 </a>\
                 <a href="Body.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Bodies\
 		            </h3>\
                 </a>\
                 <a href="propulsion.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Propulsion\
 		            </h3>\
                 </a>\
                 <a href="cyborgs.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Cyborgs\
 		            </h3>\
                 </a>\
                 <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Buildings\
 		            </h3>\
                 </a>\
                 <a href="stats.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
                         Database\
 		            </h3>\
                 </a>\
                 <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:110px; display:inline-block">\
+		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:130px; display:inline-block">\
                         <span class="ui-icon ui-icon-star" style="display:inline-block;padding:0px;margin-bottom:-4px"></span>Tank Designer\
 		            </h3>\
                 </a>\
@@ -1150,7 +1150,7 @@ function DrawPageCaption() {
 
         var html = '\
         <div class="ui-accordion ui-widget ui-helper-reset">\
-            <h3 style="text-align:left; font-size:1.1em;margin-bottom:-10px;padding-bottom:10px;background:rgba(255,255,255,0.90)" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">\
+            <h3 style="text-align:left; font-size:1.1em;margin-bottom:-10px;padding-bottom:10px;background:rgba(255,255,255,0.90)" class="ui-accordion-header ui-helper-reset ui-state-active ui-accordion-icons ui-accordion-header-active">\
                 <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>\
         ' + elm.attr('data-caption') +'\
             </h3>\
@@ -1198,7 +1198,7 @@ function DrawSection_type1_html(container_id, caption) {
     var sub_container_name = container_id + '_sub' + sub_sections_index++;
     var html = '\
     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" id="' + capt_container_name + '"> \
-        <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top"> \
+        <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top"> \
             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span> \
     ' + caption + '\
     </h3>\
@@ -1211,8 +1211,23 @@ function DrawSection_type1_html(container_id, caption) {
 function DrawSection_type2_html(container_id, caption) {
     var sub_container_name = container_id + '_sub' + sub_sections_index++;
     var html = '\
-    <div class="my-header ui-widget-header ui-corner-all">' + caption + '</div> \
-        <div id="' + sub_container_name + '" class="ui-widget-content"></div>';
+    <div class="ui-widget my-header ui-widget-header ui-corner-top">' + caption + '</div> \
+        <div id="' + sub_container_name + '" class="ui-widget ui-widget-content"></div>';
+    $('#' + container_id).append(html);
+    return $('#' + sub_container_name);
+}
+
+function DrawSection_type2_1_html(container_id, caption) {
+    var capt_container_name = container_id + '_capt' + sub_sections_index++;
+    var sub_container_name = container_id + '_sub' + sub_sections_index++;
+    var html = '\
+    <div class="ui-accordion ui-widget ui-helper-reset" id="' + capt_container_name + '"> \
+        <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-accordion-icons ui-corner-top ui-widget-header"> \
+            <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span> \
+    ' + caption + '\
+    </h3>\
+    <div id="' + sub_container_name + '" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">\
+    </div>';
     $('#' + container_id).append(html);
     return $('#' + sub_container_name);
 }

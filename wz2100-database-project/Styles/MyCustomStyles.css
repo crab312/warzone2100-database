@@ -2,7 +2,11 @@
 ----------------------------------------------------------*/
 
 
+@import url("../scripts/jquery-ui-1.10.3.custom/css/wztheme-try1/jquery-ui-1.10.3.custom.css");
 
+body {
+    font-size: 13px;
+}
 
 .ContentBox
 {
@@ -210,19 +214,19 @@ input:-moz-placeholder, textarea:-moz-placeholder {
 }
 
 .MyStyledLinkMenu a {
-    color: darkred;
+    
     line-height:1.5em;
 }
 
 .MyStyledLinkMenu a:hover {
-    color: #cc0000;
+    
     text-decoration:underline;
     border:dotted thin;
     padding:2px;
 }
 
 .my-header {
-    padding: 4px;
+    padding: 8px !important;
 }
 
 .center .ui-jqgrid {
