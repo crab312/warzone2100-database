@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.76";
+    var current_site_version = "1.85";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -748,7 +748,7 @@ function GetSelectedColumns(DataObject) {
 
         }
     }
-    return {};
+    return null;
 }
 
 function DrawLeftGrid(DataObject) {
@@ -763,22 +763,29 @@ function DrawLeftGrid_WithProperties(DataObject) {
 
 function DrawGrid(DataObject, container_id, on_select_callback, container_height, container_width) {
     var grid_data = DataObject.loaded_data;
-    var finalColModel = new Array;
-    finalColModel = finalColModel.concat(DataObject.grid_colModel);
+    var finalColModel = [];
     var selected_columns = GetSelectedColumns(DataObject);
-    for (var i = 0; i < DataObject.all_columns.length; i++) {
-        var col_added = false;
-        for (var j = 0; j < DataObject.grid_colModel.length; j++) {
-            if (DataObject.all_columns[i].name == DataObject.grid_colModel[j].name && DataObject.grid_colModel[j].hidden != true) {
-                
-                col_added = true;
-                break;
-            }
+    if (selected_columns == null) {
+        selected_columns = {};
+        for (var i in DataObject.grid_colModel) {
+            selected_columns[DataObject.grid_colModel[i].name] = 1;
         }
-        if (!col_added) {
-            if (selected_columns[DataObject.all_columns[i].name] != undefined) {
-                finalColModel.push(DataObject.all_columns[i]);
-            }
+        localStorage[DataObject.sysid + "_SelectedColumns"] = JSON.stringify(selected_columns);
+    };
+    //first - push columns from data model in given order
+    var pushed_cols = {};
+    for (var i in DataObject.grid_colModel) {
+        var colName = DataObject.grid_colModel[i].name;
+        if (selected_columns[colName] != undefined || DataObject.grid_colModel[i].hidden == true) { //hidden columns should be in table always
+            finalColModel.push(DataObject.grid_colModel[i]);
+            pushed_cols[colName] = 1;
+        }
+    }
+    //second - push selected columns which were not included in DataObject.grid_colModel
+    for (var i = 0; i < DataObject.all_columns.length; i++) {
+        var colName = DataObject.all_columns[i].name;
+        if (selected_columns[colName] != undefined && pushed_cols[colName]==undefined) {
+            finalColModel.push(DataObject.all_columns[i]);
         }
     }
 
@@ -806,6 +813,21 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
                 return DataObject.GetIconHtml_Function(rowObject);
             }
         }].concat(finalColModel);
+    }
+
+    /* Check - group columns shoul be selected/pushed to final column model */
+    var groupEnabled = false;
+    if (DataObject.groupingView != undefined) {
+        if (DataObject.groupingView.groupField != undefined) {
+            groupEnabled = true;
+            for (var f in DataObject.groupingView.groupField) {
+                var fieldName = DataObject.groupingView.groupField[f];
+                if (pushed_cols[fieldName] == undefined) {
+                    groupEnabled = false;
+                    break;
+                }
+            }
+        }
     }
     grid.jqGrid
     ({
@@ -840,7 +862,7 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
         recordtext: "records: {2}",
         ignoreCase: true, //make search case insensitive
         grouping: DataObject.groupingView != undefined,
-        groupingView: DataObject.groupingView,
+        groupingView: groupEnabled ? DataObject.groupingView : undefined,
         scrollrows: true,
     });
 
@@ -992,27 +1014,18 @@ function ShowSelectColumns(DataObject) {
     var table_id = ResetGridContainer(container_id);
     var grid = $(table_id);
 
+    //var hidden_cols = {};
+    //for (var i in DataObject.grid_colModel) {
+    //    if (DataObject.grid_colModel[i].hidden == true) {
+    //        hidden_cols[DataObject.grid_colModel[i].name] = 1;
+    //    }
+    //}
+
     var selected_columns = GetSelectedColumns(DataObject);
-    for (var i = 0; i < DataObject.all_columns.length; i++) {
-        var col_added = false;
-        for (var j = 0; j < DataObject.grid_colModel.length; j++) {
-            if (DataObject.all_columns[i].name == DataObject.grid_colModel[j].name) {
-                if (DataObject.grid_colModel[j].hidden != true) {
-                    DataObject.all_columns[i].col_visible = true;
-                    col_added = true;
-                }
-                break;
-            }
-        }
-        if (!col_added) {
-            if (selected_columns[DataObject.all_columns[i].name] != undefined) {
-                DataObject.all_columns[i].col_visible = true;
-                col_added = true;
-            }
-        }
-        if (!col_added) {
-            DataObject.all_columns[i].col_visible = false;
-        }
+    for(var i in DataObject.all_columns)
+    {
+        var colName = DataObject.all_columns[i].name;
+        DataObject.all_columns[i].col_visible = selected_columns[colName] != undefined;
     }
 
 
@@ -1025,15 +1038,21 @@ function ShowSelectColumns(DataObject) {
         {
             "Save": function () {
                 var selected_columns = {};
+                var sel_cnt = 0;
                 for (var i = 0; i < grid_data.length; i++) {
                     var rowData = grid.jqGrid('getRowData', grid_data[i].name);
                     if (rowData.col_visible == "True") {
                         selected_columns[grid_data[i].name] = 1;
+                        sel_cnt++;
                     }
                 }
-                localStorage[DataObject.sysid + "_SelectedColumns"] = JSON.stringify(selected_columns);
-                DrawLeftGrid(DataObject);
-                $(this).dialog('close');
+                if (sel_cnt == 0) {
+                    alert('Please select 1 column at least.');
+                } else {
+                    localStorage[DataObject.sysid + "_SelectedColumns"] = JSON.stringify(selected_columns);
+                    DrawLeftGrid(DataObject);
+                    $(this).dialog('close');
+                }
             },
             "Cancel": function () {
                 $(this).dialog('close');

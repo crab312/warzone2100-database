@@ -125,6 +125,7 @@
     <Content Include="data_master\stats\weapons.ini">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="data_master\stats\weapons.json" />
     <Content Include="design.html">
       <SubType>Content</SubType>
     </Content>

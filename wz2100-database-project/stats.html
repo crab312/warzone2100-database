@@ -76,7 +76,7 @@ $(function () {
                     }
                 }
                 if (Objects[i].grid_colModel != undefined && Objects[i].non_researchable != true) {
-                    Objects[i].grid_colModel.push({
+                    var col = {
                         label: "Research Time (min)",
                         name: "minResearchTime",
                         width: 80,
@@ -91,7 +91,9 @@ $(function () {
                             }
                         },
                         sorttype: "int",
-                    });
+                    };
+                    Objects[i].grid_colModel.push(col);
+                    Objects[i].all_columns.push(col);
                 }
             }
 
