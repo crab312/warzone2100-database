@@ -53,9 +53,6 @@
     <Compile Include="structure.php">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="structure_details.php">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="stuff.php" />
     <Compile Include="SensorGuide.php">
       <SubType>Code</SubType>
@@ -134,10 +131,11 @@
     <Content Include="earlygamestrategy.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Formulas.html" />
     <Content Include="index.html">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Inroduction.html">
+    <Content Include="Introduction.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="keyboard_shortcuts.html">
@@ -251,6 +249,23 @@
     <Content Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\jquery-ui-1.10.3.custom.min.css">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\animated-overlay.gif" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_dots-medium_90_eeeeee_4x4.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_flat_100_fcfcfc_40x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_flat_15_cd0a0a_40x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_flat_40_232F46_40x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_highlight-hard_70_000000_1x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_highlight-hard_80_9faac1_1x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_highlight-soft_100_e4f1fb_1x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_highlight-soft_25_ffef8f_1x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-bg_highlight-soft_50_d5ddee_1x100.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-icons_232F46_256x240.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-icons_364767_256x240.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-icons_72a7cf_256x240.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\jquery-ui-1.10.3.custom.css" />
+    <Content Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\jquery-ui-1.10.3.custom.min.css" />
     <Content Include="scripts\jquery-ui-1.10.3.custom\development-bundle\AUTHORS.txt">
       <SubType>Content</SubType>
     </Content>
@@ -2456,6 +2471,23 @@
     <Content Include="scripts\jquery.ui.combobox.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\animated-overlay.gif" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_dots-medium_90_eeeeee_4x4.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_flat_100_fcfcfc_40x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_flat_15_cd0a0a_40x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_flat_40_232F46_40x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_highlight-hard_70_000000_1x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_highlight-hard_80_9faac1_1x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_highlight-soft_100_e4f1fb_1x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_highlight-soft_25_ffef8f_1x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-bg_highlight-soft_50_d5ddee_1x100.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-icons_232F46_256x240.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-icons_364767_256x240.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-icons_72a7cf_256x240.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\jquery-ui-1.10.3.custom.css" />
+    <Content Include="scripts\JQUERY~1.CUS\css\WZTHEM~1\jquery-ui-1.10.3.custom.min.css" />
     <Content Include="scripts\MyCustomScripts2.js">
       <SubType>Content</SubType>
     </Content>
@@ -2477,9 +2509,6 @@
     <Content Include="structure.html">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="structure_details.html">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Styles\FhHRx.gif">
       <SubType>Content</SubType>
     </Content>
@@ -2493,9 +2522,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Styles\wz2100netlogo.png">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="test.html">
       <SubType>Content</SubType>
     </Content>
     <Content Include="weapons.html">
@@ -2512,6 +2538,8 @@
     <Folder Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\images\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\css\custom-theme\images\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\" />
+    <Folder Include="scripts\jquery-ui-1.10.3.custom\css\wztheme-try1\images\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\accordion\" />

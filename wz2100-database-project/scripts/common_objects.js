@@ -56,6 +56,8 @@ var TerrainTypesIndexes = [
 
 
 $(function () {
+
+    $('head').append('<link href="./Styles/icon1.ico" rel="shortcut icon" type="image/x-icon" />');
     DrawPageHeader();
     DrawPageCaption();
 });
@@ -65,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.75";
+    var current_site_version = "1.76";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -786,7 +788,8 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
     if (container_height != undefined) {
         $("#" + container_id).height(container_height);
     } else {
-        $("#" + container_id).height($(window).height() - $("#" + container_id).offset().top - 39);
+        $("#" + container_id).css("height", "700px");
+       // $("#" + container_id).height(Math.max($(window).height() - $("#" + container_id).offset().top - 39,500));
     }
     if (container_width != undefined) {
         $("#" + container_id).width(container_width);
@@ -810,7 +813,7 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
         data: grid_data,
         rowNum: grid_data.length,
         //height: "100%",
-        height: Math.max($("#" + container_id).height() - 110, 400),
+        height: Math.max($("#" + container_id).height() - 120, 400),
         scrollerbar: true,
         colModel:
             [
@@ -971,7 +974,7 @@ function ShowProps(RowData) {
         height: "auto",
         colModel:
             [
-                { label: "Name", name: "id", key: true, width: "50px" },
+                { label: "Name", name: "id", key: true, width: "120",fixed:true },
                 { label: "Value", name: "value" },
             ],
         autowidth: true,
@@ -1084,6 +1087,56 @@ function EmptyComponentIcon_html(name) {
     return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
 }
 
+//var html = '\
+//            <div style="text-align:center;">\
+//            <div class="ui-corner-top" style="margin-bottom:-5px;width:100%; height:185px;background:url(\'./Styles/wz2100netbanner.jpg\') no-repeat left top #ffffff; color: #FFFFFF">\
+//                <img src="./Styles/wz2100netlogo.png" width="186" height="86" alt="" title="" style="margin-top:10px"/>\
+//            </div>\
+//            <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top" style=";margin-top:-85px;margin-bottom:-5px;"> \
+//                <a href="index.html" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Guide\
+//		            </h3>\
+//                </a>\
+//                <a href="weapons.php" class="ui-helper-reset" style="font-size:0.9em;">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Weapons\
+//		            </h3>\
+//                </a>\
+//                <a href="Body.php" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Bodies\
+//		            </h3>\
+//                </a>\
+//                <a href="propulsion.php" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Propulsion\
+//		            </h3>\
+//                </a>\
+//                <a href="cyborgs.php" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Cyborgs\
+//		            </h3>\
+//                </a>\
+//                <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Buildings\
+//		            </h3>\
+//                </a>\
+//                <a href="stats.php" class="ui-helper-reset" style="font-size:0.9em">\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
+//                        Database\
+//		            </h3>\
+//                </a>\
+//                <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
+//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:130px; display:inline-block">\
+//                        <span class="ui-icon ui-icon-star" style="display:inline-block;padding:0px;margin-bottom:-4px"></span>Tank Designer\
+//		            </h3>\
+//                </a>\
+//            </div>\
+//            </div>\
+//    \
+//    ';
 
 function DrawPageHeader() {
 
@@ -1092,50 +1145,64 @@ function DrawPageHeader() {
             <div class="ui-corner-top" style="margin-bottom:-5px;width:100%; height:185px;background:url(\'./Styles/wz2100netbanner.jpg\') no-repeat left top #ffffff; color: #FFFFFF">\
                 <img src="./Styles/wz2100netlogo.png" width="186" height="86" alt="" title="" style="margin-top:10px"/>\
             </div>\
-            <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top" style=";margin-top:-85px;margin-bottom:-5px;"> \
-                <a href="index.html" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Guide\
-		            </h3>\
-                </a>\
-                <a href="weapons.php" class="ui-helper-reset" style="font-size:0.9em;">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Weapons\
-		            </h3>\
-                </a>\
-                <a href="Body.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Bodies\
-		            </h3>\
-                </a>\
-                <a href="propulsion.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Propulsion\
-		            </h3>\
-                </a>\
-                <a href="cyborgs.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Cyborgs\
-		            </h3>\
-                </a>\
-                <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Buildings\
-		            </h3>\
-                </a>\
-                <a href="stats.php" class="ui-helper-reset" style="font-size:0.9em">\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-                        Database\
-		            </h3>\
-                </a>\
-                <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
-		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:130px; display:inline-block">\
-                        <span class="ui-icon ui-icon-star" style="display:inline-block;padding:0px;margin-bottom:-4px"></span>Tank Designer\
-		            </h3>\
-                </a>\
-            </div>\
             </div>\
     \
+    ';
+
+    html += '\
+        \
+<div class="nav ui-widget ui-corner-bottom" style=";margin-top:-25px;margin-bottom:10px;">\
+                	<div class="fl">\
+                    	<ul>\
+							    <li class=""><a href="http://wz2100.net">FrontPage (News)</a></li>\
+							    <li class=""><a href="http://developer.wz2100.net">Wiki/trac</a></li>\
+                                <li class="current"><a href="http://betaguide.wz2100.net/">Guide</a></li>\
+							    <li class=""><a href="http://addons.wz2100.net">Addons</a></li>\
+                                <li class=""><a href="http://developer.wz2100.net/wiki/NewFAQ">FAQ</a></li>\
+							    <li class=""><a href="http://donations.wz2100.net">Donate</a></li>\
+							    <li class=""><a href="http://forums.wz2100.net/index.php">Board index</a></li>\
+                            \
+                            	<li><a href="./search.php">Search</a></li>\
+                            \
+                        </ul>\
+                    </div>\
+                    <div class="fr">\
+                    	<ul>\
+                            \
+                                	<li>\
+                                        <form action="http://forums.wz2100.net/search.php" method="get" id="search">\
+                                            <input name="keywords" type="text" maxlength="128" title="Search for keywords" class="quicksearch" value="Search…" onclick="if(this.value==\'Search…\')this.value=\'\';" onblur="if(this.value==\'\')this.value=\'Search…\';">\
+                                        </form>\
+                                    </li>\
+                                \
+                        </ul>\
+                    </div>\
+                </div>';
+
+    html += '\
+        \
+<div class="ui-widget ui-widget-content ui-corner-top" style="margin-bottom:-4px;" >\
+        \
+        \
+        			<ul class="navmenu2">\
+        				<li><a href="index.html" accesskey="h"><span class="ui-icon ui-icon-home" style="display:inline-block"></span>Guide index</a> </li>\
+        				<li><a href="weapons.php">Weapons</a> </li>\
+        				<li><a href="Body.php">Bodies</a> </li>\
+                        <li><a href="propulsion.php">Propulsion</a> </li>\
+                        <li><a href="cyborgs.php">Cyborgs</a> </li>\
+                        <li><a href="structure.php">Buildings</a> </li>\
+                        <li><a href="stats.php"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>Database</a></li>\
+                        <li><a href="design.php"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>Unit designer</a> </li>\
+        \
+        				\
+        			</ul>\
+        \
+        			\
+        \
+        \
+        			\
+        		</div>\
+\
     ';
 
     var elm = $('#page_header');
@@ -1147,10 +1214,11 @@ function DrawPageHeader() {
 function DrawPageCaption() {
     var elm = $('#page_caption');
     if (elm.length > 0) {
-
+        //elm.addClass("ui-widget");
+        //elm.addClass("ui-corner-top");
         var html = '\
-        <div class="ui-accordion ui-widget ui-helper-reset">\
-            <h3 style="text-align:left; font-size:1.1em;margin-bottom:-10px;padding-bottom:10px;background:rgba(255,255,255,0.90)" class="ui-accordion-header ui-helper-reset ui-state-active ui-accordion-icons ui-accordion-header-active">\
+        <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top">\
+            <h3 style="text-align:left; font-size:1.1em;margin-bottom:-10px;padding-bottom:10px;background:rgba(255,255,255,0.70)" class="ui-accordion-header ui-helper-reset ui-state-active ui-accordion-icons ui-accordion-header-active">\
                 <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>\
         ' + elm.attr('data-caption') +'\
             </h3>\

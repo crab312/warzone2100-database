@@ -17,7 +17,7 @@
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
 
-    <title></title>
+    <title>Warzone 2100 Guide • Propulsion</title>
 
 <script>
 
@@ -150,7 +150,7 @@ function DrawPropulsion(container_id, show_enabled) {
                 width: 70,
             },
             {
-                label: "Armor Modifiers", sortable: false,
+                label: "Resistances to different types of weapons", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
                     var res_html = "";
                     for (var weap_type in PropulsionModifiers.loaded_data_hash) {
@@ -253,7 +253,7 @@ function DrawPropulsionDetailsParameters(propulsion_id) {
 
     if (propulsion != undefined) {
         $("#propulsion_detail_data_container").show();
-        scrollToId('body');
+        scrollToId('#tabs_left');
     }
 
     $("#select_propulsion_button").button({
@@ -374,8 +374,8 @@ function DrawPropulsionTerrainModifiers(container_id, propulsion_id) {
 
 </script>
 </head>
-<body style="background:#eeeeee;">
-    <table style="width:95%;max-width:1200px;min-width:800px ;margin-left: auto ; margin-right: auto ;">
+<body>
+    <table class="ui-widget ui-corner-all">
         <tr>
             <td id="page_header">
 

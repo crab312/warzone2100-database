@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+
+
+    <title>Warzone 2100 Guide • Formulas</title>
+
+    <script>
+
+        $(function () {
+
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+            DrawSection_type1_html("left-tabs-1", "").append($('#into_content'));
+            DrawSection_type1_html("left-tabs-1", "Global").append($('#global_content'));
+            DrawSection_type1_html("left-tabs-1", "Damage").append($('#damage_content'));
+            DrawSection_type1_html("left-tabs-1", "Armor").append($('#armor_content'));
+            DrawSection_type1_html("left-tabs-1", "Hit points (Health)").append($('#hitpoints_content'));
+            DrawSection_type1_html("left-tabs-1", "Speed").append($('#speed_content'));
+            DrawSection_type1_html("left-tabs-1", "Prodution/Construction time").append($('#production_time_content'));
+
+        });
+
+    </script>
+</head>
+<body>
+    <table class="ui-widget ui-corner-all">
+        <tr>
+            <td id="page_header">
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Formulas</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                    <div id="into_content">
+                        <p>
+                            Most of the things in Warzone are easy to calculate, but some of them can be pretty confusing. Here are some of the formulas we use to calculate things.
+                        </p>
+                        <ul class="MyStyledLinkMenu" style="display:inline-block">
+                            <li><a href="#damage_content">Damage formula</a></li>
+                            <li><a href="#armor_content">Armor formula</a></li>
+                            <li><a href="#hitpoints_content">Hit points (health) formula</a></li>
+                            <li><a href="#speed_content">Speed</a></li>
+                            <li><a href="#production_time_content">Prodution/Construction time</a></li>
+                        </ul>
+                    </div>
+                    <div id="global_content">
+                        <p>
+                        Nearly all calculations in formulas are done with integers. This means that numbers are nearly always <em>rounded down</em> to the nearest integer. This includes damage bonuses, weight multipliers, damage multipliers, experience bonuses, accuracy bonuses (down to the nearest percent)...
+                        </p>
+                        <p>
+                        However, note that time is usually rounded down to the nearest 0.1 second, and distance is usually rounded down to the nearest 1/128 tile.
+                        </p>
+                    </div>
+                    <div id="damage_content">
+                        <p>
+                        Ever wonder how damage is calculated in Warzone? If you just want to know if armor is subtractive or multiplicative, it's subtractive:
+                        </p>
+                        <p>
+                        <span class="box">DAMAGE</span> = <span class="box">BASE DAMAGE</span> − <span class="box">ARMOR</span>
+                        </p>
+                        <p>
+                        <em>or</em>
+                        </p>
+                        <p>
+                        <span class="box">DAMAGE</span> = <sup>1</sup>/<sub>3</sub> × <span class="box">BASE DAMAGE</span>
+                        </p>
+                        <p>
+                        whichever is higher.
+                        </p>
+                        <p>
+                        But to know exactly how much damage you're going to do, you need to know how to calculate base damage.
+                        </p>
+                        <h3 id="formula">The formula</h3>
+                        <p>
+                        <span class="box">BASE DAMAGE</span> = <span class="box">WEAPON DAMAGE</span> × <span class="box">WEAPON SUBCLASS DAMAGE UPGRADE</span> × <span class="box">WEAPON TARGET MODIFIER</span>
+                        </p>
+                        <p>
+                        <span class="box">ARMOR</span> = <span class="box">TARGET WEAPON CLASS ARMOR</span> × <span class="box">CLASS ARMOR UPGRADE</span>
+                        </p>
+                        <p>
+                        Damage is <span class="box">BASE DAMAGE</span> − <span class="box">ARMOR</span>, or <sup>1</sup>/<sub>3</sub> of <span class="box">BASE DAMAGE</span>, whichever is higher, rounded down (The exception is when rounding down would make damage 0, in which case damage is rounded up to 1).
+                        </p>
+
+                        <h3 id="clarification">Clarification</h3>
+                        <ul>
+                        <li><p><span class="box">WEAPON DAMAGE</span> is the base damage of the weapon—what you see in the "Damage" column of the turret table.</p></li>
+                        <li><p><span class="box">WEAPON SUBCLASS DAMAGE UPGRADE</span> is the best damage upgrade you've researched for the weapon's subclass.</p></li>
+                        <li><p><span class="box">WEAPON TARGET MODIFIER</span> is the multiplier in the above damage table.</p></li>
+                        <li><p><span class="box">TARGET WEAPON CLASS ARMOR</span> is the target's thermal armor for thermal weapons, and kinetic armor for kinetic weapons. In tanks and VTOLs, thermal armor depends on nothing but the vehicle body.</p></li>
+                        <li><p><span class="box">CLASS ARMOR UPGRADE</span> is the best kinetic/thermal armor upgrade your target has researched for it.</p></li>
+                        </ul>
+
+                        <h3 id="example">An example</h3>
+                        <p>
+                        Green's Tank Killer Scorpion Half-Tracks shoots Yellow's Heavy Cannon Python Tracks. Green has HESH Rocket Warhead, and Yellow has Dense Composite Alloys.
+                        </p>
+                        <p>
+                        Tank Killer (an anti-tank weapon) has 180 damage. HESH Rocket Warhead gives 275%, and anti-tank weapons do 120% damage against tracks.
+                        </p>
+                        <p>
+                        <span class="box">BASE DAMAGE</span> = 180 × 275% × 120% = 524.
+                        </p>
+                        <p>
+                        Tank Killer is a kinetic weapon, and Python has 20 Kinetic Armor. Dense Composite Alloys upgrades 220%.
+                        </p>
+                        <p>
+                        <span class="box">ARMOR</span> = 20 × 220% = 44
+                        </p>
+                        <p>
+                        524 − 44 (480) is greater than 524 × <sup>1</sup>/<sub>3</sub> (174), so the tank killer does 480 damage each time it hits (Notice that it fires two salvos; if they both hit, the tank killer does 960 damage, a significant proportion of the 2260 HP after upgrades that the heavy cannon tank has).
+                        </p>
+                    </div>
+                    <div id="armor_content">
+
+
+
+                    </div>
+                    <div id="hitpoints_content">
+
+                    </div>
+                    <div id="speed_content">
+                        <p>
+                            <span class="box">Speed</span> = <span class="box">Base Speed</span> × <span class="box">Speed Penalty</span> × <span class="box">Unit Experience Bonus</span><br>
+                            &nbsp;&nbsp;<em>or</em><br/>
+                            <span class="box">Speed</span> = <span class="box">Propulsion Max Speed</span> × <span class="box">Unit Experience Bonus</span>
+                        </p>
+                        <p>
+                            (Whichever is lower.)
+                        </p>
+                        <p>
+                            <span class="box">Base Speed</span> = <span class="box">Engine Power After Upgrades</span> × <span class="box">Propulsion Speed</span> × <span class="box">Propulsion Terrain Multiplier</span> / <span class="box">Total Weight</span>
+                        </p>
+                        <p>
+                            <span class="box">Speed Penalty</span> is 3/4 if using a medium body on VTOL, 1/4 if using a heavy body on VTOL, and 1 in all other cases.
+                        </p>
+                        <p>
+                            This speed is in units of world-coordinates per second. There are 128 world-coordinates in a tile, so, for instance, a unit with a speed of 128 would go at a speed of one tile per second.
+                        </p>
+                        <p>
+                            That "Terrain Multiplier" is pretty important. You'd expect it to be 1× for all propulsions flat terrain, but it's actually 2.5× for VTOLs.
+                        </p>
+                    </div>
+                    <div id="production_time_content">
+
+                    </div>
+                </div>
+
+            </div>
+        </td>
+    </tr>
+    </table>
+</body>
+</html>
