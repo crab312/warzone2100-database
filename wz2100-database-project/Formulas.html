@@ -34,10 +34,14 @@
             DrawSection_type1_html("left-tabs-1", "").append($('#into_content'));
             DrawSection_type1_html("left-tabs-1", "Global").append($('#global_content'));
             DrawSection_type1_html("left-tabs-1", "Damage").append($('#damage_content'));
-            DrawSection_type1_html("left-tabs-1", "Armor").append($('#armor_content'));
             DrawSection_type1_html("left-tabs-1", "Hit points (Health)").append($('#hitpoints_content'));
             DrawSection_type1_html("left-tabs-1", "Speed").append($('#speed_content'));
             DrawSection_type1_html("left-tabs-1", "Prodution/Construction time").append($('#production_time_content'));
+
+            InitDataObjects();
+            LoadAllObjects(function () {
+                DrawDamageModifiersTable("modifier_table_container");
+            });
 
         });
 
@@ -57,12 +61,12 @@
                 </ul>
                 <div id="left-tabs-1">
                     <div id="into_content">
+                        <span style="color:red">This page is not finished yet</span>
                         <p>
                             Most of the things in Warzone are easy to calculate, but some of them can be pretty confusing. Here are some of the formulas we use to calculate things.
                         </p>
                         <ul class="MyStyledLinkMenu" style="display:inline-block">
                             <li><a href="#damage_content">Damage formula</a></li>
-                            <li><a href="#armor_content">Armor formula</a></li>
                             <li><a href="#hitpoints_content">Hit points (health) formula</a></li>
                             <li><a href="#speed_content">Speed</a></li>
                             <li><a href="#production_time_content">Prodution/Construction time</a></li>
@@ -70,37 +74,37 @@
                     </div>
                     <div id="global_content">
                         <p>
-                        Nearly all calculations in formulas are done with integers. This means that numbers are nearly always <em>rounded down</em> to the nearest integer. This includes damage bonuses, weight multipliers, damage multipliers, experience bonuses, accuracy bonuses (down to the nearest percent)...
+                        Nearly all calculations in formulas are done with integers.
+                        This means that numbers are nearly always <em>rounded down</em> to the nearest integer.
+                        This includes damage bonuses, weight multipliers, damage multipliers, experience bonuses, accuracy bonuses (down to the nearest percent).
                         </p>
                         <p>
                         However, note that time is usually rounded down to the nearest 0.1 second, and distance is usually rounded down to the nearest 1/128 tile.
                         </p>
                     </div>
                     <div id="damage_content">
-                        <p>
-                        Ever wonder how damage is calculated in Warzone? If you just want to know if armor is subtractive or multiplicative, it's subtractive:
-                        </p>
-                        <p>
-                        <span class="box">DAMAGE</span> = <span class="box">BASE DAMAGE</span> − <span class="box">ARMOR</span>
-                        </p>
-                        <p>
-                        <em>or</em>
-                        </p>
-                        <p>
-                        <span class="box">DAMAGE</span> = <sup>1</sup>/<sub>3</sub> × <span class="box">BASE DAMAGE</span>
-                        </p>
-                        <p>
-                        whichever is higher.
-                        </p>
+                        <p>Ever wonder how damage is calculated in Warzone? If you just want to know if armor is subtractive or multiplicative, it's subtractive:</p>
+
+                        <p><span class="box">DAMAGE</span> = <span class="box">BASE DAMAGE</span> − <span class="box">ARMOR</span>
+                        <br /><em>or</em>
+                            <span class="box">DAMAGE</span> = <sup>1</sup>/<sub>3</sub> × <span class="box">BASE DAMAGE</span>
+                        <br />whichever is higher.</p>
+                        <p>There are 2 kinds of armor: <span style="color:blue">kinetic</span> and <span style="color:red">thermal</span>. 
+                        <br />Kinetic armor protects tanks from "physical" damage (ie from machineguns, cannons, rockets, etc.). 
+                        Thermal armor is used to protect the tank body from "heat" damage type weapons such as flamers, lasers, thermite bombs, etc.</p>
+                        
+                        <div id="modifier_table_container"></div>
+                        
+                        
                         <p>
                         But to know exactly how much damage you're going to do, you need to know how to calculate base damage.
                         </p>
                         <h3 id="formula">The formula</h3>
                         <p>
-                        <span class="box">BASE DAMAGE</span> = <span class="box">WEAPON DAMAGE</span> × <span class="box">WEAPON SUBCLASS DAMAGE UPGRADE</span> × <span class="box">WEAPON TARGET MODIFIER</span>
+                        <span class="box">BASE DAMAGE</span> = <span class="box">Weapon damage</span> × <span class="box">Weapon damage upgrade modifier</span> × <span class="box">Propulsion/Structure damage modifier</span>
                         </p>
                         <p>
-                        <span class="box">ARMOR</span> = <span class="box">TARGET WEAPON CLASS ARMOR</span> × <span class="box">CLASS ARMOR UPGRADE</span>
+                        <span class="box">ARMOR</span> = <span class="box">Target armor</span> × <span class="box">Target armor upgrade modifier</span>
                         </p>
                         <p>
                         Damage is <span class="box">BASE DAMAGE</span> − <span class="box">ARMOR</span>, or <sup>1</sup>/<sub>3</sub> of <span class="box">BASE DAMAGE</span>, whichever is higher, rounded down (The exception is when rounding down would make damage 0, in which case damage is rounded up to 1).
@@ -108,11 +112,11 @@
 
                         <h3 id="clarification">Clarification</h3>
                         <ul>
-                        <li><p><span class="box">WEAPON DAMAGE</span> is the base damage of the weapon—what you see in the "Damage" column of the turret table.</p></li>
-                        <li><p><span class="box">WEAPON SUBCLASS DAMAGE UPGRADE</span> is the best damage upgrade you've researched for the weapon's subclass.</p></li>
-                        <li><p><span class="box">WEAPON TARGET MODIFIER</span> is the multiplier in the above damage table.</p></li>
-                        <li><p><span class="box">TARGET WEAPON CLASS ARMOR</span> is the target's thermal armor for thermal weapons, and kinetic armor for kinetic weapons. In tanks and VTOLs, thermal armor depends on nothing but the vehicle body.</p></li>
-                        <li><p><span class="box">CLASS ARMOR UPGRADE</span> is the best kinetic/thermal armor upgrade your target has researched for it.</p></li>
+                        <li><p><span class="box">Weapon damage</span> is the base damage of the weapon—what you see in the "Damage" column of the turret table.</p></li>
+                        <li><p><span class="box">Weapon damage upgrade modifier</span> is the best damage upgrade you've researched for the weapon's subclass.</p></li>
+                        <li><p><span class="box">Propulsion/Structure damage modifier </span> is the multiplier in the above damage tables.</p></li>
+                        <li><p><span class="box">Target armor</span> is the target's thermal armor for thermal weapons, and kinetic armor for kinetic weapons. In tanks and VTOLs, thermal armor depends on nothing but the vehicle body.</p></li>
+                        <li><p><span class="box">Target armor upgrade modifier</span> is the best kinetic/thermal armor upgrade your target has researched for it.</p></li>
                         </ul>
 
                         <h3 id="example">An example</h3>
@@ -135,13 +139,24 @@
                         524 − 44 (480) is greater than 524 × <sup>1</sup>/<sub>3</sub> (174), so the tank killer does 480 damage each time it hits (Notice that it fires two salvos; if they both hit, the tank killer does 960 damage, a significant proportion of the 2260 HP after upgrades that the heavy cannon tank has).
                         </p>
                     </div>
-                    <div id="armor_content">
-
-
-
-                    </div>
                     <div id="hitpoints_content">
-
+                        <p>Hit points(HP) of Unit are calculated as summ of hit points of components of Unit</p>
+                        Each Unit have 3 components:
+                        <ul>
+                            <li>Body</li>
+                            <li>Propulsion</li>
+                            <li>Turret</li>
+                        </ul>
+                        Note: Multiturret bodies (Dragon) can have 2 turrets so in that case unit has 4 components (body, propulsion, turret1, turret2).
+                        <p><span class="box">Unit HP</span> = (<span class="box">Body HP</span> + <span class="box">Body HP</span> x <span class="box">Propulsion HP modifier</span> + <span class="box">Turret HP</span>) x <span class="box">HP upgrade modifier</span></p>
+                        <h4>Clarification</h4>
+                        <ul>
+                        <li><p><span class="box">Body HP</span> base hit points of body</p></li>
+                        <li><p><span class="box">Propulsion HP modifier</span> hit points modifier for propulsion</p></li>
+                        <li><p><span class="box">Turret HP</span> hit points of turret (turrets). Some turrets have 0 HP whilc other turrets can have 500 HP</p></li>
+                        <li><p><span class="box">HP upgrade modifier</span> modifier from armor upgrades. Each researchof composite alloys increases this modifier.</p></li>
+                        </ul>
+                    
                     </div>
                     <div id="speed_content">
                         <p>
@@ -166,7 +181,37 @@
                         </p>
                     </div>
                     <div id="production_time_content">
+                        <h3>Production Time (Build Points)</h3>
+                        <p>Production time (also known as Build points) is time required to produce unit in factory.</p>
+                        <p>Note: Factory modules decrease production time of units</p>
+                        <p>Production time (build points) of Unit are calculated as summ of build points of components of Unit</p>
+                        Each Unit have 3 components:
+                        <ul>
+                            <li>Body</li>
+                            <li>Propulsion</li>
+                            <li>Turret</li>
+                        </ul>
+                        Note: Multiturret bodies (Dragon) can have 2 turrets so in that case unit has 4 components (body, propulsion, turret1, turret2).
+                        <p><span class="box">Unit Build Points</span> = (<span class="box">Body Build Points</span> + <span class="box">Body Build Points</span> x <span class="box">Propulsion Build Points modifier</span> + <span class="box">Turret Build Points</span>) x <span class="box">Production upgrade modifier</span></p>
+                        <h4>Clarification</h4>
+                        <ul>
+                        <li><p><span class="box">Body Build Points</span> base Build Points of body</p></li>
+                        <li><p><span class="box">Propulsion Build Points modifier</span> Build Points modifier for propulsion</p></li>
+                        <li><p><span class="box">Turret Build Points</span> Build Points of turret (turrets). Some turrets are produced very slow.</p></li>
+                        <li><p><span class="box">Production upgrade modifier</span> modifier from production upgrades (upgrades like Automatic Manufacturing, Robotic manufacturing)</p></li>
+                        </ul>
 
+                        <h3>Construction Time</h3>
+                        <p>Construction Time is time required to build a building by trucks/cyborg engineers</p>
+                        <p>Note: more trucks = faster build</p>
+                        <p><span class="box">Construction time (seconds)</span> = <span class="box">Structure build points</span> / (<span class="box">Truck construct points</span> x <span class="box">Engineering upgrade modifier</span> x <span class="box">Count of trucks</span>)</p>
+                        <h4>Clarification</h4>
+                        <ul>
+                            <li><p><span class="box">Structure build points</span> Build Points of structure. More build points means longer construction time.</p></li>
+                            <li><p><span class="box">Truck construct points</span> Construct points of truck/cyborg engineer. More construct points means faster build</p></li>
+                            <li><p><span class="box">Engineering upgrade modifier</span> modifier from engineering upgrades (upgrades like Improved Engineering, Advanced Engineering)</p></li>
+                            <li><p><span class="box">Count of trucks</span> how much trucks/cyborg engineers are used to build up structure</p></li>
+                        </ul>                    
                     </div>
                 </div>
 

@@ -142,6 +142,7 @@
     <Content Include="keyboard_shortcuts.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="mp_ranking.html" />
     <Content Include="propulsion.html">
       <SubType>Content</SubType>
     </Content>

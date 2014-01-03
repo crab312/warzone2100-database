@@ -440,7 +440,7 @@ function InitDataObjects() {
 
         obj.grid_colModel = [
             {
-                label: "Weapon Class", name: "grid_id", key: true, width: 70,
+                label: "Weapon Class", name: "grid_id", key: true, width: 110, fixed:true,
                 formatter: function (cellvalue, options, rowObject) {
                     return "<div style='font-size:0.9em'><b>" + cellvalue + "</b></div>";
                 },
@@ -493,9 +493,9 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             {
-                label: "Weapon Class", name: "grid_id", key: true, width: 70,
+                label: "Weapon Class", name: "grid_id", key: true, width: 110, fixed:true,
                 formatter: function (cellvalue, options, rowObject) {
-                    return "<div style='font-size:1.1em'><b>" + cellvalue + "</b></div>";
+                    return "<div style='font-size:0.9em'><b>" + cellvalue + "</b></div>";
                 },
             },
             {
@@ -1106,57 +1106,6 @@ function EmptyComponentIcon_html(name) {
     return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
 }
 
-//var html = '\
-//            <div style="text-align:center;">\
-//            <div class="ui-corner-top" style="margin-bottom:-5px;width:100%; height:185px;background:url(\'./Styles/wz2100netbanner.jpg\') no-repeat left top #ffffff; color: #FFFFFF">\
-//                <img src="./Styles/wz2100netlogo.png" width="186" height="86" alt="" title="" style="margin-top:10px"/>\
-//            </div>\
-//            <div class="ui-accordion ui-widget ui-helper-reset ui-corner-top" style=";margin-top:-85px;margin-bottom:-5px;"> \
-//                <a href="index.html" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Guide\
-//		            </h3>\
-//                </a>\
-//                <a href="weapons.php" class="ui-helper-reset" style="font-size:0.9em;">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Weapons\
-//		            </h3>\
-//                </a>\
-//                <a href="Body.php" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top  ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Bodies\
-//		            </h3>\
-//                </a>\
-//                <a href="propulsion.php" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Propulsion\
-//		            </h3>\
-//                </a>\
-//                <a href="cyborgs.php" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Cyborgs\
-//		            </h3>\
-//                </a>\
-//                <a href="structure.php" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Buildings\
-//		            </h3>\
-//                </a>\
-//                <a href="stats.php" class="ui-helper-reset" style="font-size:0.9em">\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:100px; display:inline-block">\
-//                        Database\
-//		            </h3>\
-//                </a>\
-//                <a href="design.php" class="ui-helper-reset" style="font-size:0.9em" >\
-//		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-top ui-accordion-noicons" style="padding-bottom:7px;background:rgba(255,255,255,0.76);width:130px; display:inline-block">\
-//                        <span class="ui-icon ui-icon-star" style="display:inline-block;padding:0px;margin-bottom:-4px"></span>Tank Designer\
-//		            </h3>\
-//                </a>\
-//            </div>\
-//            </div>\
-//    \
-//    ';
-
 function DrawPageHeader() {
 
     var html = '\
@@ -1179,7 +1128,7 @@ function DrawPageHeader() {
 							    <li class=""><a href="http://addons.wz2100.net">Addons</a></li>\
                                 <li class=""><a href="http://developer.wz2100.net/wiki/NewFAQ">FAQ</a></li>\
 							    <li class=""><a href="http://donations.wz2100.net">Donate</a></li>\
-							    <li class=""><a href="http://forums.wz2100.net/index.php">Board index</a></li>\
+							    <li class=""><a href="http://forums.wz2100.net/index.php">Forum</a></li>\
                             \
                             	<li><a href="./search.php">Search</a></li>\
                             \
@@ -1367,6 +1316,96 @@ function scrollToRow(targetGrid, id) {
 
         }
     });
+}
+
+function DrawDamageModifiersTable(container_id) {
+
+    var grid_data_hash = {};
+    var grid_col_hash = {};
+    var grid_col_model = [{ name: "prop_struc_type", label: ' ', key: true }];
+    
+
+    var set_method = function (weap_type, modif_object) {
+        if (grid_col_hash[weap_type] == undefined) {
+            var new_col = {
+                name: weap_type
+            };
+            grid_col_hash[weap_type] = 1;
+            grid_col_model.push(new_col);
+        }
+
+        for (var prop_struc_type in modif_object.loaded_data_hash[weap_type]) {
+            if (grid_data_hash[prop_struc_type] == undefined) {
+                grid_data_hash[prop_struc_type] = {};
+                grid_data_hash[prop_struc_type]["prop_struc_type"] = prop_struc_type;
+            }
+            grid_data_hash[prop_struc_type][weap_type] = modif_object.loaded_data_hash[weap_type][prop_struc_type] + '%';
+        }
+    }
+
+    for (var weap_type in PropulsionModifiers.loaded_data_hash) {
+        set_method(weap_type, PropulsionModifiers);
+    }
+
+    for (var weap_type in StructureModifiers.loaded_data_hash) {
+        set_method(weap_type, StructureModifiers);
+    }
+
+    $('#' + container_id).append('<div id="' + container_id + '_1"></div><div id="' + container_id + '_2"></div>');
+
+    var prop_types_hash = {};
+    for (var prop_type in PropulsionType.loaded_data_hash) {
+        if (prop_types_hash[prop_type] == undefined) {
+            prop_types_hash[prop_type] = 1;
+        }
+    }
+    var grid_data = [];
+    for (var prop_struc_type in grid_data_hash) {
+        if (prop_types_hash[prop_struc_type] != undefined)
+        {
+            grid_data.push(grid_data_hash[prop_struc_type])
+        }
+    }
+    var grid = $(ResetGridContainer(container_id + '_1'));
+    grid.jqGrid
+    ({
+        caption: 'Weapon to Propulsion damage modifiers',
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: "auto",
+        colModel: grid_col_model,
+    });
+
+
+    var grid_data = [];
+    var struc_types_hash = {};
+    for (var struc_id in Structures.loaded_data_hash) {
+        var struc_type = Structures.loaded_data_hash[struc_id].strength;
+        if (struc_type != undefined) {
+            if (struc_types_hash[struc_type] == undefined) {
+                struc_types_hash[struc_type] = 1;
+            }
+        }
+    }
+
+    for (var prop_struc_type in grid_data_hash) {
+        if (struc_types_hash[prop_struc_type] != undefined) {
+            grid_data.push(grid_data_hash[prop_struc_type])
+        }
+    }
+
+    var grid = $(ResetGridContainer(container_id + '_2'));
+    grid.jqGrid
+    ({
+        caption:'Weapon to Structure damage modifiers',
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: "auto",
+        colModel: grid_col_model,
+    });
+
 }
 
 /*
