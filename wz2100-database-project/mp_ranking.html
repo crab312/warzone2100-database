@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+    <link href="Styles/MyCustomStyles.css" rel="stylesheet" />
+
+    <link href="scripts/jquery.jqGrid-4.5.2/css/ui.jqgrid.css" rel="stylesheet" />
+    <script src="scripts/jquery.jqGrid-4.5.2/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
+    <script src="scripts/jquery.blockUI.js"></script>
+
+    <script src="scripts/MyCustomScripts2.js"></script>
+    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/designer_functions.js"></script>
+    <script src="scripts/research_functions.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+
+<style type="text/css">
+#content table {
+border-bottom: 1px solid #CCCCCC;
+border-right: 1px solid #CCCCCC;
+vertical-align: middle;
+}
+table.mpad td, table.mpad th {
+padding: 2px 4px;
+}
+
+table .c {
+text-align: center;
+}
+
+td.nb, #content th.nb {
+border: 0;
+}
+
+#content td, #content th {
+border-top: 1px solid #CCCCCC;
+border-left: 1px solid #CCCCCC;
+}
+
+</style>
+
+    <title>Warzone 2100 Guide • Multiplayer rankings</title>
+
+    <script>
+
+        $(function () {
+
+            $("#tabs_left").tabs();
+            $("#tabs_left").tabs("option", "active", 0);
+
+            $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+    <table class="ui-widget ui-corner-all">
+        <tr>
+            <td id="page_header">
+            </td>
+        </tr>
+    <tr>
+        <td style="width:100%;vertical-align:top">
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-1">Multiplayer rankings</a></li>
+                </ul>
+                <div id="left-tabs-1">
+                    <div id="content">
+                    <p>
+                    Ever notice the stars and medals next to a player's name in the multiplayer screen? Here's how to get them.
+                    </p>
+                    <p>
+                    If you have played 4 or fewer games, you will have a <img src="data:image/gif;base64,R0lGODlhEAAQALMAAJsPF7sLH/+/x9uDn32Ahv9XQ/tvX+cAAGMAAP///97e3v///wAAAAAAAAAAAAAAACH5BAEAAAsALAAAAAAQABAAQARGcMlJay0HjYFCsFMmIQA4EYkiCIQ5CcZRuksAx5+rrRy9EKuWbzgxzGQ0EmCJcAViy8MhZwkAEALO0oVasWjARGIgBJcpEQA7" alt=""/> (pacifier), and no other stars. Otherwise:
+                    </p>
+
+                    <h3 id="top">Top star</h3>
+                    <table class="mpad" style="width: 260px;">
+                        <tbody>
+                            <tr>
+                                <th class="l nb" style="width: 55%"></th><th class="c" style="width: 45%">Units killed</th>
+                            </tr>
+                            <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32AhvrSSP/Pc//nt/+RANd3ALBeAIhEAGAqAOWANMZWJaY7HP///////wAAACH5BAEAAA4ALAAAAAAQABAAQARE0MlJKwVAla2wpQEBfFPgSdhISsHKBkEjGAD8BYyAAEixu8DgKiBQuQIHwsFYCRgGss3M0LLgBIsBjeRMjACJrXBMigAAOw==" alt=""/> Bronze</td><td class="c">150</td></tr>
+
+                            <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAAH2Ahv///+/v797e3s7Ozp2dnY2NjWxsbFxcXBoaGv///wAAAAAAAAAAAAAAAAAAACH5BAEAAAoALAAAAAAQABAAQAQ+UMlJKwWpjCEMANYVgKH0JRNGlspafkDAJV8IIASS4Drr/0AAwfWKHYgpQmAp4AyGNgHhQBggTYXaxwPs/iIAOw==" alt=""/> Silver</td><td class="c">300</td></tr>
+                            <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32Ahv/xYPrSSLN+PYhEAGAqAP///////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAQABAAQAQ+EMlJKwWAiE2wpcEBfFPgSdhISsHKBqEwAPAXaAVQCJ3r/6vA7Hc79GyDw2GzOQxaltBAIyIJDSOAYQjskiIAOw==" alt=""/> Gold</td><td class="c">600</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="middle">Middle star</h3>
+                    <table class="mpad" style="width: 260px;">
+                    <tbody><tr>
+                    <th class="l nb" style="width: 55%"></th><th class="c" style="width: 45%">Games played</th>
+                    </tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32AhvrSSP/Pc//nt/+RANd3ALBeAIhEAGAqAOWANMZWJaY7HP///////wAAACH5BAEAAA4ALAAAAAAQABAAQARE0MlJKwVAla2wpQEBfFPgSdhISsHKBkEjGAD8BYyAAEixu8DgKiBQuQIHwsFYCRgGss3M0LLgBIsBjeRMjACJrXBMigAAOw==" alt=""/> Bronze</td><td class="c">50</td></tr>
+
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAAH2Ahv///+/v797e3s7Ozp2dnY2NjWxsbFxcXBoaGv///wAAAAAAAAAAAAAAAAAAACH5BAEAAAoALAAAAAAQABAAQAQ+UMlJKwWpjCEMANYVgKH0JRNGlspafkDAJV8IIASS4Drr/0AAwfWKHYgpQmAp4AyGNgHhQBggTYXaxwPs/iIAOw==" alt=""/> Silver</td><td class="c">100</td></tr>
+
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32Ahv/xYPrSSLN+PYhEAGAqAP///////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAQABAAQAQ+EMlJKwWAiE2wpcEBfFPgSdhISsHKBqEwAPAXaAVQCJ3r/6vA7Hc79GyDw2GzOQxaltBAIyIJDSOAYQjskiIAOw==" alt=""/> Gold</td><td class="c">200</td></tr>
+                    </tbody></table>
+
+                    <h3 id="bottom">Bottom star</h3>
+                    <table class="mpad" style="width: 260px;">
+                    <tbody><tr>
+                    <th class="l nb" style="width: 55%"></th><th class="c" style="width: 45%">Games won</th>
+                    </tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32AhvrSSP/Pc//nt/+RANd3ALBeAIhEAGAqAOWANMZWJaY7HP///////wAAACH5BAEAAA4ALAAAAAAQABAAQARE0MlJKwVAla2wpQEBfFPgSdhISsHKBkEjGAD8BYyAAEixu8DgKiBQuQIHwsFYCRgGss3M0LLgBIsBjeRMjACJrXBMigAAOw==" alt=""/> Bronze</td><td class="c">10</td></tr>
+
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAAH2Ahv///+/v797e3s7Ozp2dnY2NjWxsbFxcXBoaGv///wAAAAAAAAAAAAAAAAAAACH5BAEAAAoALAAAAAAQABAAQAQ+UMlJKwWpjCEMANYVgKH0JRNGlspafkDAJV8IIASS4Drr/0AAwfWKHYgpQmAp4AyGNgHhQBggTYXaxwPs/iIAOw==" alt=""/> Silver</td><td class="c">40</td></tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjM32Ahv/xYPrSSLN+PYhEAGAqAP///////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAQABAAQAQ+EMlJKwWAiE2wpcEBfFPgSdhISsHKBqEwAPAXaAVQCJ3r/6vA7Hc79GyDw2GzOQxaltBAIyIJDSOAYQjskiIAOw==" alt=""/> Gold</td><td class="c">80</td></tr>
+                    </tbody></table>
+
+                    <h3 id="medal">Medal</h3>
+
+                    <table class="mpad" style="width: 377px;">
+                    <tbody><tr>
+                    <th class="l nb" style="width: 38%"></th><th class="c" style="width: 31%">Games won</th><th class="c" style="width: 31%">Win:loss&nbsp;ratio</th>
+
+                    </tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAACMjMzfvbyvPWyezSx9nC0N/L////97e3r6+vp2dnXx8fGxsbFxcXP///wAAAAAAACH5BAEAAA0ALAAAAAAQABAAQARTsMkmSr1g6qYY8IySbdJgncJIHgfgIoi6CUNQ17KWJIqSIC3SRGE4IDzCSS43odmeTMmlEKBGGwXCQEsQJRMeFyNxbQCI4euiyIAhhWQVOUmfRAAAOw==" alt=""/> Silver chevron</td><td class="c">6</td><td class="c">2:1</td></tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAAJuXr1NTh2dnoyMjM6eny0drk3+Tn//Pc//nt/+RANd3ALBeAIhEAGAqAP///wAAACH5BAEAAA4ALAAAAAAQABAAQARb0EkHDLF2zC3ZSQozaJwkBAYaCGTJIAejhC0HFDdREPWmNANRQ9GbHA6LRJJYkiRGk2eTgrnwpgac1lCUzBYLReLQdSwajASjsSi/kDPRVP0JSZvH0QBUdvRqEQA7" alt=""/> Double chevron</td><td class="c">12</td><td class="c">4:1</td></tr>
+                    <tr><td class="l"><img src="data:image/gif;base64,R0lGODlhEAAQALMAAP8ApdgAlbIAhYsAdCMjM32Ahv/xYPrSSGAqAOWANMZWJaY7HP///////wAAAAAAACH5BAEAAA0ALAAAAAAQABAAQARXsMkGQr1kalkUU9kmBkNAhGJTGIdyGKgoCAA9x2Jx4JrO/IYgq5BLIE4FRIInCdAsAlNKQhvUTtOJAJvlMJiTgpgRJIhTBUJCuOT2FocFAb4g5tJh/CQCADs=" alt=""/> Gold star</td><td class="c">24</td><td class="c">8:1</td></tr>
+
+                    </tbody></table>
+
+                    <h4>Note</h4>
+                    <p>
+                    Rankings can depend on a number of factors not directly correlated to a player's skill, so they should not be trusted as an absolute measure of how strong a player is.
+                    </p>
+                    </div>
+                </div>
+
+            </div>
+        </td>
+    </tr>
+    </table>
+</body>
+</html>

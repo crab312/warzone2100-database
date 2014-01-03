@@ -145,21 +145,9 @@ function InitDataObjects() {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
+        obj.icon_folder = "Weapon";
         obj.GetIconHtml_Function = function (rowObject, size) {
-            var img_name = rowObject.grid_id + ".gif";
-            if (typeof icon_files_hash != 'undefined') {
-                if (icon_files_hash[img_name] == undefined) {
-                    return EmptyComponentIcon_html(rowObject.name);
-                } else {
-                    if (size == undefined) {
-                        return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
-                    } else {
-                        return "<img src='data_icons/Weapon/" + img_name + "' onerror='$(this).hide();' width='" + size + "' title='" + rowObject.name + "'/>";
-                    }
-                }
-            } else {
-                return '';
-            }
+            return GetIcon_element(this.icon_folder, rowObject, size);
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden:true },
@@ -235,21 +223,9 @@ function InitDataObjects() {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
+        obj.icon_folder = "Body";
         obj.GetIconHtml_Function = function (rowObject) {
-            var img_name = rowObject.name == undefined ? rowObject.grid_id : rowObject.name.toLowerCase() + ".gif";
-            var img_name2 = rowObject.grid_id + ".gif";
-            if (typeof icon_files_hash != 'undefined') {
-                var img_found = icon_files_hash[img_name] != undefined;
-                if (!img_found) {
-                    img_name = img_name2;
-                    img_found = icon_files_hash[img_name] != undefined
-                }
-            }
-            if (img_found){
-                return "<img src='data_icons/Body/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
-            } else {
-                return EmptyComponentIcon_html(rowObject.name);
-            }
+            return GetIcon_element(this.icon_folder, rowObject);
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
@@ -278,21 +254,9 @@ function InitDataObjects() {
         obj.sysid = "Propulsion";
         obj.path_ini = data_directory + "propulsion.ini";
         obj.LoadDataFunction = LoadDataObject;
+        obj.icon_folder = "Propulsion";
         obj.GetIconHtml_Function = function (rowObject, size) {
-            var img_name = rowObject.grid_id + ".gif";
-            if (typeof icon_files_hash != 'undefined') {
-                if (icon_files_hash[img_name] == undefined) {
-                    return EmptyComponentIcon_html(rowObject.name);
-                } else {
-                    if (size == undefined) {
-                        return "<img src='data_icons/Propulsion/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
-                    } else {
-                        return "<img src='data_icons/Propulsion/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
-                    }
-                }
-            } else {
-                return '';
-            }
+            return GetIcon_element(this.icon_folder, rowObject, size);
         };
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -330,21 +294,9 @@ function InitDataObjects() {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
+        obj.icon_folder = "Structures";
         obj.GetIconHtml_Function = function (rowObject) {
-            var img_name = rowObject.name.toLowerCase() + ".gif";
-            var img_name2 = rowObject.grid_id + ".gif";
-            if (typeof icon_files_hash != 'undefined') {
-                var img_found = icon_files_hash[img_name] != undefined;
-                if (!img_found) {
-                    img_name = img_name2;
-                    img_found = icon_files_hash[img_name] != undefined
-                }
-            }
-            if (img_found) {
-                return "<img src='data_icons/Structures/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
-            } else {
-                return EmptyComponentIcon_html(rowObject.name);
-            }
+            return GetIcon_element(this.icon_folder, rowObject);
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
@@ -576,6 +528,10 @@ function InitDataObjects() {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
+        obj.icon_folder = "SupportTurrets";
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            return GetIcon_element(this.icon_folder, rowObject, size);
+        };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             { label: "Name", name: "name" },
@@ -602,22 +558,9 @@ function InitDataObjects() {
             { label: "Price", name: "buildPower" },
             { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
         ];
-
+        obj.icon_folder = "SupportTurrets";
         obj.GetIconHtml_Function = function (rowObject, size) {
-            var img_name = rowObject.grid_id + ".gif";
-            if (typeof icon_files_hash != 'undefined') {
-                if (icon_files_hash[img_name] == undefined) {
-                    return EmptyComponentIcon_html(rowObject.name);
-                } else {
-                    if (size == undefined) {
-                        return "<img src='data_icons/SupportTurrets/" + img_name + "' onerror='$(this).hide();' title='" + rowObject.name + "'/>";
-                    } else {
-                        return "<img src='data_icons/SupportTurrets/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
-                    }
-                }
-            } else {
-                return '';
-            }
+            return GetIcon_element(this.icon_folder, rowObject, size);
         };
 
         Construction = obj;
@@ -640,7 +583,10 @@ function InitDataObjects() {
                 { label: "Price", name: "buildPower" },
                 { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
             ],
-            GetIconHtml_Function: Construction.GetIconHtml_Function,
+            icon_folder: "SupportTurrets",
+            GetIconHtml_Function: function (rowObject, size) {
+                return GetIcon_element(this.icon_folder, rowObject, size);
+            },
         };
         Objects.push(Sensor);
     }
@@ -659,6 +605,10 @@ function InitDataObjects() {
             { label: "Name", name: "name" },
             { label: "Range", name: "range" },
         ];
+        obj.icon_folder = "SupportTurrets";
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            return GetIcon_element(this.icon_folder, rowObject, size);
+        };
         ECM = obj;
         Objects.push(obj);
     }
@@ -698,6 +648,7 @@ function InitDataObjects() {
         ];
 
         obj.GetIconHtml_Function = function (rowObject, size) {
+            //this code used to draw cyborgs icons at Cyborgs.html
             var img_name = null;
             var img_folder = null;
             if (rowObject.type == "CYBORG" || rowObject.type == "CYBORG_SUPER") {
@@ -1096,16 +1047,6 @@ function ShowSelectColumns(DataObject) {
     });
 }
 
-
-function EmptyComponentIcon_html(name) {
-    var name = name == undefined ? "...where is my name?" : name;
-    var shown_name = name;
-    if (name.length > 22) {
-        shown_name = name.substring(0, 21) + '...';
-    }
-    return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
-}
-
 function DrawPageHeader() {
 
     var html = '\
@@ -1406,6 +1347,42 @@ function DrawDamageModifiersTable(container_id) {
         colModel: grid_col_model,
     });
 
+}
+
+function GetIcon_filename( grid_id) {
+    return grid_id + ".gif";
+
+}
+function GetIcon_src(folder, grid_id) {
+    var img_name = GetIcon_filename(grid_id);
+    return "data_icons/" + folder + "/" + img_name;
+}
+
+function GetIcon_element(folder, rowObject, size) {
+    var img_name = GetIcon_filename(rowObject.grid_id);
+    var img_src = GetIcon_src(folder, rowObject.grid_id);
+    if (typeof icon_files_hash != 'undefined') {
+        if (icon_files_hash[img_name] == undefined) {
+            return EmptyComponentIcon_html(rowObject.name);
+        } else {
+            if (size == undefined) {
+                return '<img src="'+img_src+'" onerror="$(this).hide();" title="' + rowObject.name + '"/>';
+            } else {
+                return '<img src="' + img_src + '" onerror="$(this).hide();" width="' + size + '" title="' + rowObject.name + '"/>';
+            }
+        }
+    } else {
+        return '';
+    }
+}
+
+function EmptyComponentIcon_html(name) {
+    var name = name == undefined ? "...where is my name?" : name;
+    var shown_name = name;
+    if (name.length > 22) {
+        shown_name = name.substring(0, 21) + '...';
+    }
+    return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
 }
 
 /*
