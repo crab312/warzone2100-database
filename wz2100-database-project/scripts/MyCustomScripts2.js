@@ -71,6 +71,13 @@ Number.prototype.toMMSS = function () {
     return minutes + ':' + seconds;
 }
 
+Number.prototype.tohhMMSS = function () {
+    if (this > 3600)
+        return this.toHHMMSS();
+    else
+        return this.toMMSS();
+}
+
 Number.prototype.toInt = function () {
     return Math.floor(this);
 }

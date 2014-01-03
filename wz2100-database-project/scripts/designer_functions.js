@@ -536,7 +536,7 @@ function Abilities_Description(ability_name) {
             res.designer_only_ability = true;
             break;
         case "HasPeriodicalDamage":
-            res.name = "Overtime damage";
+            res.name = "Over time damage";
             res.descr = "This unit has additional continious damage";
             res.icon_class = "ui-icon ui-icon-star";
             break;

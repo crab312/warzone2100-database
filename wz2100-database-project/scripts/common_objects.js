@@ -139,6 +139,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Weapon";
+        obj.page_url = "weapons.php";
         obj.path_ini = data_directory + "weapons.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -217,6 +218,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Body";
+        obj.page_url = "Body.php";
         obj.path_ini = data_directory + "body.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -252,6 +254,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Propulsion";
+        obj.page_url = "propulsion.php";
         obj.path_ini = data_directory + "propulsion.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.icon_folder = "Propulsion";
@@ -288,6 +291,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Structure";
+        obj.page_url = "structure.php";
         obj.path_ini = data_directory + "structure.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -1358,21 +1362,29 @@ function GetIcon_src(folder, grid_id) {
     return "data_icons/" + folder + "/" + img_name;
 }
 
+function GetIcon_CheckIconFilenameHashed(img_name) {
+    if (typeof icon_files_hash != 'undefined') {
+        if (icon_files_hash[img_name] == undefined) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
 function GetIcon_element(folder, rowObject, size) {
     var img_name = GetIcon_filename(rowObject.grid_id);
     var img_src = GetIcon_src(folder, rowObject.grid_id);
-    if (typeof icon_files_hash != 'undefined') {
-        if (icon_files_hash[img_name] == undefined) {
-            return EmptyComponentIcon_html(rowObject.name);
+    if (GetIcon_CheckIconFilenameHashed(img_name) == true) {
+        if (size == undefined) {
+            return '<img src="'+img_src+'" onerror="$(this).hide();" title="' + rowObject.name + '"/>';
         } else {
-            if (size == undefined) {
-                return '<img src="'+img_src+'" onerror="$(this).hide();" title="' + rowObject.name + '"/>';
-            } else {
-                return '<img src="' + img_src + '" onerror="$(this).hide();" width="' + size + '" title="' + rowObject.name + '"/>';
-            }
+            return '<img src="' + img_src + '" onerror="$(this).hide();" width="' + size + '" title="' + rowObject.name + '"/>';
         }
     } else {
-        return '';
+        return EmptyComponentIcon_html(rowObject.name);
     }
 }
 

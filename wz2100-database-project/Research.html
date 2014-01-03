@@ -17,6 +17,8 @@
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
 
+    <script src="scripts/raphael-min.js"></script>
+
     <title>Warzone 2100 Guide • Research</title>
 
 <script>
@@ -32,8 +34,9 @@ $(function () {
             DrawResearchTree();
         });
     })
-
-
+    DrawSection_type2_1_html("intro_header", "Introduction").append($('#intro_content'));
+    DrawSection_type2_1_html("time_table_header", "Research Timeline").append($('#time_table_container'));
+    
 
 
 });
@@ -53,57 +56,468 @@ function drawLine(ctx, from, to) {
     ctx.stroke();
 }
 
+; (function (Raphael) {
+    /// Plugin - replaces original RaphaelJS .image constructor
+    /// with one that respects original dimensions.
+    /// Optional overrides for each dimension.
+
+    var originalRaphaelImageFn = Raphael.fn.image;
+    /**
+	 * Overload - replace Raphael .image function with one that respects original dimensions
+	 * @param  {string} url the image path
+	 * @param  {number} x   position-x
+	 * @param  {number} y   position-y
+	 * @param  {number} w   dimensions-width
+	 * @param  {number} h   dimensions-height
+	 * @return {Paper.Element}     new raphael element
+	 */
+    Raphael.fn.image = function (url, x, y, w, h) {
+        // fix the image dimensions to match original scale unless otherwise provided
+        if (!w || !h) {
+            var img = new Image();
+            img.src = url;
+            if (!w) w = img.width;
+            if (!h) h = img.height;
+        }
+        return originalRaphaelImageFn.call(this, url, x, y, w, h);
+    };
+})(Raphael);
+
+//function DrawCompTimeTable(container_id) {
+//    //1px = 1 sec
+//    var h = 2000;
+//    $('#' + container_id).append('<canvas style="position:relative;z-index:1;"id="timeTableSvgCanva" width="5401" height="2001"></canvas>');
+//    var ctx = $('#timeTableSvgCanva').get(0).getContext('2d');
+//    for(var i=0; i<=5400; i=i+60)
+//    {
+//        var x = i;
+//        drawLine(ctx, { x: x, y: 0 }, { x: x, y: 2000 });
+//        //$('#timeTableSvgCanva').append('<line x1="'+x+'" y1="0" x2="'+x+'" y2="2000" style="stroke:gray;stroke-width:0.4" />');
+//    }
+
+//    var can_research = function (comp_id) {
+//        return ResearchedComponents[player_all_researched][comp_id] != undefined
+//    }
+
+//    /* 1. Prepare array of Research Lines */
+//    var res_lines = [];
+//    {
+//        /* Body line */
+//        var line = {};
+//        line.DataObject = Bodies;
+//        line.items_ids = {};
+//        for (var body_id in Bodies.loaded_data_hash) {
+//            if (can_research(body_id)) {
+//                line.items_ids[body_id] = 1;
+//            }
+//        }
+//        res_lines.push(line);
+//    }
+//    {
+//        /* propulsion line */
+//        var line = {};
+//        line.DataObject = Propulsion;
+//        line.items_ids = {};
+//        for (var prop_id in Propulsion.loaded_data_hash) {
+//            if (can_research(prop_id)) {
+//                line.items_ids[prop_id] = 1;
+//            }
+//        }
+//        res_lines.push(line);
+//    }
+
+//    {
+//        /* Weapon lines */
+//        var weap_res_classes = {};
+//        for (var i in Weapons.loaded_data) {
+//            var weapon = Weapons.loaded_data[i];
+//            if (!can_research(weapon.grid_id)) {
+//                continue;
+//            }
+//            var res_class = weapon.weaponSubClass;
+//            if(res_class == undefined)
+//            {
+//                continue;
+//            }
+//            if (weap_res_classes[res_class] == undefined) {
+//                weap_res_classes[res_class] = {};
+//                weap_res_classes[res_class].minResearchTime = weapon.minResearchTime;
+//                weap_res_classes[res_class].weapons_ids = {};;
+//                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+//            } else {
+//                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+//                weap_res_classes[res_class].minResearchTime = Math.min(weapon.minResearchTime, weap_res_classes[res_class].minResearchTime);
+//            }
+//        }
+//        var weap_res_classes_array = [];
+//        for (var res_class in weap_res_classes) {
+//            weap_res_classes_array.push({
+//                res_class: res_class,
+//                minResearchTime: weap_res_classes[res_class].minResearchTime,
+//                weapons_ids: weap_res_classes[res_class].weapons_ids,
+//            });
+//        }
+
+//        weap_res_classes_array.sort(function (elm1, elm2) {
+//            return elm1.minResearchTime - elm2.minResearchTime;
+//        });
+
+//        for (var i in weap_res_classes_array) {
+//            var line = {};
+//            line.DataObject = Weapons;
+//            line.items_ids = weap_res_classes_array[i].weapons_ids;
+//            res_lines.push(line);
+//        }  
+//    }
+//    /* 2. Draw researches which are included in Research Lines */
+//    for (var res_id in Researches.loaded_data_hash) {
+//        var research = Researches.loaded_data_hash[res_id];
+//        var result_comps = [];
+//        /* prepare array of research results */
+//        if (research.resultComponents != undefined) {
+//            result_comps = result_comps.concat(research.resultComponents.split(','));
+//        }
+//        if (research.resultStructures != undefined) {
+//            result_comps = result_comps.concat(research.resultStructures.split(','));
+//        }
+//        if (result_comps.length == 0) {
+//            continue;
+//        }
+//        /* iterate research results */
+//        for (var ir in result_comps) {
+//            var comp_id = result_comps[ir];
+//            if (!can_research(comp_id)) {
+//                continue;
+//            }
+//            for (var line_num in res_lines) {
+//                var line = res_lines[line_num];
+//                if (line.items_ids[comp_id] != undefined) { //found component in research line
+//                    var DataObject = line.DataObject;
+//                    var res_time = ResearchTime[player_all_researched][res_id];
+//                    var pic = new Image();
+//                    pic.src = GetIcon_src(DataObject.icon_folder, comp_id);
+//                    pic._x = res_time;
+//                    pic._y = line_num * 50 + 10;
+//                    pic.onload = function () {
+//                        ctx.drawImage(this, this._x, this._y);
+//                    };
+
+//                    break;
+//                }
+//            }
+//        }
+//    }
+
+//}
+
 function DrawCompTimeTable(container_id) {
     //1px = 1 sec
     var h = 2000;
-    $('#' + container_id).append('<canvas style="position:relative;z-index:1;"id="timeTableSvgCanva" width="5401" height="2001"></canvas>');
-    var ctx = $('#timeTableSvgCanva').get(0).getContext('2d');
-    for(var i=0; i<=5400; i=i+20)
+    $('#' + container_id).append('<div id="timeTableSvgCanva"></div>');
+    var max_res_time = 0;
+    for (var i in Researches.loaded_data) {
+        var res_time = ResearchTime[player_all_researched][Researches.loaded_data[i].grid_id]
+        if (res_time != undefined) {
+            max_res_time = Math.max(res_time, max_res_time);
+        }
+    }
+    var x_size = max_res_time+200;
+    var y_size = 1151;
+    var paper = new Raphael('timeTableSvgCanva', x_size, y_size);
+
+
+    var x_offset = 100;
+    var y_offset = 50;
+    var text_offset_y = 30 - 10;
+    paper.text(x_offset - 50, text_offset_y, "Timeline");
+    paper.path("M30 30L" + x_size + " 30");
+
+    var bottom_timeline_y = y_size - 50;
+    var y_lines_max = y_size - 45;
+    paper.text(x_offset - 50, bottom_timeline_y + 7, "Timeline");
+    paper.path("M30 " + bottom_timeline_y + "L" + x_size + " " + bottom_timeline_y);
+    for (var i = 0; i <= 5400; i = i + 60) {
+        var x = i + x_offset;
+        var y0 = y_offset - 25;
+
+
+        if (i % 600 == 0) {
+            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("stroke-width", "2");
+            paper.text(x, text_offset_y, i.tohhMMSS()).attr("font-weight", "bold");
+            paper.text(x, bottom_timeline_y+7, i.tohhMMSS()).attr("font-weight", "bold");
+        } else {
+            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("opacity", 0.7);
+            paper.text(x, text_offset_y, i.tohhMMSS());
+            paper.text(x, bottom_timeline_y + 7, i.tohhMMSS());
+        }
+    }
+
+    var can_research = function (comp_id) {
+        return ResearchedComponents[player_all_researched][comp_id] != undefined;
+    }
+
+    /* 1. Prepare array of Research Lines */
+    var res_lines = [];
     {
-        var x = i;
-        
-
-        drawLine(ctx, { x: x, y: 0 }, { x: x, y: 2000 });
-        //$('#timeTableSvgCanva').append('<line x1="'+x+'" y1="0" x2="'+x+'" y2="2000" style="stroke:gray;stroke-width:0.4" />');
-    }
-    
-
-    var weap_types = {};
-    var weap_types_count = 0;
-    var z = 1000;
-    for (var weap_id in Weapons.loaded_data_hash) {
-        var weapon = Weapons.loaded_data_hash[weap_id];
-        if (ResearchedComponents[player_all_researched][weapon.grid_id] == undefined) /* Check Weapon can be researched */ {
-            continue;
-        }
-        var weap_type = weapon.weaponSubClass;
-        if(weap_type == undefined)
-        {
-            continue;
-        }
-        if (weap_types[weap_type] == undefined) {
-            weap_types[weap_type] = {
-                num: weap_types_count,
-                elem: "",
+        /* Body line */
+        var line = {};
+        line.DataObject = Bodies;
+        line.items_ids = {};
+        for (var body_id in Bodies.loaded_data_hash) {
+            if (can_research(body_id)) {
+                line.items_ids[body_id] = 1;
             }
-            weap_types_count++;
         }
-        var line_indx = weap_types[weap_type].num;
-        var icon_html = Weapons.GetIconHtml_Function(weapon, 48);
-        var left = weapon.minResearchTime;// + $('#timeTableSvgCanva').position().left;
-        var top = line_indx * 50;// + $('#timeTableSvgCanva').position().top;
-        var imgElem = new Image();
-        z++;
-        //ctx.drawImage(imgElem, x, y);
-        $('#time_table_container').append('<div style="height:48px;width:48px;z-index:'+z+';position:relative;top:' + (-1) * top + 'px;left:' + left + 'px;float:left">' + icon_html + '</div>');
-        //$('#timeTableSvgCanva').append('<foreignObject x="' + x + '" y="' + y + '" height="50" width="50">' + icon_html + '</foreignObject>');
+        res_lines.push(line);
     }
-    //$("body").html($("body").html());
-    //for (var comp_id in ResearchedComponents[player_all_researched]) {
-    //    var DataObject = FindComponentDataObject(comp_id);
-    //    var comp = DataObject.loaded_data_hash[comp_id];
-    //    var icon_html = DataObject.GetIconHtml_Function(comp, 48);
-    //}
+    {
+        /* propulsion line */
+        var line = {};
+        line.color = "darkblue";
+        line.DataObject = Propulsion;
+        line.items_ids = {};
+        for (var prop_id in Propulsion.loaded_data_hash) {
+            if (can_research(prop_id)) {
+                line.items_ids[prop_id] = 1;
+            }
+        }
+        res_lines.push(line);
+    }
+
+    {
+        /* Base structures line */
+        var line = {};
+        line.color = "darkpink";
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var si in Structures.loaded_data) {
+            var struc = Structures.loaded_data[si];
+            if (can_research(struc.grid_id)) {
+                if (struc.type == "FACTORY MODULE" || struc.type == "POWER MODULE" || struc.type == "RESEARCH MODULE"
+                    || struc.type == "REPAIR FACILITY" || struc.type == "SAT UPLINK" || struc.type == "CYBORG FACTORY"
+                    || struc.type == "VTOL FACTORY" || struc.type == "REARM PAD") {
+                    line.items_ids[struc.grid_id] = 1;
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    {
+        /* Weapon lines */
+        var weap_res_classes = {};
+        for (var i in Weapons.loaded_data) {
+            var weapon = Weapons.loaded_data[i];
+            if (!can_research(weapon.grid_id)) {
+                continue;
+            }
+            var res_class = weapon.weaponSubClass;
+            if (res_class == undefined) {
+                continue;
+            }
+            if (weap_res_classes[res_class] == undefined) {
+                weap_res_classes[res_class] = {};
+                weap_res_classes[res_class].minResearchTime = weapon.minResearchTime;
+                weap_res_classes[res_class].weapons_ids = {};;
+                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+            } else {
+                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+                weap_res_classes[res_class].minResearchTime = Math.min(weapon.minResearchTime, weap_res_classes[res_class].minResearchTime);
+            }
+        }
+        var weap_res_classes_array = [];
+        for (var res_class in weap_res_classes) {
+            weap_res_classes_array.push({
+                res_class: res_class,
+                minResearchTime: weap_res_classes[res_class].minResearchTime,
+                weapons_ids: weap_res_classes[res_class].weapons_ids,
+            });
+        }
+
+        weap_res_classes_array.sort(function (elm1, elm2) {
+            return elm1.minResearchTime - elm2.minResearchTime;
+        });
+
+        for (var i in weap_res_classes_array) {
+            var line = {};
+            line.color = "darkred";
+            line.DataObject = Weapons;
+            line.items_ids = weap_res_classes_array[i].weapons_ids;
+            res_lines.push(line);
+        }
+    }
+
+    var pushed_structs = {};
+    {
+        /* defenses line - bunkers */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (struc.strength == "BUNKER") {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    {
+        /* defenses line - hardpoints */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id]== undefined && struc.name.indexOf("ardpoint") > 0) {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    {
+        /* defenses line - sensors */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        line.color = "blue";
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined && struc.sensorID != undefined && struc.weapons == undefined) {
+                    line.items_ids[struc_id] = 1;
+                    pushed_structs[struc_id] = 1;
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    {
+        /* defenses line - other */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined) {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    for (var line_num in res_lines) {
+        res_lines[line_num].min_time = 100 * 100;
+        res_lines[line_num].max_time = 0;
+        res_lines[line_num].pos_y = line_num * 50 + y_offset;
+    }
+
+
+    /* 2. Draw researches which are included in Research Lines */
+    for (var res_id in Researches.loaded_data_hash) {
+        var research = Researches.loaded_data_hash[res_id];
+        var result_comps = [];
+        /* prepare array of research results */
+        if (research.resultComponents != undefined) {
+            result_comps = result_comps.concat(research.resultComponents.split(','));
+        }
+        if (research.resultStructures != undefined) {
+            result_comps = result_comps.concat(research.resultStructures.split(','));
+        }
+        if (result_comps.length == 0) {
+            continue;
+        }
+        /* iterate research results */
+        for (var ir in result_comps) {
+            var comp_id = result_comps[ir];
+            if (!can_research(comp_id)) {
+                continue;
+            }
+            for (var line_num in res_lines) {
+                var line = res_lines[line_num];
+                if (line.items_ids[comp_id] != undefined) { //found component in research line
+                    var DataObject = line.DataObject;
+                    var comp = DataObject.loaded_data_hash[comp_id];
+                    var res_time = ResearchTime[player_all_researched][res_id];
+                    var elm_icon;
+                    if (GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id)))
+                    {
+                        elm_icon = paper.image(GetIcon_src(DataObject.icon_folder, comp_id), res_time + x_offset, line.pos_y, 48, 48).attr("alt", comp.name);
+                        //ie_fix_hover_out_rect = paper.rect(res_time + x_offset + 1, line.pos_y + 1, 48 + 1, 48 + 1).attr("fill", "gray").attr("opacity", "0");
+                        //ie_fix_hover_out_rect//attr("opacity", "0")
+                        //ie_fix_hover_out_rect.toBack();
+                        //ie_fix_hover_out_rect.elem_icon = elm_icon;
+                    }else
+                    {
+                        elm_icon = paper.rect(res_time + x_offset, line.pos_y, 48, 48).attr("title", comp.name).attr("fill","gray" );
+                        paper.text(res_time + x_offset, line.pos_y+10, comp.name);
+                    }
+                    elm_icon.attr("title", comp.name + "\nResearch time: " + res_time.tohhMMSS())
+                    elm_icon.orig_form = elm_icon.transform(); // remember current transform
+                    elm_icon.comp = comp;
+                    elm_icon.DataObject = DataObject;
+                    elm_icon.hover(
+                        function () {
+                            //this.toFront();
+                            this.animate({ transform: "...s1.3,1.3" }, 300, 'bounce');
+                            
+                            var tmp = this;
+
+                            //setTimeout(function () { tmp.toFront(); }, 200);
+                            //
+                        },
+                        function () {
+                            this.animate({ transform: this.orig_form.toString() }, 500, 'bounce');
+                            this.toFront();
+                        }
+                        );
+                    //ie_fix_hover_out_rect.hover(
+                    //    function () { },
+                    //    function () {
+                    //        //this.elem_icon.animate({ transform: this.elem_icon.orig_form.toString() }, 300, 'bounce');
+                    //    }
+                    //    );
+                    elm_icon.click(function () {
+                        if (this.DataObject.page_url != undefined) {
+                            window.open(this.DataObject.page_url + "?details_id=" + this.comp.grid_id);
+                        }
+                    });
+                    elm_icon.attr("cursor", "pointer");
+                    line.min_time = Math.min(line.min_time, res_time);
+                    line.max_time = Math.max(line.max_time, res_time);
+                    break;
+                }
+            }
+        }
+    }
+
+    /* 3 - Draw hotizontal connection lines */
+    for (var line_num in res_lines) {
+        var line = res_lines[line_num];
+        var y = line.pos_y + 24;
+        var x1 = line.min_time + x_offset;
+        var x2 = line.max_time + x_offset;
+        var color = line.color == undefined ? "darkGreen" : line.color; 
+        paper.path("M" + x1 + " " + y + "L" + x2 + " " + y).attr("stroke", color).attr("stroke-width", "2.2").toBack();
+    }
+
 }
 
 </script>
@@ -122,15 +536,21 @@ function DrawCompTimeTable(container_id) {
         </tr>
     <tr>
         <td style="width:100%;vertical-align:top">
+           <div id="intro_header">
+           </div>
+           <div id="intro_content">
+               <p>
+                   Research is most complicated thing in Warzone.
+                   <br />Below you can see Research Timeline.                   
+               </p>
+               <span style="color:red">Note: this page is not finished yet</span>
+           </div>
+           <div id="time_table_header">
+           </div>
            <div id="time_table_container" style="background-color:white">
 
            </div>
-           <div id="canva">
-
-                <svg width="300" height="200">
-                  <polygon points="100,10 40,180 190,60 10,60 160,180"style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" />
-                </svg>
-           </div>
+           
         </td>
     </tr>
     </table>

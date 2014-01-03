@@ -2496,6 +2496,7 @@
     <Content Include="scripts\properties_desription.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\raphael-min.js" />
     <Content Include="scripts\research_functions.js">
       <SubType>Content</SubType>
     </Content>
