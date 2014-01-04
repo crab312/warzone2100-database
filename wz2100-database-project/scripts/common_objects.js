@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.94";
+    var current_site_version = "1.95";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -646,13 +646,53 @@ function InitDataObjects() {
         obj.sysid = "Templates";
         obj.path_ini = data_directory + "templates.ini";
         obj.LoadDataFunction = LoadDataObject;
+        obj.LoadLeftGridFunction = function () {
+            var data_obj = this;
+            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+        };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Body", name: "compBody" },
-            { label: "Propulsion", name: "compPropulsion" },
-            { label: "Type", name: "type" },
-            { label: "Weapons", name: "weapons" },
+            { label: "Name", name: "name", width: 160, fixed: true },
+            //{ label: "Type", name: "type", width: 50, fixed: true },
+            {
+                label: "Body", name: "compBody", width: 80, fixed: true,
+                formatter: function (cellvalue, options, rowObject) {
+                    if (Bodies.loaded_data_hash[cellvalue] != undefined) {
+                        return Bodies.loaded_data_hash[cellvalue].name;
+                    } else {
+                        return cellvalue;
+                    }
+                },
+            },
+            {
+                label: "Propulsion", name: "compPropulsion", width: 100, fixed: true,
+                formatter: function (cellvalue, options, rowObject) {
+                    if (Propulsion.loaded_data_hash[cellvalue] != undefined) {
+                        return Propulsion.loaded_data_hash[cellvalue].name;
+                    } else {
+                        return cellvalue;
+                    }
+                },
+            },
+            
+            {
+                label: "Weapons", name: "weapons", width: 200, fixed: true,
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue == undefined) {
+                        return '';
+                    }
+                    var weaps = cellvalue.split(',');
+                    var result = [];
+                    for (var i in weaps) {
+                        if (Weapons.loaded_data_hash[cellvalue] != undefined) {
+                            result.push(Weapons.loaded_data_hash[cellvalue].name);
+                        } else {
+                            result.push(cellvalue);
+                        }
+                    }
+                    return result.toString();
+                },
+            },
         ];
 
         obj.GetIconHtml_Function = function (rowObject, size) {
@@ -682,14 +722,16 @@ function InitDataObjects() {
                             return "<img src='data_icons/" + img_folder + "/" + img_name + "' onerror='$(this).hide();' width='" + size + "' height='auto' title='" + rowObject.name + "'/>";
                         }
                     }
+                    return '';
                 } else {
                     return '';
                 }
             }
+            return EmptyComponentIcon_html(rowObject.name);
         };
 
         Templates = obj;
-        //Objects.push(obj); do not add to 'objects' array because we do not need load templates in LoadAll(..) function
+        Objects.push(obj); 
     }
 
 }
