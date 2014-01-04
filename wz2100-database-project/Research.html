@@ -37,18 +37,37 @@ $(function () {
     DrawSection_type2_1_html("intro_header", "Introduction").append($('#intro_content'));
     DrawSection_type2_1_html("time_table_header", "Research Timeline").append($('#time_table_container'));
     
+    $('.opt_link').click(function () {
+        timeline_optionsChanged($(this));
+        DrawResearchTimeline();
+    }).css("cursor", "pointer");
 
+    for (var option in timeline_options) {
+        if (timeline_options[option]) {
+            $('#opt_' + option).css("text-decoration", "none");
+        } else {
+            $('#opt_' + option).css("text-decoration", "line-through");
+        }
+    }
 
 });
 
+timeline_options = {
+    armor_upgrades: false,
+    weapon_upgrades: false,
+    cyborgs: true,
+    tanks: true,
+    vtol: true,
+    structures: true,
+}
 
 function DrawResearchTimeline() {
-    
+
     DrawScaleSlider('scale_slider', 100, function (value) {
         var scale = value / 100;
-        DrawCompTimeTable("time_table_canva", scale);
+        DrawCompTimeTable("time_table_canva", scale, timeline_options);
     });
-    DrawCompTimeTable("time_table_canva", 1);
+    DrawCompTimeTable("time_table_canva", 1, timeline_options);
 }
 
 var scale_setted_timeout;
@@ -72,7 +91,6 @@ function DrawScaleSlider(container_id, init_value, slide_function) {
                 scale_setted_timeout = undefined;
             };
             scale_setted_timeout = setTimeout(function () {
-
                 if (slide_function != undefined) {
                     slide_function($('#' + slider_id).slider("value"));
                 }
@@ -82,34 +100,332 @@ function DrawScaleSlider(container_id, init_value, slide_function) {
     $('#' + input_id).val($('#' + slider_id).slider("value") + "%");
 }
 
-; (function (Raphael) {
-    /// Plugin - replaces original RaphaelJS .image constructor
-    /// with one that respects original dimensions.
-    /// Optional overrides for each dimension.
+function CreateResearchLines(options) {
 
-    var originalRaphaelImageFn = Raphael.fn.image;
-    /**
-	 * Overload - replace Raphael .image function with one that respects original dimensions
-	 * @param  {string} url the image path
-	 * @param  {number} x   position-x
-	 * @param  {number} y   position-y
-	 * @param  {number} w   dimensions-width
-	 * @param  {number} h   dimensions-height
-	 * @return {Paper.Element}     new raphael element
-	 */
-    Raphael.fn.image = function (url, x, y, w, h) {
-        // fix the image dimensions to match original scale unless otherwise provided
-        if (!w || !h) {
-            var img = new Image();
-            img.src = url;
-            if (!w) w = img.width;
-            if (!h) h = img.height;
+    /* Prepare array of Research Lines */
+    var res_lines = [];
+    {
+        /* Body line */
+        var line = {};
+        line.DataObject = Bodies;
+        line.items_ids = {};
+        line.attr_func = function (elem) {
+            elem.attr("stroke", "green");
         }
-        return originalRaphaelImageFn.call(this, url, x, y, w, h);
-    };
-})(Raphael);
+        var body_cnt = 0;
+        for (var body_id in Bodies.loaded_data_hash) {
+            if (!can_research(body_id)) {
+                continue;
+            }
+            var body = Bodies.loaded_data_hash[body_id];
+            if (!options.tanks && !options.vtol) {
+                if (body.class == "Droids" || body.class == "Transports") {
+                    continue;
+                }
+            }
 
-function DrawCompTimeTable(container_id, scale) {
+            if (!options.cyborgs) {
+                if (body.class == "Cyborgs") {
+                    continue;
+                }
+            }
+            line.items_ids[body_id] = 1;
+            body_cnt++;
+        }
+        if (body_cnt > 0) {
+            res_lines.push(line);
+        }
+        if (options.armor_upgrades && options.cyborgs) {
+            var upgr_line = {};
+            upgr_line.attr_func = function (elem) {
+                elem.attr("stroke", "green").attr("opacity", "0.55");
+            }
+            upgr_line.DataObject = Researches;
+            upgr_line.items_ids = {};
+            upgr_line.height = 35;
+            upgr_line.parent_line = line;
+            var tmp_cnt = 0;
+            var res_class = "Cyborgs";
+            for (var ires in Researches.loaded_data) {
+                var res = Researches.loaded_data[ires];
+                if (Upgrades[player_all_researched].research_data != undefined)
+                    if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
+                        if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == res_class) {
+                            var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
+                            if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
+                                upgr_line.items_ids[res.grid_id] = 1;
+                                tmp_cnt++;
+                            }
+                        }
+            }
+            if (tmp_cnt > 0) {
+                res_lines.push(upgr_line);
+            }
+        }
+        if (options.armor_upgrades && (options.tanks || options.vtol)) {
+            var upgr_line = {};
+            upgr_line.attr_func = function (elem) {
+                elem.attr("stroke", "green").attr("opacity", "0.55");
+            }
+            upgr_line.DataObject = Researches;
+            upgr_line.items_ids = {};
+            upgr_line.height = 35;
+            upgr_line.parent_line = line;
+            var tmp_cnt = 0;
+            var res_class = "Droids";
+            for (var ires in Researches.loaded_data) {
+                var res = Researches.loaded_data[ires];
+                if (Upgrades[player_all_researched].research_data != undefined)
+                    if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
+                        if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == res_class) {
+                            var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
+                            if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
+                                upgr_line.items_ids[res.grid_id] = 1;
+                                tmp_cnt++;
+                            }
+                        }
+            }
+            if (tmp_cnt > 0) {
+                res_lines.push(upgr_line);
+            }
+        }
+    }
+    {
+        /* propulsion line */
+        var line = {};
+        line.attr_func = function (elem) {
+            elem.attr("stroke", "darkblue");
+        }
+        line.DataObject = Propulsion;
+        line.items_ids = {};
+        var prop_cnt = 0;
+        for (var prop_id in Propulsion.loaded_data_hash) {
+            if (!can_research(prop_id)) {
+                continue;
+            }
+            var prop = Propulsion.loaded_data_hash[prop_id];
+            if (!options.tanks) {
+                if (prop.type != "Legged") {
+                    continue;
+                }
+            }
+            if (!options.cyborgs) {
+                if (prop.type == "Legged") {
+                    continue;
+                }
+            }
+            prop_cnt++;
+            line.items_ids[prop_id] = 1;
+        }
+        if (prop_cnt > 0) {
+            res_lines.push(line);
+        }
+    }
+    var pushed_structs = {};
+    if (options.structures) {
+        /* Base structures line */
+        var line = {};
+        line.attr_func = function (elem) {
+            elem.attr("stroke", "darkpink");
+        }
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var si in Structures.loaded_data) {
+            var struc = Structures.loaded_data[si];
+            if (can_research(struc.grid_id)) {
+                if (struc.type == "FACTORY MODULE" || struc.type == "POWER MODULE" || struc.type == "RESEARCH MODULE"
+                    || struc.type == "REPAIR FACILITY" || struc.type == "SAT UPLINK" || struc.type == "CYBORG FACTORY"
+                    || struc.type == "VTOL FACTORY" || struc.type == "REARM PAD") {
+                    line.items_ids[struc.grid_id] = 1;
+                    pushed_structs[struc.grid_id] = 1;
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+    {
+        /* Weapon lines */
+        var weap_res_classes = {};
+        for (var i in Weapons.loaded_data) {
+            var weapon = Weapons.loaded_data[i];
+            if (!can_research(weapon.grid_id)) {
+                continue;
+            }
+            var res_class = weapon.weaponSubClass;
+            if (res_class == undefined) {
+                continue;
+            }
+            var abils = Weapon_GetAbilities(weapon);
+            if (!options.cyborgs) {
+                if (abils.CyborgWeapon) {
+                    continue;
+                }
+            }
+            if (!options.vtol) {
+                if (abils.VTOLWeapon) {
+                    continue;
+                }
+            }
+
+            if (!options.tanks) {
+                if (!abils.VTOLWeapon && !abils.CyborgWeapon) {
+                    continue;
+                }
+            }
+
+            if (weap_res_classes[res_class] == undefined) {
+                weap_res_classes[res_class] = {};
+                weap_res_classes[res_class].minResearchTime = weapon.minResearchTime;
+                weap_res_classes[res_class].weapons_ids = {};;
+                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+            } else {
+                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
+                weap_res_classes[res_class].minResearchTime = Math.min(weapon.minResearchTime, weap_res_classes[res_class].minResearchTime);
+            }
+        }
+        var weap_res_classes_array = [];
+        for (var res_class in weap_res_classes) {
+            weap_res_classes_array.push({
+                res_class: res_class,
+                minResearchTime: weap_res_classes[res_class].minResearchTime,
+                weapons_ids: weap_res_classes[res_class].weapons_ids,
+                res_class: res_class,
+            });
+        }
+        //..sort weapon lines by minimal research time
+        weap_res_classes_array.sort(function (elm1, elm2) {
+            return elm1.minResearchTime - elm2.minResearchTime;
+        });
+
+        for (var i in weap_res_classes_array) {
+            var line = {};
+            line.attr_func = function (elem) {
+                elem.attr("stroke", "darkred");
+            }
+            line.DataObject = Weapons;
+            var item_cnt = 0;
+            for (var weap_idtmp in weap_res_classes_array[i].weapons_ids) {
+                item_cnt++;
+            }
+            if (item_cnt > 0) {
+                line.items_ids = weap_res_classes_array[i].weapons_ids;
+                res_lines.push(line);
+
+                /* Create Upgrade line for this weapon line */
+                if (options.weapon_upgrades) {
+                    var upgr_line = {};
+                    upgr_line.attr_func = function (elem) {
+                        elem.attr("stroke", "darkred").attr("opacity", "0.55");
+                    }
+                    upgr_line.DataObject = Researches;
+                    upgr_line.items_ids = {};
+                    upgr_line.height = 35;
+                    upgr_line.parent_line = line;
+                    var tmp_cnt = 0;
+                    var res_class = weap_res_classes_array[i].res_class;
+                    for (var ires in Researches.loaded_data) {
+                        var res = Researches.loaded_data[ires];
+                        if (Upgrades[player_all_researched].research_data != undefined)
+                            if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
+                                if (Upgrades[player_all_researched].research_data[res.grid_id].weapon_res_class == res_class) {
+                                    upgr_line.items_ids[res.grid_id] = 1;
+                                    tmp_cnt++;
+                                }
+                    }
+                    if (tmp_cnt > 0) {
+                        res_lines.push(upgr_line);
+                    }
+                }
+            }
+        }
+    }
+
+    if (options.structures) {
+        /* defenses line - bunkers */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined && struc.strength == "BUNKER") {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    if (options.structures) {
+        /* defenses line - hardpoints */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined && struc.name.indexOf("ardpoint") > 0) {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    if (options.structures) {
+        /* defenses line - sensors */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        line.attr_func = function (elem) {
+            elem.attr("stroke", "blue");
+        }
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined && struc.sensorID != undefined && struc.weapons == undefined) {
+                    line.items_ids[struc_id] = 1;
+                    pushed_structs[struc_id] = 1;
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+
+    if (options.structures) {
+        /* defenses line - other */
+        var line = {};
+        line.DataObject = Structures;
+        line.items_ids = {};
+        for (var struc_id in Structures.loaded_data_hash) {
+            var struc = Structures.loaded_data_hash[struc_id];
+            if (can_research(struc_id)) {
+                if (pushed_structs[struc_id] == undefined) {
+                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
+                        line.items_ids[struc_id] = 1;
+                        pushed_structs[struc_id] = 1;
+                    }
+                }
+            }
+        }
+        res_lines.push(line);
+    }
+    return res_lines;
+}
+
+function can_research(comp_id) {
+    return ResearchedComponents[player_all_researched][comp_id] != undefined;
+}
+
+
+
+function DrawCompTimeTable(container_id, scale, options) {
     //1px = 1 sec
     if (scale == undefined) {
         scale = 1;
@@ -141,210 +457,170 @@ function DrawCompTimeTable(container_id, scale) {
     var x_size = max_res_time * sec_per_pixel + 200;
     var y_size = 1151;
     var paper = new Raphael('timeTableSvgCanva', x_size, y_size);
-
-    /* Draw time grid lines */
     var x_offset = 100;
-    var y_offset = 50;
-    var text_offset_y = 30 - 10;
-    paper.text(x_offset - 50, text_offset_y, "Timeline");
-    paper.path("M30 30L" + x_size + " 30");
+    var y_offset = 35;
+    var line_space = 2;
 
-    var bottom_timeline_y = y_size - 50;
-    var y_lines_max = y_size - 45;
-    paper.text(x_offset - 50, bottom_timeline_y + 7, "Timeline");
-    paper.path("M30 " + bottom_timeline_y + "L" + x_size + " " + bottom_timeline_y);
-    for (var i = 0; i <= x_size; i = i + vertical_lines_period_thin) {
-        var x = i + x_offset;
-        var time = Math.floor(i / sec_per_pixel); //time in seconds
-        var y0 = y_offset - 25;
-        if (i % vertical_lines_period_thick == 0) {
-            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("stroke-width", "2");
-            paper.text(x, text_offset_y, time.tohhMMSS()).attr("font-weight", "bold");
-            paper.text(x, bottom_timeline_y + 7, time.tohhMMSS()).attr("font-weight", "bold");
-        } else {
-            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("opacity", 0.7);
-            paper.text(x, text_offset_y, time.tohhMMSS());
-            paper.text(x, bottom_timeline_y + 7, time.tohhMMSS());
-        }
-    }
+    /* Create Research Lines - res lines*/
+    var res_lines = CreateResearchLines(options);
 
-    var can_research = function (comp_id) {
-        return ResearchedComponents[player_all_researched][comp_id] != undefined;
-    }
-
-    /* Prepare array of Research Lines */
-    var res_lines = [];
-    {
-        /* Body line */
-        var line = {};
-        line.DataObject = Bodies;
-        line.items_ids = {};
-        for (var body_id in Bodies.loaded_data_hash) {
-            if (can_research(body_id)) {
-                line.items_ids[body_id] = 1;
-            }
-        }
-        res_lines.push(line);
-    }
-    {
-        /* propulsion line */
-        var line = {};
-        line.color = "darkblue";
-        line.DataObject = Propulsion;
-        line.items_ids = {};
-        for (var prop_id in Propulsion.loaded_data_hash) {
-            if (can_research(prop_id)) {
-                line.items_ids[prop_id] = 1;
-            }
-        }
-        res_lines.push(line);
-    }
-
-    {
-        /* Base structures line */
-        var line = {};
-        line.color = "darkpink";
-        line.DataObject = Structures;
-        line.items_ids = {};
-        for (var si in Structures.loaded_data) {
-            var struc = Structures.loaded_data[si];
-            if (can_research(struc.grid_id)) {
-                if (struc.type == "FACTORY MODULE" || struc.type == "POWER MODULE" || struc.type == "RESEARCH MODULE"
-                    || struc.type == "REPAIR FACILITY" || struc.type == "SAT UPLINK" || struc.type == "CYBORG FACTORY"
-                    || struc.type == "VTOL FACTORY" || struc.type == "REARM PAD") {
-                    line.items_ids[struc.grid_id] = 1;
-                }
-            }
-        }
-        res_lines.push(line);
-    }
-
-    {
-        /* Weapon lines */
-        var weap_res_classes = {};
-        for (var i in Weapons.loaded_data) {
-            var weapon = Weapons.loaded_data[i];
-            if (!can_research(weapon.grid_id)) {
-                continue;
-            }
-            var res_class = weapon.weaponSubClass;
-            if (res_class == undefined) {
-                continue;
-            }
-            if (weap_res_classes[res_class] == undefined) {
-                weap_res_classes[res_class] = {};
-                weap_res_classes[res_class].minResearchTime = weapon.minResearchTime;
-                weap_res_classes[res_class].weapons_ids = {};;
-                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
-            } else {
-                weap_res_classes[res_class].weapons_ids[weapon.grid_id] = 1;
-                weap_res_classes[res_class].minResearchTime = Math.min(weapon.minResearchTime, weap_res_classes[res_class].minResearchTime);
-            }
-        }
-        var weap_res_classes_array = [];
-        for (var res_class in weap_res_classes) {
-            weap_res_classes_array.push({
-                res_class: res_class,
-                minResearchTime: weap_res_classes[res_class].minResearchTime,
-                weapons_ids: weap_res_classes[res_class].weapons_ids,
-            });
-        }
-
-        weap_res_classes_array.sort(function (elm1, elm2) {
-            return elm1.minResearchTime - elm2.minResearchTime;
-        });
-
-        for (var i in weap_res_classes_array) {
-            var line = {};
-            line.color = "darkred";
-            line.DataObject = Weapons;
-            line.items_ids = weap_res_classes_array[i].weapons_ids;
-            res_lines.push(line);
-        }
-    }
-
-    var pushed_structs = {};
-    {
-        /* defenses line - bunkers */
-        var line = {};
-        line.DataObject = Structures;
-        line.items_ids = {};
-        for (var struc_id in Structures.loaded_data_hash) {
-            var struc = Structures.loaded_data_hash[struc_id];
-            if (can_research(struc_id)) {
-                if (struc.strength == "BUNKER") {
-                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
-                        line.items_ids[struc_id] = 1;
-                        pushed_structs[struc_id] = 1;
-                    }
-                }
-            }
-        }
-        res_lines.push(line);
-    }
-
-    {
-        /* defenses line - hardpoints */
-        var line = {};
-        line.DataObject = Structures;
-        line.items_ids = {};
-        for (var struc_id in Structures.loaded_data_hash) {
-            var struc = Structures.loaded_data_hash[struc_id];
-            if (can_research(struc_id)) {
-                if (pushed_structs[struc_id]== undefined && struc.name.indexOf("ardpoint") > 0) {
-                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
-                        line.items_ids[struc_id] = 1;
-                        pushed_structs[struc_id] = 1;
-                    }
-                }
-            }
-        }
-        res_lines.push(line);
-    }
-
-    {
-        /* defenses line - sensors */
-        var line = {};
-        line.DataObject = Structures;
-        line.items_ids = {};
-        line.color = "blue";
-        for (var struc_id in Structures.loaded_data_hash) {
-            var struc = Structures.loaded_data_hash[struc_id];
-            if (can_research(struc_id)) {
-                if (pushed_structs[struc_id] == undefined && struc.sensorID != undefined && struc.weapons == undefined) {
-                    line.items_ids[struc_id] = 1;
-                    pushed_structs[struc_id] = 1;
-                }
-            }
-        }
-        res_lines.push(line);
-    }
-
-    {
-        /* defenses line - other */
-        var line = {};
-        line.DataObject = Structures;
-        line.items_ids = {};
-        for (var struc_id in Structures.loaded_data_hash) {
-            var struc = Structures.loaded_data_hash[struc_id];
-            if (can_research(struc_id)) {
-                if (pushed_structs[struc_id] == undefined) {
-                    if (struc.type == "DEFENSE" || struc.type == "GENERIC") {
-                        line.items_ids[struc_id] = 1;
-                        pushed_structs[struc_id] = 1;
-                    }
-                }
-            }
-        }
-        res_lines.push(line);
-    }
-
+    var line_pos_y = y_offset;
     for (var line_num in res_lines) {
-        res_lines[line_num].min_time = 100 * 100;
-        res_lines[line_num].max_time = 0;
-        res_lines[line_num].pos_y = line_num * 50 + y_offset;
+        var line = res_lines[line_num];
+        line.min_time = 100 * 100;
+        line.max_time = 0;
+        if (line.height == undefined) {
+            line.height = 50;
+        }
+        line.pos_y = line_pos_y;//line_num * line.height + y_offset;
+        line_pos_y += line.height + line_space;
+        line.drawn_elems = [];
+        line.height_expected = line.height;
+        line.res_time_periods = {};//stuff for collision detection
     }
 
+    /* Collapse small lines into 1 line */
+    var one_line = null;
+    var final_lines_array = [];
+    for (var line_num in res_lines) {
+        var line = res_lines[line_num];
+        var items_count = 0;
+        for (var comp_id in line.items_ids) {
+            items_count++;
+        }
+        if (items_count == 1) {
+            if (one_line == null) {
+                one_line = line;
+                one_line.DataObject = null;
+                one_line.color = "lightgray";
+                final_lines_array.push(one_line);
+            }else
+            {
+                //line collapsed
+                for (var comp_id in line.items_ids) {
+                    one_line.items_ids[comp_id] = 1;
+                }
+                //adjust y_coord of below lines
+                for (var ln = parseInt(line_num) + 1; ln < res_lines.length; ln++) {
+                    res_lines[ln].pos_y = res_lines[ln].pos_y - line.height_expected - line_space;
+                }
+            }
+        } else {
+            final_lines_array.push(line);
+        }
+    }
+    res_lines = final_lines_array;
+
+    
+    var res_time_period = 15; //seconds
+
+    /* Draw function for component icons */
+    var DrawComponentIcon = function (line, res_id, comp_id) {
+        var DataObject = line.DataObject;
+        if (DataObject == null) {
+            DataObject = FindDataObject(comp_id);
+        }
+        var height = 48;
+        var width = 52;
+        if (DataObject == Researches) {
+            height = Math.floor(height * 0.7);
+            width = Math.floor(width *0.7);
+        }
+        var comp = DataObject.loaded_data_hash[comp_id];
+        var res_time = ResearchTime[player_all_researched][res_id];
+        var elm_icon;
+        var icon_x = res_time * sec_per_pixel + x_offset;
+        var icon_y = line.pos_y;//+ line.height / 2;
+        var drawn_elems = [];
+        var has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id));
+        var icon_src;
+        if (has_icon)
+        {
+            icon_src = GetIcon_src(DataObject.icon_folder, comp_id);
+        }
+        if (!has_icon && DataObject == Researches) {
+            /* Try find icon for Research */
+            var comp_res = Researches.loaded_data_hash[comp_id];
+            if (comp_res.statID != undefined) {
+                has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_res.statID));
+                if(has_icon)
+                {
+                    StatID_DataObject = FindDataObject(comp_res.statID);
+                    if (StatID_DataObject != null) {  
+                        icon_src = GetIcon_src(StatID_DataObject.icon_folder, comp_res.statID);
+                    }
+                }
+            }
+        }
+        /* Draw image or rectangle */
+        if (has_icon) {
+            elm_icon = paper.image(icon_src, icon_x, icon_y, width, height).attr("alt", comp.name);
+        } else {
+            elm_icon = paper.rect(icon_x, icon_y, width, height).attr("title", comp.name).attr("fill", "gray");
+            var txt_tmp = paper.text(icon_x, icon_y, comp.name);
+            line.drawn_elems.push(txt_tmp);
+            drawn_elems.push(txt_tmp);
+        }
+        drawn_elems.push(elm_icon);
+        elm_icon.attr("title", comp.name + "\nResearch time: " + res_time.tohhMMSS())
+        elm_icon.orig_form = elm_icon.transform(); // remember current transform
+        elm_icon.comp = comp;
+        elm_icon.DataObject = DataObject;
+        elm_icon.hover(
+            function () {
+                //this.toFront(); - this line makes animation buggy in IE 10. 
+                this.animate({ transform: "...s1.3,1.3" }, 300, 'bounce');
+            },
+            function () {
+                this.animate({ transform: this.orig_form.toString() }, 500, 'bounce');
+                this.toFront(); //set to front after animation to avoid bug in IE 10
+            }
+            );
+        elm_icon.click(function () {
+            if (this.DataObject.page_url != undefined) {
+                window.open(this.DataObject.page_url + "?details_id=" + this.comp.grid_id);
+            }
+        });
+        elm_icon.attr("cursor", "pointer");
+        line.min_time = Math.min(line.min_time, res_time);
+        line.max_time = Math.max(line.max_time, res_time);
+        line.drawn_elems.push(elm_icon);
+
+        /* Try resolve collisions */
+        var res_period = Math.floor(res_time / res_time_period);
+        if (line.res_time_periods[res_period] != undefined) {
+            // (!) collision detected
+            var coll_array = line.res_time_periods[res_period];
+            for (var ia in coll_array) {
+                coll_item = coll_array[ia];
+                if (coll_item.res_id == res_id) {
+                    //in this case collision will be resolved in another piece of code
+                } else {
+                    //..just need to draw element lower...
+                    var y_offset = Math.floor(line.height/2) * coll_array.length;
+                    for (var ielem in drawn_elems) {
+                        var elem = drawn_elems[ielem];
+                        var old_y = elem.attr("y");
+                        var old_x = elem.attr("x");
+                        elem.attr("x", old_x + 1).attr("y", old_y + y_offset).toBack();
+                    }
+                    line.height_expected = Math.max(line.height + y_offset, line.height_expected);
+                    break;
+                }
+            }
+            coll_array.push({
+                comp_id: comp_id,
+                res_id: res_id,
+            });
+
+        } else {
+            line.res_time_periods[res_period] = [{
+                comp_id: comp_id,
+                res_id: res_id,
+            }];
+        }
+        return elm_icon;
+    }
 
     /* Draw researches which are included in Research Lines */
     for (var res_id in Researches.loaded_data_hash) {
@@ -357,10 +633,77 @@ function DrawCompTimeTable(container_id, scale) {
         if (research.resultStructures != undefined) {
             result_comps = result_comps.concat(research.resultStructures.split(','));
         }
-        if (result_comps.length == 0) {
+        if (result_comps.length == 0 && (research.results == undefined || research.results=="")) {
             continue;
         }
-        /* iterate research results */
+
+        /* Filter out secondary VTOL weapons from research results (do not need to show both "Light Cannon" and "VTOL Light Cannon")*/
+        var results_comp_lines = {};
+        var result_final = [];
+        for (var ir in result_comps) {
+            var comp_id = result_comps[ir];
+            if (!can_research(comp_id)) {
+                continue;
+            }
+            for (var line_num in res_lines) {
+                var line = res_lines[line_num];
+                if (line.items_ids[comp_id] != undefined) {
+                    if (line.DataObject == Weapons) {
+                        if (results_comp_lines[line_num] == undefined) {
+                            results_comp_lines[line_num] = [];
+                            results_comp_lines[line_num].push(comp_id);
+                        } else {
+                            //found second weapon component in same line
+                            var weapon = Weapons.loaded_data_hash[comp_id];
+                            var abils = Weapon_GetAbilities(weapon);
+                            if (abils.VTOLWeapon == true) {
+                                //do nothing - we do not need this VTOL weapon, because we already have another weapon as result of current research
+                            } else {
+                                var new_weap_list = [];
+                                new_weap_list.push(comp_id);
+                                for (var iwep in results_comp_lines[line_num]) {
+                                    var prev_comp_id = results_comp_lines[line_num][iwep];
+                                    var prev_weapon = Weapons.loaded_data_hash[prev_comp_id];
+                                    var prev_abils = Weapon_GetAbilities(prev_weapon);
+                                    if (prev_abils.VTOLWeapon == true) {
+                                        //previous component is VTOL weapon, and current component is non-VTOL weapon
+                                        //we do not need this VTOL component
+                                    } else {
+                                        new_weap_list.push(prev_comp_id);
+                                    }
+                                }
+                                results_comp_lines[line_num] = new_weap_list;
+                            }
+                        }
+                    } else {
+                        result_final.push(comp_id);
+                    }
+                    break;//component was found in research line. not need to search anymore
+                }
+            }
+        }
+        var weapon_results = [];
+        for (var iline in results_comp_lines) {
+            for (var iweap in results_comp_lines[iline]) {
+                weapon_results.push(results_comp_lines[iline][iweap]);
+            }
+        }
+
+        /* Re-order weapon components, to make cyborg weapon appear under main weapon */
+        if (weapon_results.length > 1) {
+            weapon_results.sort(function (a, b) {
+                var a_weap = Weapons.loaded_data_hash[a];
+                var b_weap = Weapons.loaded_data_hash[b];
+                var a_val = Weapon_GetAbilities(a_weap).CyborgWeapon ? -1 : 1;
+                var b_val = Weapon_GetAbilities(b_weap).CyborgWeapon ? -1 : 1;
+                return a_val - b_val;
+            });
+        }
+        result_comps = result_final.concat(weapon_results);
+        result_comps.push(res_id); //current research item is also result of research..
+
+        /* Draw research results  */
+        var drawn_comps = {}; //components from one research which are belong to one line
         for (var ir in result_comps) {
             var comp_id = result_comps[ir];
             if (!can_research(comp_id)) {
@@ -369,55 +712,116 @@ function DrawCompTimeTable(container_id, scale) {
             for (var line_num in res_lines) {
                 var line = res_lines[line_num];
                 if (line.items_ids[comp_id] != undefined) { //found component in research line
-                    var DataObject = line.DataObject;
-                    var comp = DataObject.loaded_data_hash[comp_id];
-                    var res_time = ResearchTime[player_all_researched][res_id];
-                    var elm_icon;
-                    var icon_x = res_time * sec_per_pixel + x_offset;
-                    if (GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id)))
+                    if (drawn_comps[line_num] == undefined)
                     {
-                        elm_icon = paper.image(GetIcon_src(DataObject.icon_folder, comp_id), icon_x, line.pos_y, 48, 48).attr("alt", comp.name);
+                        var elem_icon = DrawComponentIcon(line, res_id, comp_id);
+                        drawn_comps[line_num] = [elem_icon];
                     }else
                     {
-                        elm_icon = paper.rect(icon_x, line.pos_y, 48, 48).attr("title", comp.name).attr("fill", "gray");
-                        paper.text(icon_x, line.pos_y + 10, comp.name);
+                        //have collision - two or more components at 1 line at same time
+                        var tmp_y_offset = 20;
+                        for (var i_icon in drawn_comps[line_num]) {
+                            var drawn_comp = drawn_comps[line_num][i_icon];
+                            var old_x = drawn_comp.attr("x");
+                            var old_y = drawn_comp.attr("y");
+                            drawn_comp.attr("x", old_x + 3).attr("y", old_y + tmp_y_offset);
+                        }
+                        var elem_icon = DrawComponentIcon(line, res_id, comp_id);
+                        drawn_comps[line_num].push(elem_icon);
+                        line.height_expected = Math.max(line.height + tmp_y_offset * (drawn_comps[line_num].length -1),line.height_expected);
                     }
-                    elm_icon.attr("title", comp.name + "\nResearch time: " + res_time.tohhMMSS())
-                    elm_icon.orig_form = elm_icon.transform(); // remember current transform
-                    elm_icon.comp = comp;
-                    elm_icon.DataObject = DataObject;
-                    elm_icon.hover(
-                        function () {
-                            //this.toFront(); - this line makes animation buggy in IE 10. 
-                            this.animate({ transform: "...s1.3,1.3" }, 300, 'bounce');
-                        },
-                        function () {
-                            this.animate({ transform: this.orig_form.toString() }, 500, 'bounce');
-                            this.toFront(); //set to front after animation to avoid bug in IE 10
-                        }
-                        );
-                    elm_icon.click(function () {
-                        if (this.DataObject.page_url != undefined) {
-                            window.open(this.DataObject.page_url + "?details_id=" + this.comp.grid_id);
-                        }
-                    });
-                    elm_icon.attr("cursor", "pointer");
-                    line.min_time = Math.min(line.min_time, res_time);
-                    line.max_time = Math.max(line.max_time, res_time);
-                    break;
                 }
             }
         }
     }
 
+    /* Adjust lines y-coord, because some lines may use more space */
+    var total_offset = res_lines[0].height_expected - res_lines[0].height;
+    for(var line_num = 1; line_num < res_lines.length; line_num++)
+    {
+        var line = res_lines[line_num];
+        if (total_offset != 0) {
+            for (var elem_i in line.drawn_elems) {
+                var elem = line.drawn_elems[elem_i];
+                var old_y = elem.attr("y");
+                elem.attr("y", old_y + total_offset);
+            }
+        }
+        line.pos_y = line.pos_y + total_offset;
+        total_offset += line.height_expected - line.height;
+    }
+
+    /* Resize paper */
+    var y_offset_bottom = 50;
+    var y_size = res_lines[res_lines.length - 1].pos_y + res_lines[res_lines.length - 1].height_expected + y_offset_bottom + line_space;
+    //for (var line_num in res_lines) {
+    //    y_size += line_space + res_lines[line_num].height_expected;
+    //}
+    //y_size = y_size + total_offset;
+    paper.setSize(x_size, y_size);
+
+    /* Draw time grid lines */
+    var text_offset_y = 30 - 10;
+
+    paper.text(x_offset - 50, text_offset_y, "Timeline");
+    paper.path("M30 30L" + x_size + " 30");
+
+    var bottom_timeline_y = y_size - y_offset_bottom;
+    var y_lines_max = y_size - 45;
+    paper.text(x_offset - 50, bottom_timeline_y + 7, "Timeline");
+    paper.path("M30 " + bottom_timeline_y + "L" + x_size + " " + bottom_timeline_y);
+    for (var i = 0; i <= x_size; i = i + vertical_lines_period_thin) {
+        var x = i + x_offset;
+        var time = Math.floor(i / sec_per_pixel); //time in seconds
+        var y0 = y_offset - 25;
+        if (i % vertical_lines_period_thick == 0) {
+            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("stroke-width", "2").toBack();
+            paper.text(x, text_offset_y, time.tohhMMSS()).attr("font-weight", "bold").toBack();
+            paper.text(x, bottom_timeline_y + 7, time.tohhMMSS()).attr("font-weight", "bold").toBack();
+        } else {
+            paper.path("M" + x + " " + y0 + "L" + x + " " + y_lines_max).attr("opacity", 0.7).toBack();
+            paper.text(x, text_offset_y, time.tohhMMSS()).toBack();
+            paper.text(x, bottom_timeline_y + 7, time.tohhMMSS()).toBack();
+        }
+    }
+
+
     /* Draw hotizontal connection lines */
     for (var line_num in res_lines) {
         var line = res_lines[line_num];
-        var y = line.pos_y + 24;
+        var y = line.pos_y + line.height/2;
         var x1 = line.min_time * sec_per_pixel + x_offset;
         var x2 = line.max_time * sec_per_pixel + x_offset;
-        var color = line.color == undefined ? "darkGreen" : line.color; 
-        paper.path("M" + x1 + " " + y + "L" + x2 + " " + y).attr("stroke", color).attr("stroke-width", "2.2").toBack();
+        var line_elem;
+        if (line.parent_line == undefined) {
+            line_elem = paper.path("M" + x1 + " " + y + "L" + x2 + " " + y);
+        } else {
+            parent_line = line.parent_line;
+            var x0 = parent_line.min_time * sec_per_pixel + x_offset;
+            var y0 = parent_line.pos_y + parent_line.height / 2;
+            var path2 = [["M", x0, y0], ["C", x0+60, y0, x0-5, y, x1, y], ["L", x2, y]];
+            line_elem = paper.path(path2);
+        }
+        line_elem.attr("stroke-width", "2.2").toBack();
+        if (line.attr_func == undefined) {
+            line_elem.attr("stroke", "darkgreen");
+        } else {
+            line.attr_func(line_elem);
+        }
+    }
+
+}
+
+function timeline_optionsChanged(opt_link) {
+    for (var option in timeline_options) {
+        if (opt_link.attr('id') == 'opt_' + option) {
+            timeline_options[option] = !timeline_options[option];
+            if (timeline_options[option]) {
+                opt_link.css("text-decoration", "none");
+            } else {
+                opt_link.css("text-decoration", "line-through");
+            }
+        }
     }
 
 }
@@ -449,9 +853,20 @@ function DrawCompTimeTable(container_id, scale) {
             </div>
             <div id="time_table_header">
             </div>
-            <div id="time_table_container" >
-                <div id="scale_slider" style="width:500px"></div>
+            <div id="time_table_container">
+                <div id="scale_slider" style="width:400px;display:inline-block" ></div>
+                <ul  class="MyStyledLinkMenu navmenu2" style="display:inline-block;">
+                    <li><a class="opt_link" id="opt_tanks">Tanks</a></li>
+                    <li><a class="opt_link" id="opt_vtol">VTOL</a></li>
+                    <li><a class="opt_link" id="opt_cyborgs">Cyborgs</a></li>
+                    <li><a class="opt_link" id="opt_structures">Structures</a></li>
+                    <li><a class="opt_link" id="opt_weapon_upgrades">Weapons upgrades</a></li>
+                    <li><a class="opt_link" id="opt_armor_upgrades">Armor Upgrades</a></li>
+                </ul>
+
                 <div id="time_table_canva" style="background-color:white"></div>
+
+                
             </div>
            
         </td>

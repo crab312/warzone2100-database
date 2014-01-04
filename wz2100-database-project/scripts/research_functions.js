@@ -93,6 +93,17 @@ function eventResearched(research, player) {
                     log_upgrade(Upgrades[player].Body[i], research.grid_id, s[1], int_value);
                 }
             }
+            {
+                //save body class for current research (used "Upgrade" structure, because "Researches" was hashed (fixed) in above code)
+                if (Upgrades[player].research_data == undefined) {
+                    Upgrades[player].research_data = {};
+                }
+                if (Upgrades[player].research_data[research.grid_id] == undefined) {
+                    Upgrades[player].research_data[research.grid_id] = {};
+                }
+                Upgrades[player].research_data[research.grid_id].body_res_class = s[0]; //for futher use
+                Upgrades[player].research_data[research.grid_id].body_res_changed_field = s[1];
+            }
         }
         else if (['ResearchPoints', 'ProductionPoints', 'PowerPoints', 'RepairPoints', 'RearmPoints'].indexOf(s[0]) >= 0) {
             s[0] = setCharAt(s[0], 0, s[0][0].toLowerCase());  // <<<< SHIT
@@ -150,6 +161,16 @@ function eventResearched(research, player) {
                 s[1] = "periodicalDamage";
             }
             var int_value = parseFloat(s[2]);
+            {
+                //save weapon class for current research (used "Upgrade" structure, because "Researches" was hashed (fixed) in above code)
+                if (Upgrades[player].research_data == undefined) {
+                    Upgrades[player].research_data = {};
+                }
+                if (Upgrades[player].research_data[research.grid_id] == undefined) {
+                    Upgrades[player].research_data[research.grid_id] = {};
+                }
+                Upgrades[player].research_data[research.grid_id].weapon_res_class = s[0]; //for futher use
+            }
             for (var i in Upgrades[player].Weapon) {
                 if (Stats.Weapon[i][s[1]] > 0 && Stats.Weapon[i].weaponSubClass === s[0]) {
                     if (firePause) {
@@ -390,10 +411,8 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
                     ResearchedComponents[player_number][resultStructures[e]].research_id = research_id;
                 }
             }
+            ResearchedComponents[player_number][research_id] = { time_seconds: current_time, research_id: research_id };
 
-
-            
-            
             //remove from active research
             delete active_research[research_id];
 

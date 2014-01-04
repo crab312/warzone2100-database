@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.85";
+    var current_site_version = "1.94";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -504,8 +504,12 @@ function InitDataObjects() {
             },
         ];
         Researches = obj;
-
+        obj.icon_folder = "Research";
         obj.GetIconHtml_Function = function (rowObject) {
+            var img_filename = GetIcon_filename(rowObject.grid_id);
+            if (GetIcon_CheckIconFilenameHashed(img_filename)) {
+                return GetIcon_element(this.icon_folder, rowObject);
+            }
             if (rowObject.statID != undefined) {
                 var stat_id = rowObject.statID;
                 /* search stat_id */
@@ -1247,6 +1251,17 @@ function FindComponentDataObject(comp_id) {
     }
     if (Sensor.loaded_data_hash[comp_id] != undefined) {
         return Sensor;
+    }
+    return null;
+}
+
+function FindDataObject(grid_id) {
+    for (var i in Objects) {
+        if (Objects[i].loaded_data_hash != undefined) {
+            if (Objects[i].loaded_data_hash[grid_id] != undefined) {
+                return Objects[i];
+            }
+        }
     }
     return null;
 }
