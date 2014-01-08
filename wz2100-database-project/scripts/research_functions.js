@@ -347,7 +347,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
 
         var all_research = {};
         for (var i = 0; i < Researches.loaded_data.length; i++) {
-            var res_id = Researches.loaded_data[i].grid_id;
+            var res_id = Researches.loaded_data[i].name;
             if(all_research[res_id] == undefined)
             {
                 all_research[res_id] = {};
@@ -355,7 +355,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
             }
             all_research[res_id].Res_Data = Researches.loaded_data[i];
             var requredResearch = Researches.loaded_data[i].requiredResearch;
-            all_research[res_id].PreRes_Array = requredResearch == undefined ? [] : Researches.loaded_data[i].requiredResearch.split(',');
+            all_research[res_id].PreRes_Array = requredResearch == undefined ? [] : requredResearch;
             for (var j = 0; j < all_research[res_id].PreRes_Array.length; j++) {
                 var pre_res_id = all_research[res_id].PreRes_Array[j];
                 if (all_research[pre_res_id] == undefined) {
@@ -382,7 +382,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
         
         var completeResearch = function (research_id, player_number) {
 
-            if (research_id == 'R-Struc-Research-Module') {
+            if (research_id == 'Research Module') {
                 is_module_research_ready = true;
             }
 
@@ -394,7 +394,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
 
             if (res_row.Res_Data.resultComponents != undefined)
             {
-                var result_components = res_row.Res_Data.resultComponents.split(',');
+                var result_components = res_row.Res_Data.resultComponents;
                 for(var e=0; e<result_components.length; e++)
                 {
                     ResearchedComponents[player_number][result_components[e]] = {};
@@ -404,7 +404,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
             }
 
             if (res_row.Res_Data.resultStructures != undefined) {
-                var resultStructures = res_row.Res_Data.resultStructures.split(',');
+                var resultStructures = res_row.Res_Data.resultStructures;
                 for (var e = 0; e < resultStructures.length; e++) {
                     ResearchedComponents[player_number][resultStructures[e]] = {};
                     ResearchedComponents[player_number][resultStructures[e]].time_seconds = current_time;
@@ -450,6 +450,9 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
         }
 
         /* start game research */
+        for (var ires in techlist) {
+            techlist[ires] = Researches.loaded_data_hash[techlist[ires]].name;
+        }
         for (var count = 0; count < numCleanTech; count++) {
             completeResearch(techlist[count], player);
         }

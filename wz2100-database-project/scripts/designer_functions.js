@@ -1368,7 +1368,7 @@ function GetResearchPath_SubTree(component_id, player,expand_level) {
         if (res_row.requiredResearch == undefined) {
             return;
         } else {
-            var pre_res = res_row.requiredResearch.split(',');
+            var pre_res = res_row.requiredResearch;
             if (pre_res.length > 0) {
                 data_row.isLeaf = false;
             }
@@ -1637,7 +1637,7 @@ function CalculateBuilding(player, structure) {
     StructureDesign.baseStats = {};
 
     if (structure.weapons != undefined) {
-        var weapons = structure.weapons.split(',');
+        var weapons = structure.weapons;
         if (weapons.length > 0) {
             var weapon = Weapons.loaded_data_hash[weapons[0]];
             //var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy

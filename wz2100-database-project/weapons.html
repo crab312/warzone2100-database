@@ -239,7 +239,7 @@ function DrawWeaponList() {
                             //skip structures which cannot be researched
                             continue;
                         }
-                        var struc_weaps = Structures.loaded_data[i].weapons.split(',');
+                        var struc_weaps = Structures.loaded_data[i].weapons;
                         for (var e = 0 ; e < struc_weaps.length; e++) {
                             building_weapons[struc_weaps[e]] = 1;
                         }

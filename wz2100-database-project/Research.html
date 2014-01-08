@@ -628,10 +628,10 @@ function DrawCompTimeTable(container_id, scale, options) {
         var result_comps = [];
         /* prepare array of research results */
         if (research.resultComponents != undefined) {
-            result_comps = result_comps.concat(research.resultComponents.split(','));
+            result_comps = result_comps.concat(research.resultComponents);
         }
         if (research.resultStructures != undefined) {
-            result_comps = result_comps.concat(research.resultStructures.split(','));
+            result_comps = result_comps.concat(research.resultStructures);
         }
         if (result_comps.length == 0 && (research.results == undefined || research.results=="")) {
             continue;

@@ -113,9 +113,6 @@
     <Content Include="data_master\stats\structuremodifier.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="data_master\stats\templates.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="data_master\stats\terraintable.ini">
       <SubType>Content</SubType>
     </Content>
@@ -2493,6 +2490,7 @@
     <Content Include="scripts\MyCustomScripts2.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\MyDrawFunctions.js" />
     <Content Include="scripts\properties_desription.js">
       <SubType>Content</SubType>
     </Content>
@@ -2530,6 +2528,7 @@
     <Content Include="weapons.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="data_master\" />

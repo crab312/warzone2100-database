@@ -1,0 +1,129 @@
+{
+    "BaBaLegs": {
+        "buildPoints": 15,
+        "deceleration": 450,
+        "hitpoints": 1,
+        "id": "BaBaLegs",
+        "speed": 200,
+        "spinAngle": 45,
+        "spinSpeed": 450,
+        "turnSpeed": 225,
+        "type": "Legged",
+        "weight": 10
+    },
+    "BaBaProp": {
+        "buildPoints": 15,
+        "hitpoints": 1,
+        "id": "BaBaProp",
+        "speed": 200,
+        "type": "Wheeled",
+        "weight": 10
+    },
+    "Cyborg Propulsion": {
+        "buildPoints": 50,
+        "buildPower": 10,
+        "deceleration": 450,
+        "hitpoints": 50,
+        "id": "CyborgLegs",
+        "speed": 400,
+        "spinAngle": 45,
+        "spinSpeed": 450,
+        "turnSpeed": 225,
+        "type": "Legged",
+        "weight": 50
+    },
+    "Half-tracks": {
+        "buildPoints": 75,
+        "buildPower": 75,
+        "designable": 1,
+        "hitpoints": 200,
+        "id": "HalfTrack",
+        "model": "PRLRHTR1.PIE",
+        "skidDeceleration": 500,
+        "speed": 150,
+        "type": "Half-Tracked",
+        "weight": 400
+    },
+    "Helicopter": {
+        "acceleration": 200,
+        "buildPoints": 125,
+        "buildPower": 150,
+        "deceleration": 200,
+        "designable": 1,
+        "hitpoints": 100,
+        "id": "Helicopter",
+        "model": "DPVTOL.PIE",
+        "speed": 700,
+        "spinSpeed": 200,
+        "turnSpeed": 100,
+        "type": "Lift",
+        "weight": 50
+    },
+    "Hover": {
+        "buildPoints": 100,
+        "buildPower": 150,
+        "designable": 1,
+        "hitpoints": 100,
+        "id": "hover01",
+        "model": "PRLHOV1.PIE",
+        "skidDeceleration": 120,
+        "speed": 300,
+        "type": "Hover",
+        "weight": 200
+    },
+    "Naval": {
+        "buildPoints": 150,
+        "buildPower": 150,
+        "designable": 1,
+        "hitpoints": 300,
+        "id": "Naval",
+        "model": "prhnaval1.pie",
+        "speed": 300,
+        "type": "Propellor",
+        "weight": 300
+    },
+    "Tracks": {
+        "buildPoints": 125,
+        "buildPower": 125,
+        "designable": 1,
+        "hitpoints": 300,
+        "id": "tracked01",
+        "model": "PRLRTRK1.PIE",
+        "speed": 125,
+        "spinAngle": 45,
+        "type": "Tracked",
+        "weight": 650
+    },
+    "VTOL": {
+        "acceleration": 200,
+        "buildPoints": 125,
+        "buildPower": 150,
+        "deceleration": 200,
+        "designable": 1,
+        "hitpoints": 100,
+        "id": "V-Tol",
+        "model": "DPVTOL.PIE",
+        "speed": 700,
+        "spinSpeed": 200,
+        "turnSpeed": 100,
+        "type": "Lift",
+        "weight": 50
+    },
+    "Wheels": {
+        "buildPoints": 50,
+        "buildPower": 50,
+        "designable": 1,
+        "hitpoints": 100,
+        "id": "wheeled01",
+        "model": "PRLRWHL1.PIE",
+        "skidDeceleration": 350,
+        "speed": 175,
+        "type": "Wheeled",
+        "weight": 300
+    },
+    "ZNULLPROP": {
+        "id": "ZNULLPROP",
+        "model": "MIBNKDRL.PIE",
+        "type": "Wheeled"
+    }
+}

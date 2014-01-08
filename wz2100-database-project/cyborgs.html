@@ -115,7 +115,7 @@ function DrawCyborgsLists() {
             if (cyborg.weapons == undefined) {
                 return false;
             }
-            var cyb_body = Bodies.loaded_data_hash[cyborg.compBody];
+            var cyb_body = Bodies.loaded_data_hash[cyborg.body];
             if (cyb_body.droidType == "CYBORG") {
                 return true
             }
@@ -131,7 +131,7 @@ function DrawCyborgsLists() {
             if (cyborg.weapons == undefined) {
                 return false;
             }
-            var cyb_body = Bodies.loaded_data_hash[cyborg.compBody];
+            var cyb_body = Bodies.loaded_data_hash[cyborg.body];
             if (cyb_body.droidType == "CYBORG_SUPER") {
                 return true
             }
@@ -163,17 +163,17 @@ function DrawCyborgs(container_id, cyb_id_list, cyborg_filter_function, col_mode
 
     /* calculate parameters of cyborgs */
     for (var i = 0; i < grid_data.length; i++) {
-        var body_id = grid_data[i].compBody, propulsion_id = grid_data[i].compPropulsion;
+        var body_id = grid_data[i].body, propulsion_id = grid_data[i].propulsion;
         var turret_id = "";
         var armed;
         if (grid_data[i].type == "CYBORG" || grid_data[i].type == "CYBORG_SUPER") {
-            turret_id = grid_data[i].weapons.split(',')[0];
+            turret_id = grid_data[i].weapons[0];
             armed = true;
         } else if (grid_data[i].type == "CYBORG_CONSTRUCT") {
-            turret_id = grid_data[i].compConstruct;
+            turret_id = grid_data[i].construct;
             armed = false;
         } else if (grid_data[i].type == "CYBORG_REPAIR") {
-            turret_id = grid_data[i].compRepair;
+            turret_id = grid_data[i].repair;
             armed = false;
         }
         grid_data[i].armed = armed;
@@ -327,14 +327,14 @@ function openCyborgDetails(template_id) {
     var template = Templates.loaded_data_hash[template_id];
     var turret_id = null;
     if (template.weapons != undefined) {
-        turret_id = template.weapons.split(',')[0];
-    } else if (template.compConstruct != undefined) {
-        turret_id = template.compConstruct;
-    } else if (template.compRepair != undefined) {
-        turret_id = template.compRepair;
+        turret_id = template.weapons[0];
+    } else if (template.construct != undefined) {
+        turret_id = template.construct;
+    } else if (template.repair != undefined) {
+        turret_id = template.repair;
     }
     if (turret_id != null) {
-        window.open("design.php?body_id=" + template.compBody + "&propulsion_id=" + template.compPropulsion + "&turret1_id=" + turret_id);
+        window.open("design.php?body_id=" + template.body + "&propulsion_id=" + template.propulsion + "&turret1_id=" + turret_id);
     }
 }
 
@@ -346,7 +346,7 @@ function LoadCyborgDesigns(callback_function) {
         data = Templates.loaded_data;
         for (var i = 0; i < data.length; i++) {
             if (data[i].type == "CYBORG" || data[i].type == "CYBORG_SUPER") {
-                var weapon_id = data[i].weapons.split(',')[0], body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                var weapon_id = data[i].weapons[0], body_id = data[i].body, propulsion_id = data[i].propulsion;
                 var can_research = resComp[weapon_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
                 if (can_research) {
                     var cyb_templ = data[i];
@@ -355,7 +355,7 @@ function LoadCyborgDesigns(callback_function) {
                 }
             }
             if (data[i].type == "CYBORG_CONSTRUCT") {
-                var contruct_id = data[i].compConstruct, body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                var contruct_id = data[i].construct, body_id = data[i].body, propulsion_id = data[i].propulsion;
                 var can_research = resComp[contruct_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
                 if (can_research) {
                     var cyb_templ = data[i];
@@ -364,7 +364,7 @@ function LoadCyborgDesigns(callback_function) {
                 }
             }
             if (data[i].type == "CYBORG_REPAIR") {
-                var repair_id = data[i].compRepair, body_id = data[i].compBody, propulsion_id = data[i].compPropulsion;
+                var repair_id = data[i].repair, body_id = data[i].body, propulsion_id = data[i].propulsion;
                 var can_research = resComp[repair_id] != undefined && resComp[body_id] != undefined && resComp[propulsion_id] != undefined;
                 if (can_research) {
                     var cyb_templ = data[i];

@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.95";
+    var current_site_version = "2.18";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -140,7 +140,8 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Weapon";
         obj.page_url = "weapons.php";
-        obj.path_ini = data_directory + "weapons.ini";
+        //obj.path_ini = data_directory + "weapons.ini";
+        obj.path_ini = data_directory + "weapons.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -219,7 +220,8 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Body";
         obj.page_url = "Body.php";
-        obj.path_ini = data_directory + "body.ini";
+        //obj.path_ini = data_directory + "body.ini";
+        obj.path_ini = data_directory + "body.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -255,7 +257,7 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Propulsion";
         obj.page_url = "propulsion.php";
-        obj.path_ini = data_directory + "propulsion.ini";
+        obj.path_ini = data_directory + "propulsion.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.icon_folder = "Propulsion";
         obj.GetIconHtml_Function = function (rowObject, size) {
@@ -292,7 +294,7 @@ function InitDataObjects() {
         var obj = new Object;
         obj.sysid = "Structure";
         obj.page_url = "structure.php";
-        obj.path_ini = data_directory + "structure.ini";
+        obj.path_ini = data_directory + "structure.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -482,7 +484,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Research";
-        obj.path_ini = data_directory + "research.ini";
+        obj.path_ini = data_directory + "research.json";
         obj.LoadDataFunction = LoadResearch;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -530,7 +532,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Repair";
-        obj.path_ini = data_directory + "repair.ini";
+        obj.path_ini = data_directory + "repair.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -553,7 +555,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Construction";
-        obj.path_ini = data_directory + "construction.ini";
+        obj.path_ini = data_directory + "construction.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -578,7 +580,7 @@ function InitDataObjects() {
     {
         Sensor = {
             sysid: "Sensor",
-            path_ini: data_directory + "sensor.ini",
+            path_ini: data_directory + "sensor.json",
             LoadDataFunction: LoadDataObject,
             LoadLeftGridFunction: function () {
                 var data_obj = this;
@@ -602,7 +604,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "ECM";
-        obj.path_ini = data_directory + "ecm.ini";
+        obj.path_ini = data_directory + "ecm.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -644,7 +646,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Templates";
-        obj.path_ini = data_directory + "templates.ini";
+        obj.path_ini = data_directory + "templates.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -655,7 +657,7 @@ function InitDataObjects() {
             { label: "Name", name: "name", width: 160, fixed: true },
             //{ label: "Type", name: "type", width: 50, fixed: true },
             {
-                label: "Body", name: "compBody", width: 80, fixed: true,
+                label: "Body", name: "body", width: 80, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Bodies.loaded_data_hash[cellvalue] != undefined) {
                         return Bodies.loaded_data_hash[cellvalue].name;
@@ -665,7 +667,7 @@ function InitDataObjects() {
                 },
             },
             {
-                label: "Propulsion", name: "compPropulsion", width: 100, fixed: true,
+                label: "Propulsion", name: "propulsion", width: 100, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Propulsion.loaded_data_hash[cellvalue] != undefined) {
                         return Propulsion.loaded_data_hash[cellvalue].name;
@@ -681,7 +683,7 @@ function InitDataObjects() {
                     if (cellvalue == undefined) {
                         return '';
                     }
-                    var weaps = cellvalue.split(',');
+                    var weaps = cellvalue;
                     var result = [];
                     for (var i in weaps) {
                         if (Weapons.loaded_data_hash[cellvalue] != undefined) {
@@ -700,15 +702,15 @@ function InitDataObjects() {
             var img_name = null;
             var img_folder = null;
             if (rowObject.type == "CYBORG" || rowObject.type == "CYBORG_SUPER") {
-                img_name = rowObject.weapons.split(',')[0] + ".gif";
+                img_name = rowObject.weapons[0] + ".gif";
                 img_folder = 'Weapon';
             }
             if (rowObject.type == "CYBORG_CONSTRUCT") {
-                img_name = rowObject.compConstruct + ".gif";
+                img_name = rowObject.construct + ".gif";
                 img_folder = 'SupportTurrets';
             }
             if (rowObject.type == "CYBORG_REPAIR") {
-                img_name = rowObject.compRepair + ".gif";
+                img_name = rowObject.repair + ".gif";
                 img_folder = 'SupportTurrets';
             }
             if(img_name != null){
@@ -894,8 +896,7 @@ function LoadResearch(DataObject, callback_function) {
                 if (DataObject.loaded_data[i].results == undefined) {
                     DataObject.loaded_data[i].results = [];
                 } else {
-                    DataObject.loaded_data[i].results_string = DataObject.loaded_data[i].results;
-                    DataObject.loaded_data[i].results = DataObject.loaded_data[i].results.split(',');
+                    DataObject.loaded_data[i].results_string = DataObject.loaded_data[i].results.toString();
                 }
 
             }
@@ -905,25 +906,32 @@ function LoadResearch(DataObject, callback_function) {
     });
 }
 
+
 //var readfile;
 function LoadDataObject(DataObject, callback_function) {
     if (DataObject.loaded_data == undefined) {
 
-        var method_process_loaded_data = function (DataObject, loaded_data, callback_function) {
+        var method_process_loaded_data = function (DataObject, loaded_data, callback_function, isJson) {
             var readfile = jQuery.parseJSON(loaded_data);
             var grid_data = [];
             var fields_dict = new Array();
             var grid_columns = new Array();
             DataObject.loaded_data_hash = {};
+            DataObject.d = [];
             for (var key in readfile) {
                 var data_row = readfile[key];
-                data_row.grid_id = key;
+                if (isJson == true) {
+                    data_row.grid_id = data_row.id;
+                    data_row.name = key;
+                } else {
+                    data_row.grid_id = key;
+                }
                 data_row.index_of_datarow = grid_data.length;
                 grid_data.push(data_row);
 
                 for (var propertyName in data_row) {
                     var isNumber = !isNaN(data_row[propertyName]);
-                    if (isNumber) {
+                    if (isNumber && isJson != true) {
                         //try convert all strings to numbers if possible (was unable to do this in php_parse_ini)
                         data_row[propertyName] = parseInt(data_row[propertyName]);
                     }
@@ -940,7 +948,8 @@ function LoadDataObject(DataObject, callback_function) {
                         grid_columns.push(grid_col);
                     }
                 }
-                DataObject.loaded_data_hash[key] = data_row;
+                DataObject.loaded_data_hash[data_row.grid_id] = data_row;
+                DataObject.d[key] = data_row;
             }
             DataObject.all_columns = grid_columns;
             DataObject.loaded_data = grid_data;
@@ -950,25 +959,45 @@ function LoadDataObject(DataObject, callback_function) {
         }
 
         if (localStorage[DataObject.sysid + "_loaded_data"] != undefined) {
-            method_process_loaded_data(DataObject, localStorage[DataObject.sysid + "_loaded_data"], callback_function);
+            var isJson = DataObject.path_ini.split('.').pop() == "json";
+            method_process_loaded_data(DataObject, localStorage[DataObject.sysid + "_loaded_data"], callback_function, isJson);
         }
         else {
-            /* retrievind data from server */
-            ShowLoading('tabs_left');
-            $.ajax({
-                url: "stuff.php",
-                data: { url: DataObject.path_ini },
-                datatype: "text",
-                success: function (msg) {
-                    localStorage[DataObject.sysid + "_loaded_data"] = msg;
-                    method_process_loaded_data(DataObject, msg, callback_function);
-                    HideLoading('tabs_left');
-                },
-                error: function (msg) {
-                    HideLoading('tabs_left');
-                    alert('Error happened. Please try to reload page.');
-                }
-            });
+            if (DataObject.path_ini.split('.').pop() == "json") {
+                $.ajax({
+                    url: DataObject.path_ini,
+                    type: 'GET',
+                    dataType: "text",
+                    async: false,
+                    success: function (msg) {
+                        localStorage[DataObject.sysid + "_loaded_data"] = msg;
+                        method_process_loaded_data(DataObject, msg, callback_function, true);
+                        HideLoading('tabs_left');
+                    },
+                    error: function (request, status, error) {
+                        HideLoading('tabs_left');
+                        alert('Error happened. Please try to reload page.' + erorr);
+                    }
+                });
+            } else {
+                /* retrievind data from server */
+                ShowLoading('tabs_left');
+                $.ajax({
+                    url: "stuff.php",
+                    data: { url: DataObject.path_ini },
+                    datatype: "text",
+                    success: function (msg) {
+                        localStorage[DataObject.sysid + "_loaded_data"] = msg;
+                        method_process_loaded_data(DataObject, msg, callback_function);
+                        HideLoading('tabs_left');
+                    },
+                    error: function (msg) {
+                        HideLoading('tabs_left');
+                        alert('Error happened. Please try to reload page.');
+                    }
+                });
+            }
+
         }
     } else {
         HideLoading('tabs_left');
