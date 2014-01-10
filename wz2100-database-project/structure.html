@@ -520,7 +520,7 @@ function DrawStructures(container_id, struc_id_list, structure_filter_function, 
             },
             {
                 label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
-                    return '<label style="color:#116611">$' + cellvalue + '</label>';
+                    return PropDescr("price").format_html(cellvalue);
                 }, sorttype: "int"
             },
             {
@@ -630,8 +630,8 @@ function DrawStructureDetailsParameters(structure_id) {
     {
         var row = new Object;
         row.name = 'Price';
-        row.base = design_data.baseStats.price;
-        row.upgraded = design_data.price;
+        row.base = PropDescr("price").format_html(design_data.baseStats.price);
+        row.upgraded = PropDescr("price").format_html(design_data.price);
         row.upgrade_change = ((row.upgraded - row.base) / row.base);
         row.group = '1 Price';
         row.descr = 'Price added to total price of tank design.';

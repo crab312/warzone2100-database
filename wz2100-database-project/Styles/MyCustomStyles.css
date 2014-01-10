@@ -439,3 +439,17 @@ html,body {
 	color: #555555;
 	padding: 1px 2px;
 }
+
+.compact_ul ul {
+	-webkit-padding-start: 10px;
+}
+
+p {
+    -webkit-margin-before: 0.75em;
+    -webkit-margin-after: 0.75em;
+}
+
+ul {
+    -webkit-margin-before: 0.75em;
+    -webkit-margin-after: 0.75em;
+}

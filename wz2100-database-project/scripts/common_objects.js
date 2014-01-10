@@ -1454,6 +1454,10 @@ function EmptyComponentIcon_html(name) {
     return '<div style="font-size: 0.7em; word-wrap: break-word; width:50px; height:40px; display:inline-block; float: left; margin:1px"><div style=" padding:1px; width:43px; height:33px; border: 1px dotted;" title="' + name + '">' + shown_name + '</div></div>';
 }
 
+function can_research(comp_id) {
+    return ResearchedComponents[player_all_researched][comp_id] != undefined;
+}
+
 /*
 var Weapons;
 var Bodies;
@@ -1471,3 +1475,4 @@ var Sensor;
 var Features;
 var TankDesigner;
 var Templates;*/
+

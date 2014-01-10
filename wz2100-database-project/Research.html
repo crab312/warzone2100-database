@@ -419,12 +419,6 @@ function CreateResearchLines(options) {
     return res_lines;
 }
 
-function can_research(comp_id) {
-    return ResearchedComponents[player_all_researched][comp_id] != undefined;
-}
-
-
-
 function DrawCompTimeTable(container_id, scale, options) {
     //1px = 1 sec
     if (scale == undefined) {
