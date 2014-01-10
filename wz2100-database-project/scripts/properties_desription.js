@@ -153,10 +153,10 @@ $(function () {
         d.name = "Range (1/128 of Tile)";
         d.description = "Maximum range of fire.";
         d.format_str = function (value) {
-            return str_format(value, 0);
+            return str_format(value, 1);
         };
         d.format_num = function (value) {
-            return num_format(value, 0);
+            return num_format(value, 1);
         };
         properties_description[p] = d;
     }
@@ -343,6 +343,9 @@ $(function () {
         d.format_num = function (value) {
             return num_format(value, 0);
         };
+        d.format_html = function (value) {
+            return '<span style="color:darkgreen">' + this.format_str(value) + '</span>';
+        }
         properties_description[p] = d;
     }
 

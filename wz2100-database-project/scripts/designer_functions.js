@@ -605,7 +605,7 @@ function Abilities_Description(ability_name) {
             break;
         case "Cyborg":
             res.name = "Cyborg";
-            res.descr = "This is robotic warrior (selected cyborg body anr/or cyborg propulsion)";
+            res.descr = "This is robotic warrior (selected cyborg body and/or cyborg propulsion)";
             res.icon_class = "ui-icon ui-icon-shuffle";
             res.designer_only_ability = true;
             break;
@@ -914,7 +914,11 @@ function TryCalculateDesign(callback_function) {
 
             {
                 var row = new Object;
-                row.name = 'Time to build in Factory: no modules';
+                if (propulsion.type == 'Legged') {
+                    row.name = 'Time to build in Factory';
+                } else {
+                    row.name = 'Time to build in Factory: no modules';
+                }
                 row.base = Tank.baseStats.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgraded = Tank.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_nomodules - Tank.baseStats.buildTimeSeconds_factory_nomodules) / Tank.baseStats.buildTimeSeconds_factory_nomodules;
@@ -923,6 +927,7 @@ function TryCalculateDesign(callback_function) {
                 grid_data.push(row);
             }
 
+            if (propulsion.type != 'Legged')
             {
                 var row = new Object;
                 row.name = 'Time to build in Factory: with 2 modules';
@@ -1310,8 +1315,8 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
     {
         var row = new Object;
         row.name = 'Range (tiles)';
-        row.base = turret.longRange / 128;
-        row.upgraded = turret_upgraded.longRange / 128;
+        row.base = PropDescr("longRange_tiles").format_str(turret.longRange);
+        row.upgraded = PropDescr("longRange_tiles").format_str(turret_upgraded.longRange);
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = range_label;
         row.descr = 'Maximum range of fire.';

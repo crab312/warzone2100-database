@@ -412,7 +412,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
             },
             {
                 label: "Range", name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
-                    return (cellvalue / 128).toFixed(1)
+                    return PropDescr("longRange_tiles").format_str(cellvalue);
                 }, width: 40
             },
             {
@@ -700,8 +700,8 @@ function DrawWeaponDetailsParameters(weap_id) {
     {
         var row = new Object;
         row.name = 'Price';
-        row.base = weapon.buildPower;
-        row.upgraded = weapon_upgraded.buildPower;
+        row.base = PropDescr("price").format_html(weapon.buildPower);
+        row.upgraded = PropDescr("price").format_html(weapon_upgraded.buildPower);
         row.group = '';
         row.descr = 'Price added to total price of tank design.';
         grid_data.push(row);
@@ -761,6 +761,35 @@ function DrawWeaponStaticData(weapon_id) {
 
     /* Show auto-generated description of weapon */
     var auto_descr = ('[' + weapon.weaponClass + ' ' + weapon.weaponEffect + ' ' + weapon.weaponSubClass + ']').toLowerCase();
+    var struc_weapon_descr = "";
+
+    var armed_strucs = [];
+    for (var is in Structures.loaded_data) {
+        var struc = Structures.loaded_data[is];
+        if (struc.weapons != undefined && can_research(struc.grid_id)) {
+            if (struc.weapons.indexOf(weapon_id) >= 0) {
+                armed_strucs.push(struc);
+            }
+        }
+    }
+
+    if (armed_strucs.length > 0) {
+        if (can_research(weapon_id)) {
+            struc_weapon_descr += '<p>List of defensive structures armed with this weapon:</p>';
+        }else{
+            struc_weapon_descr += '<p>This weapon can not be researched, but you can get <b>defensive structures</b> armed with this weapon.</p>';
+        }
+        
+        struc_weapon_descr += '<ul>';
+        for (var is in armed_strucs) {
+            var struc = armed_strucs[is];
+            struc_weapon_descr += '<li><a href="structure.php?details_id=' + struc.grid_id + '">' + struc.name + '</a></li>';
+        }
+        struc_weapon_descr += '</ul>';
+        auto_descr += struc_weapon_descr;
+    }
+
+
     $('#details_description').html(auto_descr);
 
     /* Draw Damage modifiers table */
