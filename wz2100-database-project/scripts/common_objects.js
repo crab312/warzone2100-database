@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.95";
+    var current_site_version = "1.97";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -893,6 +893,7 @@ function LoadResearch(DataObject, callback_function) {
             for (var i = 0; i < DataObject.loaded_data.length; i++) {
                 if (DataObject.loaded_data[i].results == undefined) {
                     DataObject.loaded_data[i].results = [];
+                    DataObject.loaded_data[i].results_string = "";
                 } else {
                     DataObject.loaded_data[i].results_string = DataObject.loaded_data[i].results;
                     DataObject.loaded_data[i].results = DataObject.loaded_data[i].results.split(',');

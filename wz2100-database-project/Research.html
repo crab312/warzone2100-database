@@ -12,62 +12,450 @@
     <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
     <script src="scripts/jquery.blockUI.js"></script>
 
+    <script src="scripts/raphael-min.js"></script>
+    <script src="scripts/fabric.js/all.js"></script>
+
     <script src="scripts/MyCustomScripts2.js"></script>
     <script src="scripts/common_objects.js"></script>
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
-
-    <script src="scripts/raphael-min.js"></script>
+    <script src="scripts/properties_desription.js"></script>
+    
 
     <title>Warzone 2100 Guide • Research</title>
 
 <script>
 
+
 var player = 0;
+var page_loaded = false;
 
 $(function () {
 
     InitDataObjects();
 
+    $("#tabs_left").tabs();
+    $("#tabs_left").tabs("option", "active", 0);
+
+    $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
+        url_pushState('');
+    });
+
+    $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+        url_pushState('?tree=1');
+        ShowResearchTree();
+    });
+
+    $('#tabs_left ul:first li:eq(2) a').click(null, function (event) {
+        url_pushState('?timeline=1');
+        ShowResearchTimeline();
+    });
+
+    $('#tabs_left ul:first li:eq(3) a').click(null, function (event) {
+        DrawDetailsTab_Init();
+    });
+
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched, true, function () {
-            DrawResearchTimeline();
+            //DrawResearchTimeline();
+            ShowResearchListView();
+            page_loaded = true;
         });
     })
+
     DrawSection_type2_1_html("intro_header", "Introduction").append($('#intro_content'));
     DrawSection_type2_1_html("time_table_header", "Research Timeline").append($('#time_table_container'));
-    
-    $('.opt_link').click(function () {
-        timeline_optionsChanged($(this));
-        DrawResearchTimeline();
-    }).css("cursor", "pointer");
-
-    for (var option in timeline_options) {
-        if (timeline_options[option]) {
-            $('#opt_' + option).css("text-decoration", "none");
-        } else {
-            $('#opt_' + option).css("text-decoration", "line-through");
-        }
-    }
 
 });
 
-timeline_options = {
-    armor_upgrades: false,
-    weapon_upgrades: false,
-    cyborgs: true,
-    tanks: true,
-    vtol: true,
-    structures: true,
+$(window).on("popstate", function () {
+    if (page_loaded) {  //this called also on PAGE FIRST LOAD
+        var uri_vars = getUrlVars();
+        if (uri_vars["details_id"] != undefined) {
+            /* open Details View */
+            DrawDetailsTab_Init(getUrlVars()["details_id"]);
+        } else if (uri_vars["tree"] != undefined) {
+            /* open Tree View */
+
+            if (uri_vars["component_id"] != undefined) {
+                /* Show research tree for only one component */
+            } else {
+                ShowResearchTree();
+            }
+        } else if (uri_vars["timeline"] != undefined) {
+            /* open TimeLine View */
+            ShowResearchTimeline();
+        } else {
+            /* open List View */
+            $("#tabs_left").tabs("option", "active", 0);
+        }
+
+    }
+});
+
+function ShowResearchListView() {
+    $("#tabs_left").tabs("option", "active", 0);
+
+    var descr_html = "Below listed all possible research items in Warzone2100.<br/>\
+List sorted by |<b>minimum research time</b>\
+You can filter it by type of research (weapon, structure, upgrade)\
+";
+
+    $('#left-tabs-listview').html('<div id="reslistcontainer_header"></div><div id="reslistcontainer">' + descr_html + '<div id="restablecontainer"></div></div>');
+    DrawSection_type2_1_html("reslistcontainer_header", "List of research").append($('#reslistcontainer'));
+    var container_id = "restablecontainer";
+
+    var grid_data = [];
+    for (var res_id in Researches.loaded_data_hash) {
+        if (can_research(res_id))
+        {
+            var research = Researches.loaded_data_hash[res_id];
+            //research.minResearchTime = 
+            grid_data.push(research);
+        }
+    }
+
+    grid_data.sort(function (a, b) {
+        if (a.minResearchTime == undefined)
+            return 1;
+        if (b.minResearchTime == undefined)
+            return -1;
+        return a.minResearchTime > b.minResearchTime ? 1 : -1;
+    });
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+        [
+            { label: "", name: "grid_id", key: true, hidden: true },
+            {
+                label: " ",
+                name: 'pic',
+                width: '65px',
+                sortable: false,
+                search: false,
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:ShowResearchDetails(\'' + rowObject.grid_id + '\')">' + Researches.GetIconHtml_Function(rowObject) + '</a>';
+                },
+            },
+            {
+                label: " ", name: "name",
+                formatter: function (cellvalue, options, rowObject) {
+                    return '<a href="javascript:ShowResearchDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                },
+            },
+            
+            {
+                label: "Price",
+                formatter: function (cellvalue, options, rowObject) {
+                    return rowObject.researchPower == undefined ? 0 : rowObject.researchPower;
+                },
+                width: 70,
+            },
+            {
+                label: "Research Points",
+                formatter: function (cellvalue, options, rowObject) {
+                    return rowObject.researchPoints == undefined ? 0 : rowObject.researchPoints;
+                },
+                width: 70,
+            },
+
+            {
+                label: "Min research time",
+                name: "minResearchTime",
+                width: 80,
+                sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    if (cellvalue != undefined) {
+                        if (cellvalue < 3600) {
+                            return cellvalue.toMMSS();
+                        } else {
+                            return cellvalue.toHHMMSS();
+                        }
+                    }
+                    return ' - ';
+                },
+            },
+        ],
+        onSelectRow: function (rowid) {
+        },
+        loadonce: true,
+        ignoreCase: true, //make search case insensitive
+    });
 }
 
-function DrawResearchTimeline() {
+function ShowResearchTree() {
+    $("#tabs_left").tabs("option", "active", 1);
 
-    DrawScaleSlider('scale_slider', 100, function (value) {
+
+    $('#research_tree_container').html('<div id="tree_scale_slider_container" style="width:400px;display:inline-block"></div><div id="restree_container"></div>');
+
+
+    var scale_slider = DrawScaleSlider("tree_scale_slider_container", 200, function (value) {
         var scale = value / 100;
-        DrawCompTimeTable("time_table_canva", scale, timeline_options);
+        DrawResearchTree("restree_container", scale);
     });
-    DrawCompTimeTable("time_table_canva", 1, timeline_options);
+
+    DrawResearchTree("restree_container", 2);
+}
+
+function ShowResearchTimeline() {
+    $("#tabs_left").tabs("option", "active", 2);
+    DrawResearchTimeline("time_table_container");
+}
+
+function ShowResearchDetails(res_id) {
+    url_pushState('?details_id=' + res_id);
+    DrawDetailsTab_Init(res_id);
+}
+
+function DrawDetailsTab_Init(research_id) {
+
+    $("#tabs_left").tabs("option", "active", 3);
+
+
+    if (research_id == undefined) {
+        if(drawn_detail_research_id != null)
+        {
+            research_id = drawn_detail_research_id;
+            url_pushState('?details_id=' + research_id);
+        }
+    }
+
+    if (research_id != undefined)
+    {
+        //url_pushState('?details_id=' + research_id);
+        DrawResearchDetailsParameters(research_id);
+    }
+
+    $("#select_research_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Researches, null, function (res_id_new) {
+            DrawResearchDetailsParameters(res_id_new);
+        });
+    });
+}
+
+var drawn_detail_research_id = null;
+function DrawResearchDetailsParameters(research_id) {
+    drawn_detail_research_id = research_id;
+    var research = Researches.loaded_data_hash[research_id];
+
+    if (research != undefined) {
+        $("#research_detail_data_container").show();
+        scrollToId('#tabs_left');
+    }
+
+    $("#select_research_button").button({
+        icons: {
+            primary: "ui-icon-triangle-1-s",
+        }
+    }).click(function (event) {
+        event.preventDefault();
+        ShowSeletDialog_forDataObject(Researches, research_id, function (res_id_new) {
+            DrawresearchDetailsParameters(res_id_new);
+        });
+    });
+
+    $("#research_icon").html(Researches.GetIconHtml_Function(research));
+    $("#research_name_label").text(research.name);
+
+    /* Draw parameters of research */
+    $('#research_details').html('<div id="research_details_container"></div>');
+    grid_data = [];
+    {
+        var row = new Object;
+        row.name = 'Price';
+        row.base = PropDescr("price").format_html(research.researchPower);
+        row.group = '';
+        row.descr = 'Price needed to start research';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Research points';
+        row.base = PropDescr("researchPoints").format_html(research.researchPoints);
+        row.group = '';
+        row.descr = 'Each Research Facility produces 12 - 54 Research Points per second. It depends on the presence of Research Module and Research Upgrades';
+        grid_data.push(row);
+    }
+    {
+        var row = new Object;
+        row.name = 'Minimum Time to research';
+        row.base = PropDescr("minResearchTime").format_html(research.minResearchTime.tohhMMSS());
+        row.group = '';
+        row.descr = 'Minimum time calculated by program. In real games time time can be reachable depending of game start conditions/number of laboratories etc.';
+        grid_data.push(row);
+    }
+
+    var grid_element_id = ResetGridContainer("research_details_container");
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+            [
+                { name: "", width: '20px', sortable: false, search: false },
+                { name: "name", label: 'Parameter', key: true, width: '200px' },
+                {
+                    name: "base", label: 'Base value', width: '60px', fixed: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                            return '';
+                        }
+                        return cellvalue;
+                    }
+                },
+                { name: "group", label: 'group', width: '100px' },
+                {
+                    name: "descr", label: 'Description', width: '300px', fixed: true,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue == undefined) {
+                            cellvalue = ' - ';
+                        }
+                        return '<label style="color:gray;font-size:0.9em">' + cellvalue + '</label>'
+                    },
+
+                },
+            ],
+        loadonce: true,
+        grouping: true,
+        groupingView: {
+            groupField: ['group'],
+            groupText: ['<b> {0} </b>'],
+            groupColumnShow: [false]
+        },
+    });
+
+    /* Draw Research Path */
+    var res_path_data = GetResearchPath_SubTree(research_id, player_all_researched, 2);
+    DrawResearchPath_Tree("research_path_container", res_path_data);
+
+}
+
+timeline_options = {
+    tanks: {
+        value: true,
+        label: "Tanks",
+    },
+    cyborgs: {
+        value: true,
+        label: "Cyborgs",
+    },
+    vtol: {
+        value: true,
+        label: "VTOL",
+    },
+    structures: {
+        value: true,
+        label: "Structures",
+    },
+    armor_upgrades: {
+        value: false,
+        label: "Armor upgrades",
+    },
+    weapon_upgrades: {
+        value: false,
+        label: "Weapons upgrades",
+    },
+}
+
+tree_options = {
+    tanks: {
+        value: true,
+        label: "Tanks",
+    },
+    cyborgs: {
+        value: true,
+        label: "Cyborgs",
+    },
+    vtol: {
+        value: true,
+        label: "VTOL",
+    },
+    structures: {
+        value: true,
+        label: "Structures",
+    },
+    armor_upgrades: {
+        value: false,
+        label: "Armor upgrades",
+    },
+    weapon_upgrades: {
+        value: false,
+        label: "Weapons upgrades",
+    },
+}
+    
+function DrawHorizontalOptionsMenu(container_id, options, func_onchanged_callback) {
+    var html = '<ul  class="MyStyledLinkMenu navmenu2">';
+    for (var opt in timeline_options) {
+        var opt_id = container_id + "_" + opt;
+        var opt_label = timeline_options[opt].label;
+        var opt_value = timeline_options[opt].value;
+        html += '<li><a style="cursor:pointer" id="' + opt_id + '" data-opt-id="' + opt + '">' + opt_label + '</a></li>';
+    }
+    html += '</ul>';
+    $('#' + container_id).html(html);
+
+    for (var opt in timeline_options) {
+        var opt_id = container_id + "_" + opt;
+        var opt_label = timeline_options[opt].label;
+        var opt_value = timeline_options[opt].value;
+        if (opt_value) {
+            $('#' + opt_id).css("text-decoration", "none");
+        } else {
+            $('#' + opt_id).css("text-decoration", "line-through");
+        }
+        $('#' + opt_id).click(timeline_options, function (event) {
+            var opt_elem = $(this);
+            var opt_name = opt_elem.attr('data-opt-id');
+            var options_obj = event.data;
+            var opt_obj = options_obj[opt_name];
+            opt_obj.value = !opt_obj.value;
+            if (opt_obj.value) {
+                opt_elem.css("text-decoration", "none");
+            } else {
+                opt_elem.css("text-decoration", "line-through");
+            }
+            if (func_onchanged_callback) {
+                func_onchanged_callback();
+            }
+        });
+    }
+
+}
+function DrawResearchTimeline(container_id) {
+
+    var scale_slider_id = container_id + "_timeline_slider";
+    var options_div_id = container_id + "_timeline_options";
+    var canva_id = container_id + "_canva";
+    $('#' + container_id).html('<div id="' + scale_slider_id + '" style="width:400px;display:inline-block" ></div><div id="' + options_div_id + '" style="display:inline-block;"></div><div id="' + canva_id + '" style="background-color:white"></div>');
+
+    
+    var scale_slider = DrawScaleSlider(scale_slider_id, 100, function (value) {
+        var scale = value / 100;
+        DrawCompTimeTable(canva_id, scale, timeline_options);
+    });
+    DrawHorizontalOptionsMenu(options_div_id, timeline_options, function () {
+        var scale = scale_slider.slider("value") / 100;
+        DrawCompTimeTable(canva_id, scale, timeline_options);
+    });
+
+    DrawCompTimeTable(canva_id, 1, timeline_options);
 }
 
 var scale_setted_timeout;
@@ -98,9 +486,10 @@ function DrawScaleSlider(container_id, init_value, slide_function) {
         }
     });
     $('#' + input_id).val($('#' + slider_id).slider("value") + "%");
+    return $('#' + slider_id);
 }
 
-function CreateResearchLines(options) {
+function CreateComponentsLines(options) {
 
     /* Prepare array of Research Lines */
     var res_lines = [];
@@ -118,13 +507,13 @@ function CreateResearchLines(options) {
                 continue;
             }
             var body = Bodies.loaded_data_hash[body_id];
-            if (!options.tanks && !options.vtol) {
+            if (!options.tanks.value && !options.vtol.value) {
                 if (body.class == "Droids" || body.class == "Transports") {
                     continue;
                 }
             }
 
-            if (!options.cyborgs) {
+            if (!options.cyborgs.value) {
                 if (body.class == "Cyborgs") {
                     continue;
                 }
@@ -135,7 +524,7 @@ function CreateResearchLines(options) {
         if (body_cnt > 0) {
             res_lines.push(line);
         }
-        if (options.armor_upgrades && options.cyborgs) {
+        if (options.armor_upgrades.value && options.cyborgs.value) {
             var upgr_line = {};
             upgr_line.attr_func = function (elem) {
                 elem.attr("stroke", "green").attr("opacity", "0.55");
@@ -148,21 +537,16 @@ function CreateResearchLines(options) {
             var res_class = "Cyborgs";
             for (var ires in Researches.loaded_data) {
                 var res = Researches.loaded_data[ires];
-                if (Upgrades[player_all_researched].research_data != undefined)
-                    if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
-                        if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == res_class) {
-                            var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
-                            if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
-                                upgr_line.items_ids[res.grid_id] = 1;
-                                tmp_cnt++;
-                            }
-                        }
+                if (is_cyborg_body_upgrade(res)) {
+                    upgr_line.items_ids[res.grid_id] = 1;
+                    tmp_cnt++;
+                }
             }
             if (tmp_cnt > 0) {
                 res_lines.push(upgr_line);
             }
         }
-        if (options.armor_upgrades && (options.tanks || options.vtol)) {
+        if (options.armor_upgrades.value && (options.tanks.value || options.vtol.value)) {
             var upgr_line = {};
             upgr_line.attr_func = function (elem) {
                 elem.attr("stroke", "green").attr("opacity", "0.55");
@@ -175,15 +559,10 @@ function CreateResearchLines(options) {
             var res_class = "Droids";
             for (var ires in Researches.loaded_data) {
                 var res = Researches.loaded_data[ires];
-                if (Upgrades[player_all_researched].research_data != undefined)
-                    if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
-                        if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == res_class) {
-                            var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
-                            if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
-                                upgr_line.items_ids[res.grid_id] = 1;
-                                tmp_cnt++;
-                            }
-                        }
+                if (is_tank_body_upgrade(res)) {
+                    upgr_line.items_ids[res.grid_id] = 1;
+                    tmp_cnt++;
+                }
             }
             if (tmp_cnt > 0) {
                 res_lines.push(upgr_line);
@@ -204,12 +583,12 @@ function CreateResearchLines(options) {
                 continue;
             }
             var prop = Propulsion.loaded_data_hash[prop_id];
-            if (!options.tanks) {
+            if (!options.tanks.value) {
                 if (prop.type != "Legged") {
                     continue;
                 }
             }
-            if (!options.cyborgs) {
+            if (!options.cyborgs.value) {
                 if (prop.type == "Legged") {
                     continue;
                 }
@@ -222,7 +601,7 @@ function CreateResearchLines(options) {
         }
     }
     var pushed_structs = {};
-    if (options.structures) {
+    if (options.structures.value) {
         /* Base structures line */
         var line = {};
         line.attr_func = function (elem) {
@@ -256,18 +635,18 @@ function CreateResearchLines(options) {
                 continue;
             }
             var abils = Weapon_GetAbilities(weapon);
-            if (!options.cyborgs) {
+            if (!options.cyborgs.value) {
                 if (abils.CyborgWeapon) {
                     continue;
                 }
             }
-            if (!options.vtol) {
+            if (!options.vtol.value) {
                 if (abils.VTOLWeapon) {
                     continue;
                 }
             }
 
-            if (!options.tanks) {
+            if (!options.tanks.value) {
                 if (!abils.VTOLWeapon && !abils.CyborgWeapon) {
                     continue;
                 }
@@ -312,7 +691,7 @@ function CreateResearchLines(options) {
                 res_lines.push(line);
 
                 /* Create Upgrade line for this weapon line */
-                if (options.weapon_upgrades) {
+                if (options.weapon_upgrades.value) {
                     var upgr_line = {};
                     upgr_line.attr_func = function (elem) {
                         elem.attr("stroke", "darkred").attr("opacity", "0.55");
@@ -340,7 +719,7 @@ function CreateResearchLines(options) {
         }
     }
 
-    if (options.structures) {
+    if (options.structures.value) {
         /* defenses line - bunkers */
         var line = {};
         line.DataObject = Structures;
@@ -359,7 +738,7 @@ function CreateResearchLines(options) {
         res_lines.push(line);
     }
 
-    if (options.structures) {
+    if (options.structures.value) {
         /* defenses line - hardpoints */
         var line = {};
         line.DataObject = Structures;
@@ -378,7 +757,7 @@ function CreateResearchLines(options) {
         res_lines.push(line);
     }
 
-    if (options.structures) {
+    if (options.structures.value) {
         /* defenses line - sensors */
         var line = {};
         line.DataObject = Structures;
@@ -398,7 +777,7 @@ function CreateResearchLines(options) {
         res_lines.push(line);
     }
 
-    if (options.structures) {
+    if (options.structures.value) {
         /* defenses line - other */
         var line = {};
         line.DataObject = Structures;
@@ -420,14 +799,14 @@ function CreateResearchLines(options) {
 }
 
 function DrawCompTimeTable(container_id, scale, options) {
+
     //1px = 1 sec
     if (scale == undefined) {
         scale = 1;
     }
     var sec_per_pixel = scale;
     var h = 2000;
-    $('#' + container_id).html('');
-    $('#' + container_id).append('<div id="timeTableSvgCanva"></div>');
+    $('#' + container_id).html('<div id="timeTableSvgCanva"></div>');
     var max_res_time = 0;
 
     /* Distance between two vertical lines*/
@@ -456,7 +835,7 @@ function DrawCompTimeTable(container_id, scale, options) {
     var line_space = 2;
 
     /* Create Research Lines - res lines*/
-    var res_lines = CreateResearchLines(options);
+    var res_lines = CreateComponentsLines(options);
 
     var line_pos_y = y_offset;
     for (var line_num in res_lines) {
@@ -806,20 +1185,6 @@ function DrawCompTimeTable(container_id, scale, options) {
 
 }
 
-function timeline_optionsChanged(opt_link) {
-    for (var option in timeline_options) {
-        if (opt_link.attr('id') == 'opt_' + option) {
-            timeline_options[option] = !timeline_options[option];
-            if (timeline_options[option]) {
-                opt_link.css("text-decoration", "none");
-            } else {
-                opt_link.css("text-decoration", "line-through");
-            }
-        }
-    }
-
-}
-
 </script>
 </head>
 <body>
@@ -840,27 +1205,103 @@ function timeline_optionsChanged(opt_link) {
            </div>
            <div id="intro_content">
                <p>
-                   Research is most complicated thing in Warzone.
-                   <br />Below you can see Research Timeline.                   
-               </p>
-               <span style="color:red">Note: this page is not finished yet</span>
+                    In warzone2100 we have up to <b>400</b> different researches. <u>Remember:</u> before use a stuff you have to research that stuff.
+                    To research something you have to build <b>Research Facility</b>. 
+                </p>
+                   <p><b>Research List View</b> - research items are shown in table view</p>
+                   <p><b>Research Tree</b> - all items are shown in this form and you can see relation link (pre-requisites)</p>
+                   <p><b>Research Timeline</b> - research items are grouped into lines.</p>
             </div>
-            <div id="time_table_header">
-            </div>
-            <div id="time_table_container">
-                <div id="scale_slider" style="width:400px;display:inline-block" ></div>
-                <ul  class="MyStyledLinkMenu navmenu2" style="display:inline-block;">
-                    <li><a class="opt_link" id="opt_tanks">Tanks</a></li>
-                    <li><a class="opt_link" id="opt_vtol">VTOL</a></li>
-                    <li><a class="opt_link" id="opt_cyborgs">Cyborgs</a></li>
-                    <li><a class="opt_link" id="opt_structures">Structures</a></li>
-                    <li><a class="opt_link" id="opt_weapon_upgrades">Weapons upgrades</a></li>
-                    <li><a class="opt_link" id="opt_armor_upgrades">Armor Upgrades</a></li>
+            <div id="tabs_left" >
+                <ul>
+                    <li><a href="#left-tabs-listview">Research List View</a></li>
+                    <li><a href="#left-tabs-tree">Research Tree</a></li>
+                    <li><a href="#left-tabs-timeline">Research Timeline</a></li>
+                    <li><a href="#left-tabs-details">Research Details</a></li>
                 </ul>
+                <div id="left-tabs-listview">
+                    
+                </div>
+                <div id="left-tabs-tree">
+                    <div id="research_tree_container"></div>
+                </div>
+                <div id="left-tabs-timeline">
+                    <div id="time_table_header">
+                    </div>
+                    <div id="time_table_container">
+                    </div>
+                </div>
+                <div id="left-tabs-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                <div id="selected_research_header">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span style="float:left" id="research_icon"></span>
+                                            </td>
+                                            <td>
+                                                <span id="research_name_label" style="font-size:1.2em">[...]</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td>
+                                You can see details for any research, just select another research. <br />
+                                <div style="width:100%;text-align:center">
+                                    <button id="select_research_button" type="button" style="display:inline-block">Select Research...</button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="width:65%">
+                                            <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
+	                                            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
+                                                    <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
+                                                    Description
+	                                            </h3>
+                                                <div id="details_description" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width:35%">
 
-                <div id="time_table_canva" style="background-color:white"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr id="research_detail_data_container" style="display:none">
+                            <td style="vertical-align:top; width:50%">
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 
-                
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_details"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Result Components</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div1"></div>
+
+                            </td>
+                            <td style="vertical-align:top; width:50%">
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px;">Pre-requisites</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Opens research path to...</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>
+
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research Path (Tree)</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
            
         </td>

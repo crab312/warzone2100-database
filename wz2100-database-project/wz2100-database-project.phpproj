@@ -133,6 +133,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Formulas.html" />
+    <Content Include="HTMLPage1.html" />
     <Content Include="index.html">
       <SubType>Content</SubType>
     </Content>

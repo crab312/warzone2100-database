@@ -425,6 +425,9 @@ function PropDescr(prop) {
             d.format_num = function (value) {
                 return num_format(value, 0);
             };
+            d.format_html = function (value) {
+                return this.format_str(value);
+            }
             return d;
         }
     } else {

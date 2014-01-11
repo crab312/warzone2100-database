@@ -1411,7 +1411,7 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
             {
                 label: "Research Name", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    var res_html = cellvalue;
+                    var res_html = '<a href="Research.php?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/>';
                     if (rowObject.level == 0) {
                         res_html = '<b>' + res_html +'</b>';
                     }
@@ -1446,7 +1446,7 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
         ],
         treeGrid: true,
         ExpandColumn: "name",
-        ExpandColClick: true,
+        //ExpandColClick: true,
         autowidth: true,
         sortname: "id",
         treeReader: {

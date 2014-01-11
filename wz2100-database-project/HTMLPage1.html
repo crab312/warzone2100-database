@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+
+    <script src="scripts/jquery-2.0.3.js"></script>
+    <script src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="scripts/fabric.js/all.js"></script>
+
+
+    <script>
+        
+$(function () {
+    //fabric.Line draw only half of size
+
+    $('body').append('<canvas height="100" width="100" id="timeTableSvgCanva"></canvas>');
+    canvas = new fabric.Canvas('timeTableSvgCanva');
+    /* bugfix for fabric.js */
+    fabric.Line.prototype._setWidthHeight = function (options) {
+        options || (options = {});
+        this.set('width', Math.abs(this.x2 - this.x1) || 1);
+        this.set('height', Math.abs(this.y2 - this.y1) || 1);
+
+        var left = 'left' in options ? options.left : (Math.min(this.x1, this.x2) + this.width / 2),
+            top = 'top' in options ? options.top : (Math.min(this.y1, this.y2) + this.height / 2);
+
+        this.setPositionByOrigin(new fabric.Point(left, top), 'center', 'center');
+    };
+
+
+    var line = new fabric.Path("M0,0,L100,100", {
+        fill: false,
+        stroke: 'green',
+        strokeWidth: 3,
+        originX: 'center',
+        originY: 'center',
+
+    });
+
+    canvas.insertAt(line, 0); 
+
+
+})
+
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
