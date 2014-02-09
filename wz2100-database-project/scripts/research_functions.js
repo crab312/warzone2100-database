@@ -1086,7 +1086,7 @@ ResSvgItem.prototype = (function () {
     return me;
 })();
 
-function DrawResearchTree(container_id, sec_per_pixel)
+function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 {
     var x_size;
     var icon_height = 48;
@@ -1253,6 +1253,96 @@ function DrawResearchTree(container_id, sec_per_pixel)
 
     var drawn_lines = [];
 
+    /* Create Research Lines */
+    var res_lines;
+    if (localStorage["research_tree_lines"] == undefined) {
+        res_lines = CreateResearchLines();
+        localStorage["research_tree_lines"] = JSON.stringify(res_lines);
+    } else
+    {
+        res_lines = JSON.parse(localStorage["research_tree_lines"]);
+    }
+
+    /* Filter Research Lines + Options */
+    var path_to_component_reslist = {};
+    if (options_type2)
+    {
+        if (options_type2.path_to_component) {
+            var res_path_data = GetResearchPath_SubTree(options_type2.path_to_component, player_all_researched, 5);
+            for (var i in res_path_data)
+            {
+                path_to_component_reslist[res_path_data[i].research_id] = 1;
+            }
+        }
+    }
+    if (options) {
+        var checkItem = function (item)
+        {
+            var research = item;
+            if (!options.defenses.value) {
+                if (is_defense_upgrade(research)) //NOTE: assuming defense upgrade has not other effects/results
+                {
+                    return false; 
+                }
+            }
+            if (options_type2) {
+                if (options_type2.path_to_component) {
+                    if (path_to_component_reslist[research.grid_id] == undefined) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        var checkLine = function (line)
+        {
+            /* Check each item and each subitem with function 'checkItem' */
+            var items_filtered = {};
+            var checked_items_count = 0;
+            for (var res_id in line.items) {   /* check each line item */
+                var item = line.items[res_id];
+                if (checkItem(item)) {
+                    items_filtered[res_id] = item;
+                    checked_items_count++;
+                }
+            }
+            if (checked_items_count > 0) {
+                line.items = items_filtered;
+
+                var subitems_filtered = {};
+                for (var res_id in line.sub_items) {   /* check each line subitem */
+                    var subitem = line.sub_items[res_id];
+                    if (checkItem(subitem)) {
+                        subitems_filtered[res_id] = subitem;
+                    }
+                }
+                line.sub_items = subitems_filtered;
+                return true;
+            }
+            return false;
+        }
+        var res_lines_checked = [];
+        for (var i in res_lines) {
+            /* Check each line */
+            var line = JSON.parse(JSON.stringify(res_lines[i]));
+            if (checkLine(line)) {
+                res_lines_checked.push(line);
+
+                var child_lines_filtered = [];
+                for (var j in line.child_lines)
+                {
+                    /* Check each child line (if parent line was checked ok)*/
+                    var child_line = JSON.parse(JSON.stringify(line.child_lines[j])); 
+                    if (checkLine(child_line))
+                    {
+                        child_lines_filtered.push(child_line);
+                    }
+                }
+                line.child_lines = child_lines_filtered;
+            }
+        }
+        res_lines = res_lines_checked;
+    }
     /* ***** Draw research*/
     {
         var func_drawIconBox = function (research, res_id, __x_offset, __y_offset)
@@ -1292,8 +1382,6 @@ function DrawResearchTree(container_id, sec_per_pixel)
             drawn_lines.push(line);
         }
         var res_svg_items_hash = {};
-        var res_lines = CreateResearchLines();
-
         for (var i in res_lines) {
             var line = res_lines[i];
             line.additional_height = 0;
@@ -1747,9 +1835,10 @@ function DrawResearchTree(container_id, sec_per_pixel)
     
 }
 
+
 function DrawResearchTimeLine()
 {
-
+    /* See that function in Research.html */
 
 }
 
@@ -1775,6 +1864,28 @@ function is_cyborg_body_upgrade(res) {
                 }
             }
     return false;
+}
+
+function is_defense_upgrade(res)
+{
+    if (res.resultStructures != undefined)
+    {
+        var strucs = res.resultStructures.split(',');
+        for (var i in strucs)
+        {
+            var struc = Structures.loaded_data_hash[strucs[i]];
+            if (struc != undefined)
+            {
+                if(struc.type != undefined)
+                {
+                    if (struc.type == "DEFENSE")
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
 }
 
 function GetResearchIcon_src(research_id) {
@@ -1855,67 +1966,3 @@ function connectionPath(bb1, bb2, child_conn_number)
     return path;
 }
 
-Raphael.fn.connection = function (obj1, obj2, line, bg) {
-    //var color = line;
-    //var path = [["M", obj1.attr("x"), obj1.attr("y")], ["L", obj2.attr("x"), obj2.attr("y")]];
-    //return {
-    //    line: this.path(path).attr({ stroke: color }),
-    //    from: obj1,
-    //    to: obj2
-    //};
-
-    if (obj1.line && obj1.from && obj1.to) {
-        line = obj1;
-        obj1 = line.from;
-        obj2 = line.to;
-    }
-    var bb1 = obj1.getBBox(),
-        bb2 = obj2.getBBox(),
-        p = [{ x: bb1.x + bb1.width / 2, y: bb1.y - 1 },
-        { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1 },
-        { x: bb1.x - 1, y: bb1.y + bb1.height / 2 },
-        { x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2 },
-        { x: bb2.x + bb2.width / 2, y: bb2.y - 1 },
-        { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1 },
-        { x: bb2.x - 1, y: bb2.y + bb2.height / 2 },
-        { x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2 }],
-        d = {}, dis = [];
-    for (var i = 0; i < 4; i++) {
-        for (var j = 4; j < 8; j++) {
-            var dx = Math.abs(p[i].x - p[j].x),
-                dy = Math.abs(p[i].y - p[j].y);
-            if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x) && ((i != 2 && j != 7) || p[i].x > p[j].x) && ((i != 0 && j != 5) || p[i].y > p[j].y) && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
-                dis.push(dx + dy);
-                d[dis[dis.length - 1]] = [i, j];
-            }
-        }
-    }
-    if (dis.length == 0) {
-        var res = [0, 4];
-    } else {
-        res = d[Math.min.apply(Math, dis)];
-    }
-    var x1 = p[res[0]].x,
-        y1 = p[res[0]].y,
-        x4 = p[res[1]].x,
-        y4 = p[res[1]].y;
-    dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-    dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-    var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
-        y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
-        x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
-        y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
-    var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
-    if (line && line.line) {
-        line.bg && line.bg.attr({ path: path });
-        line.line.attr({ path: path });
-    } else {
-        var color = typeof line == "string" ? line : "#000";
-        return {
-            bg: bg && bg.split && this.path(path).attr({ stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3 }),
-            line: this.path(path).attr({ stroke: color, fill: "none" }),
-            from: obj1,
-            to: obj2
-        };
-    }
-};

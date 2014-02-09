@@ -67,7 +67,7 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "1.97";
+    var current_site_version = "1.98";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -1151,6 +1151,7 @@ function DrawPageHeader() {
                         <li><a href="propulsion.php">Propulsion</a> </li>\
                         <li><a href="cyborgs.php">Cyborgs</a> </li>\
                         <li><a href="structure.php">Buildings</a> </li>\
+                        <li><a href="Research.php">Research</a> </li>\
                         <li><a href="stats.php"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>Database</a></li>\
                         <li><a href="design.php"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>Unit designer</a> </li>\
         \

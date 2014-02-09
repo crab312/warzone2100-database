@@ -323,6 +323,7 @@ function DrawBodyStaticData(body_id) {
 }
 
 function DrawBodyDetailsParameters(body_id) {
+    $('#description_container').html('');
     var body = Bodies.loaded_data_hash[body_id];
     var body_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Body[body.index_of_datarow])); //deep copy
 
@@ -333,6 +334,20 @@ function DrawBodyDetailsParameters(body_id) {
 
     if (body.weaponSlots > 1) {
         $('#description_container').html("This body can hold " + body.weaponSlots + " turrets at once!");
+    }
+
+    /* Show button "Overview research path" */
+    var res_comp_row = ResearchedComponents[player_all_researched][body_id];
+    if (res_comp_row != undefined) {
+        var research = Researches.loaded_data_hash[res_comp_row.research_id];
+        var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
+        $('#description_container').append(res_path_button_html);
+
+        $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
+        $('#show_respath_button_span').button().click(null, function (event) {
+            event.preventDefault();
+            window.open("Research.php?tree=1&component_id=" + body_id);
+        }).css("font-size", "0.8em").css("margin-left", "50px");
     }
 
     $("#select_body_button").button({

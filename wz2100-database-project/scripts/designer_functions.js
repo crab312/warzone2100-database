@@ -1974,3 +1974,4 @@ function DrawStructureResistance(container_id, structure_id) {
         loadonce: true,
     });
 }
+

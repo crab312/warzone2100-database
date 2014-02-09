@@ -773,6 +773,20 @@ function DrawStructureStaticData(structure_id) {
     $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Construction Time Upgrades</div>');
     $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="construction_upgrades_container"></div>');
     DrawConstructionTimeUpgradesTable("construction_upgrades_container");
+
+    /* Show button "Overview research path" */
+    var res_comp_row = ResearchedComponents[player_all_researched][structure_id];
+    if (res_comp_row != undefined) {
+        var research = Researches.loaded_data_hash[res_comp_row.research_id];
+        var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
+        $('#details_description').append(res_path_button_html);
+
+        $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
+        $('#show_respath_button_span').button().click(null, function (event) {
+            event.preventDefault();
+            window.open("Research.php?tree=1&component_id=" + structure_id);
+        }).css("font-size", "0.8em").css("margin-left", "50px");
+    }
 }
 
 function DrawStructureUpgradesTable(container_id, structure_id) {

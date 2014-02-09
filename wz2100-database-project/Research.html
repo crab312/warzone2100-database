@@ -30,6 +30,41 @@
 var player = 0;
 var page_loaded = false;
 
+timeline_options = {
+    tanks: {
+        value: true,
+        label: "Tanks",
+    },
+    cyborgs: {
+        value: true,
+        label: "Cyborgs",
+    },
+    vtol: {
+        value: true,
+        label: "VTOL",
+    },
+    structures: {
+        value: true,
+        label: "Structures",
+    },
+    armor_upgrades: {
+        value: false,
+        label: "Armor upgrades",
+    },
+    weapon_upgrades: {
+        value: false,
+        label: "Weapons upgrades",
+    },
+}
+
+tree_options = {
+    defenses: {
+        value: true,
+        label: "Defenses",
+    },
+
+}
+
 $(function () {
 
     InitDataObjects();
@@ -52,6 +87,7 @@ $(function () {
     });
 
     $('#tabs_left ul:first li:eq(3) a').click(null, function (event) {
+        url_pushState('');
         DrawDetailsTab_Init();
     });
 
@@ -79,6 +115,9 @@ $(window).on("popstate", function () {
 
             if (uri_vars["component_id"] != undefined) {
                 /* Show research tree for only one component */
+                var tree_options2 = {};
+                tree_options2.path_to_component = uri_vars["component_id"];
+                ShowResearchTree(tree_options2);
             } else {
                 ShowResearchTree();
             }
@@ -97,8 +136,7 @@ function ShowResearchListView() {
     $("#tabs_left").tabs("option", "active", 0);
 
     var descr_html = "Below listed all possible research items in Warzone2100.<br/>\
-List sorted by |<b>minimum research time</b>\
-You can filter it by type of research (weapon, structure, upgrade)\
+List sorted by <b>minimum research time</b>. \
 ";
 
     $('#left-tabs-listview').html('<div id="reslistcontainer_header"></div><div id="reslistcontainer">' + descr_html + '<div id="restablecontainer"></div></div>');
@@ -190,19 +228,36 @@ You can filter it by type of research (weapon, structure, upgrade)\
     });
 }
 
-function ShowResearchTree() {
+function ShowResearchTree(options_type2) {
     $("#tabs_left").tabs("option", "active", 1);
 
+    var options_div_id = "restree_container_tree_options";
 
-    $('#research_tree_container').html('<div id="tree_scale_slider_container" style="width:400px;display:inline-block"></div><div id="restree_container"></div>');
+    $('#research_tree_container').html('<div id="tree_scale_slider_container" style="width:400px;display:inline-block"></div><div id="' + options_div_id + '" style="display:inline-block;"></div><div id="restree_container"></div>');
 
 
     var scale_slider = DrawScaleSlider("tree_scale_slider_container", 200, function (value) {
         var scale = value / 100;
-        DrawResearchTree("restree_container", scale);
+        DrawResearchTree("restree_container", scale, tree_options, options_type2);
     });
+    DrawHorizontalOptionsMenu(options_div_id, tree_options, function () {
+        var scale = scale_slider.slider("value") / 100;
+        DrawResearchTree("restree_container", scale, tree_options, options_type2);
+    });
+    
+    if (options_type2)
+    {
+        if(options_type2.path_to_component)
+        {
+            var comp_id = options_type2.path_to_component;
+            var DataObject = FindDataObject(comp_id);
+            var comp = DataObject.loaded_data_hash[comp_id];
+            var html_header = '<span style="font-size:1.2em; margin-top: 25px"><p>Showing Research Path to component: <b>' + comp.name + '</b></p></span>';
+            $(html_header).insertBefore($('#tree_scale_slider_container'));
+        }
+    }
 
-    DrawResearchTree("restree_container", 2);
+    DrawResearchTree("restree_container", 2, tree_options, options_type2);
 }
 
 function ShowResearchTimeline() {
@@ -344,83 +399,222 @@ function DrawResearchDetailsParameters(research_id) {
     var res_path_data = GetResearchPath_SubTree(research_id, player_all_researched, 2);
     DrawResearchPath_Tree("research_path_container", res_path_data);
 
-}
+    /* Show button "Overview research path" */
+    var res_comp_row = ResearchedComponents[player_all_researched][research_id];
+    if (res_comp_row != undefined) {
+        var research = Researches.loaded_data_hash[res_comp_row.research_id];
+        var res_path_button_html = '<br/><button type="button" id="show_respath_button_span">Overview research path</button>'
+        $('#details_description').append(res_path_button_html);
+        $('#show_respath_button_span').button().click(null, function (event) {
+            event.preventDefault();
+            window.open("Research.php?tree=1&component_id=" + research_id);
+        }).css("font-size", "0.8em");
+    }
 
-timeline_options = {
-    tanks: {
-        value: true,
-        label: "Tanks",
-    },
-    cyborgs: {
-        value: true,
-        label: "Cyborgs",
-    },
-    vtol: {
-        value: true,
-        label: "VTOL",
-    },
-    structures: {
-        value: true,
-        label: "Structures",
-    },
-    armor_upgrades: {
-        value: false,
-        label: "Armor upgrades",
-    },
-    weapon_upgrades: {
-        value: false,
-        label: "Weapons upgrades",
-    },
-}
+    /* Show pre-requisite research icons */
+    {
+        var grid_data = [];
+        if (research.requiredResearch != undefined) {
+            var pre_res_ids = research.requiredResearch.split(',');
+            for(var p in pre_res_ids)
+            {
+                grid_data.push(Researches.loaded_data_hash[pre_res_ids[p]]);
+            }
+        }
+        $('#details_preres_container').html('<div id="pre_res_table_container"></div>');
+        show_short_res_table("pre_res_table_container", grid_data);
+    }
 
-tree_options = {
-    tanks: {
-        value: true,
-        label: "Tanks",
-    },
-    cyborgs: {
-        value: true,
-        label: "Cyborgs",
-    },
-    vtol: {
-        value: true,
-        label: "VTOL",
-    },
-    structures: {
-        value: true,
-        label: "Structures",
-    },
-    armor_upgrades: {
-        value: false,
-        label: "Armor upgrades",
-    },
-    weapon_upgrades: {
-        value: false,
-        label: "Weapons upgrades",
-    },
+    /* Show open new research icons */
+    {
+        var grid_data = [];
+        for(var i in Researches.loaded_data_hash)
+        {
+            var res_n = Researches.loaded_data_hash[i];
+            if(res_n.requiredResearch != undefined)
+            {
+                var pre_res_ids = res_n.requiredResearch.split(',');
+                for (var p in pre_res_ids) {
+                    if(pre_res_ids[p] == research.grid_id)
+                    {
+                        grid_data.push(res_n);
+                    }
+                }
+            }
+        }
+        $('#details_openres_container').html('<div id="opennew_res_table_container"></div>');
+        show_short_res_table("opennew_res_table_container", grid_data);
+    }
+
+    /* Show result components */
+    {
+        var grid_data = [];
+        if (research.resultComponents != undefined) {
+            var comps_ids = research.resultComponents.split(',');
+            for (var p in comps_ids) {
+                var comp_id = comps_ids[p];
+                var DataObject = FindDataObject(comp_id);
+                var comp = DataObject.loaded_data_hash[comp_id];
+                var row = {
+                    DataObject: DataObject,
+                    comp_id: comp_id,
+                };
+                grid_data.push(row);
+            }
+        }
+        if (research.resultStructures != undefined) {
+            var comps_ids = research.resultStructures.split(',');
+            for (var p in comps_ids) {
+                var comp_id = comps_ids[p];
+                var DataObject = FindDataObject(comp_id);
+                var comp = DataObject.loaded_data_hash[comp_id];
+                var row = {
+                    DataObject: DataObject,
+                    comp_id: comp_id,
+                };
+                grid_data.push(row);
+            }
+        }
+        $('#details_result_components').html('<div id="details_result_components_table_container"></div>');
+        var grid_element_id = ResetGridContainer("details_result_components_table_container");
+        var grid = $(grid_element_id);
+        grid.jqGrid
+        ({
+            datatype: "local",
+            data: grid_data,
+            rowNum: grid_data.length,
+            height: 'auto',
+            colModel:
+                [
+                    { label: "", name: "grid_id", key: true, hidden: true },
+                    {
+                        label: "Component type", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return rowObject.DataObject.sysid;
+                        },
+                    },
+                    {
+                        label: " ",
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            var DataObject = rowObject.DataObject;
+                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
+                            return '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp) + '</a>';
+                        },
+                    },
+                    {
+                        label: "Component name", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name;
+                        },
+                    },
+
+                ],
+            loadonce: true,
+        });
+    }
+
+    /* Show result upgrades */
+    {
+        var grid_data = [];
+        for (var obj_type_id in Upgrades[player_all_researched]) {
+            var obj_type = Upgrades[player_all_researched][obj_type_id];
+            for (var i in obj_type) {
+                var comp_upgraded = obj_type[i];
+                var comp_id = comp_upgraded.grid_id;
+                if (!can_research(comp_id)) {
+                    continue;
+                }
+                if (comp_upgraded.upgrade_history) {
+                    var upgr_hist = comp_upgraded.upgrade_history;
+                    for (var h in upgr_hist) {
+                        if (upgr_hist[h].research_id == research.grid_id) {
+                            var DataObject = FindDataObject(comp_upgraded.grid_id);
+                            var row = {
+                                comp_id: comp_id,
+                                hint: upgr_hist[h].hint,
+                                value: upgr_hist[h].value,
+                                DataObject: DataObject,
+                            };
+                            grid_data.push(row);
+                        }
+                    }
+                }
+            }
+        }
+
+        $('#details_result_upgrades').html('<div id="details_result_upgrades_table_container"></div>');
+        var grid_element_id = ResetGridContainer("details_result_upgrades_table_container");
+        var grid = $(grid_element_id);
+        grid.jqGrid
+        ({
+            datatype: "local",
+            data: grid_data,
+            rowNum: grid_data.length,
+            height: 'auto',
+            colModel:
+                [
+                    { label: "", name: "grid_id", key: true, hidden: true },
+                    {
+                        label: " ",
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            var DataObject = rowObject.DataObject;
+                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
+                            return '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp) + '</a>';
+                        },
+                    },
+                    {
+                        label: "Component name", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name;
+                        },
+                    },
+                    {
+                        label: "Upgrade", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (rowObject.value > 0) {
+                                return rowObject.hint + "  +" + rowObject.value + '%';
+                            } else {
+                                return rowObject.hint + "  -" + rowObject.value + '%';
+                            }
+                        },
+                    },
+                ],
+            loadonce: true,
+        });
+    }
 }
     
 function DrawHorizontalOptionsMenu(container_id, options, func_onchanged_callback) {
     var html = '<ul  class="MyStyledLinkMenu navmenu2">';
-    for (var opt in timeline_options) {
+    for (var opt in options) {
         var opt_id = container_id + "_" + opt;
-        var opt_label = timeline_options[opt].label;
-        var opt_value = timeline_options[opt].value;
-        html += '<li><a style="cursor:pointer" id="' + opt_id + '" data-opt-id="' + opt + '">' + opt_label + '</a></li>';
+        var opt_label = options[opt].label;
+        var opt_value = options[opt].value;
+        html += '<li><span class="ui-icon ui-icon-pin-w" style="display:inline-block"></span><a style="cursor:pointer" id="' + opt_id + '" data-opt-id="' + opt + '">' + opt_label + '</a></li>';
     }
     html += '</ul>';
     $('#' + container_id).html(html);
 
-    for (var opt in timeline_options) {
+    for (var opt in options) {
         var opt_id = container_id + "_" + opt;
-        var opt_label = timeline_options[opt].label;
-        var opt_value = timeline_options[opt].value;
+        var opt_label = options[opt].label;
+        var opt_value = options[opt].value;
         if (opt_value) {
             $('#' + opt_id).css("text-decoration", "none");
         } else {
             $('#' + opt_id).css("text-decoration", "line-through");
         }
-        $('#' + opt_id).click(timeline_options, function (event) {
+        $('#' + opt_id).click(options, function (event) {
             var opt_elem = $(this);
             var opt_name = opt_elem.attr('data-opt-id');
             var options_obj = event.data;
@@ -1185,6 +1379,137 @@ function DrawCompTimeTable(container_id, scale, options) {
 
 }
 
+Raphael.fn.connection = function (obj1, obj2, line, bg) {
+    //var color = line;
+    //var path = [["M", obj1.attr("x"), obj1.attr("y")], ["L", obj2.attr("x"), obj2.attr("y")]];
+    //return {
+    //    line: this.path(path).attr({ stroke: color }),
+    //    from: obj1,
+    //    to: obj2
+    //};
+
+    if (obj1.line && obj1.from && obj1.to) {
+        line = obj1;
+        obj1 = line.from;
+        obj2 = line.to;
+    }
+    var bb1 = obj1.getBBox(),
+        bb2 = obj2.getBBox(),
+        p = [{ x: bb1.x + bb1.width / 2, y: bb1.y - 1 },
+        { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1 },
+        { x: bb1.x - 1, y: bb1.y + bb1.height / 2 },
+        { x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2 },
+        { x: bb2.x + bb2.width / 2, y: bb2.y - 1 },
+        { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1 },
+        { x: bb2.x - 1, y: bb2.y + bb2.height / 2 },
+        { x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2 }],
+        d = {}, dis = [];
+    for (var i = 0; i < 4; i++) {
+        for (var j = 4; j < 8; j++) {
+            var dx = Math.abs(p[i].x - p[j].x),
+                dy = Math.abs(p[i].y - p[j].y);
+            if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x) && ((i != 2 && j != 7) || p[i].x > p[j].x) && ((i != 0 && j != 5) || p[i].y > p[j].y) && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
+                dis.push(dx + dy);
+                d[dis[dis.length - 1]] = [i, j];
+            }
+        }
+    }
+    if (dis.length == 0) {
+        var res = [0, 4];
+    } else {
+        res = d[Math.min.apply(Math, dis)];
+    }
+    var x1 = p[res[0]].x,
+        y1 = p[res[0]].y,
+        x4 = p[res[1]].x,
+        y4 = p[res[1]].y;
+    dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+    dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+    var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
+        y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
+        x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
+        y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
+    var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
+    if (line && line.line) {
+        line.bg && line.bg.attr({ path: path });
+        line.line.attr({ path: path });
+    } else {
+        var color = typeof line == "string" ? line : "#000";
+        return {
+            bg: bg && bg.split && this.path(path).attr({ stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3 }),
+            line: this.path(path).attr({ stroke: color, fill: "none" }),
+            from: obj1,
+            to: obj2
+        };
+    }
+};
+
+function show_short_res_table(container_id, grid_data)
+{
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: 'auto',
+        colModel:
+            [
+                { label: "", name: "grid_id", key: true, hidden: true },
+                {
+                    label: " ",
+                    name: 'pic',
+                    width: '65px',
+                    sortable: false,
+                    search: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        return '<a href="javascript:ShowResearchDetails(\'' + rowObject.grid_id + '\')">' + Researches.GetIconHtml_Function(rowObject) + '</a>';
+                    },
+                },
+                {
+                    label: " ", name: "name",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return '<a href="javascript:ShowResearchDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    },
+                },
+
+                {
+                    label: "Price",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return rowObject.researchPower == undefined ? 0 : rowObject.researchPower;
+                    },
+                    width: 70,
+                },
+                {
+                    label: "Research Points",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return rowObject.researchPoints == undefined ? 0 : rowObject.researchPoints;
+                    },
+                    width: 70,
+                },
+
+                {
+                    label: "Min research time",
+                    name: "minResearchTime",
+                    width: 80,
+                    sorttype: "int",
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue != undefined) {
+                            if (cellvalue < 3600) {
+                                return cellvalue.toMMSS();
+                            } else {
+                                return cellvalue.toHHMMSS();
+                            }
+                        }
+                        return ' - ';
+                    },
+                },
+            ],
+        loadonce: true,
+    });
+}
+
 </script>
 </head>
 <body>
@@ -1208,9 +1533,6 @@ function DrawCompTimeTable(container_id, scale, options) {
                     In warzone2100 we have up to <b>400</b> different researches. <u>Remember:</u> before use a stuff you have to research that stuff.
                     To research something you have to build <b>Research Facility</b>. 
                 </p>
-                   <p><b>Research List View</b> - research items are shown in table view</p>
-                   <p><b>Research Tree</b> - all items are shown in this form and you can see relation link (pre-requisites)</p>
-                   <p><b>Research Timeline</b> - research items are grouped into lines.</p>
             </div>
             <div id="tabs_left" >
                 <ul>
@@ -1284,16 +1606,19 @@ function DrawCompTimeTable(container_id, scale, options) {
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_details"></div>
 
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Result Upgrades</div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="details_result_upgrades"></div>
+
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Result Components</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="Div1"></div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="details_result_components"></div>
 
                             </td>
                             <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px;">Pre-requisites</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="details_preres_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Opens research path to...</div>
-                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>
+                                <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="details_openres_container"></div>
 
                                 <div class="ui-widget-header ui-corner-top" style="padding:2px">Research Path (Tree)</div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
