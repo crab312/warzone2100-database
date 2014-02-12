@@ -7912,6 +7912,22 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           target,
           pointer = this.getPointer(e);
 
+       // Check active object first and short-circuit if possible    
+      if (this._activeObject &&
+          this._activeObject.visible &&
+          this._activeObject.evented &&
+          this.containsPoint(e, this._activeObject)) {
+          if ((this.perPixelTargetFind || this._activeObject.perPixelTargetFind) && !this._activeObject.isEditing) {
+              var isTransparent = this.isTargetTransparent(this._activeObject, pointer.x, pointer.y);
+              if (!isTransparent) {
+                  return this.relatedTarget;
+              }
+          }
+          else {
+              return this._activeObject;
+          }
+      }
+
       for (var i = this._objects.length; i--; ) {
         if (this._objects[i] &&
             this._objects[i].visible &&

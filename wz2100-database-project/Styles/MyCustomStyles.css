@@ -457,11 +457,27 @@ ul {
 .span_button
 {
     cursor: pointer;
-    float: left;
     padding: 2px;
 }
 
-.span_button span:hover
+.span_button:hover
 {
-    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+}
+
+/*.canvas-img
+{
+    width: 30px;
+
+}*/
+
+.noTitleStuff {
+    position: absolute;
+}
+
+.noTitleStuff .ui-dialog-titlebar {
+    
+    display:none
+
+
 }

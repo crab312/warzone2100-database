@@ -1088,6 +1088,13 @@ ResSvgItem.prototype = (function () {
 
 function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 {
+    if (fabric.Canvas.activeInstance != undefined)
+    {
+        /* WARNING - following code fixes memory leak in IE when we redraw researech tree meny times */
+        fabric.Canvas.activeInstance.dispose();
+        //TODO: provide good dispose code for canvas instances
+    }
+
     var x_size;
     var icon_height = 48;
     var icon_width = 52;
@@ -1165,16 +1172,20 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     top: y + 1,
                     left: x + 1,
                     selectable: true,
+                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
                     hoverCursor: "pointer",
                     scaleY: this.scale,
                     scaleX: this.scale,
+                    stroke: this.res_svg_item.line.line_color, //that defines border color
+                    strokeWidth: 2,
                 });
                 canvas.add(img);
                 res_svg_item.icon_item = img
                 img.res_svg_item = res_svg_item;
 
+                /* ТЕКСТЫ ТОРМОЗЯТ ЖУТКО В ИЕ - БАГ Fabric.js */
                 var txt = new fabric.Text(res_svg_item.res_text, {
-                    left: x + img.width,
+                    left: x + img.getWidth(), //...img.width did not worked for scaled image
                     top: y + 1,
                     fontSize: 11,
                     textAlign: 'center',
@@ -1183,7 +1194,10 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 res_svg_item.text_item = txt;
                 canvas.add(txt);
 
-                res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item, res_svg_item.text_item]);
+                res_svg_item.svg_items = res_svg_item.svg_items.concat([
+                    res_svg_item.icon_item
+                    /*, res_svg_item.text_item*/]);
+                res_svg_item.svg_items.push(res_svg_item.text_item);
                 //var line = res_svg_item.line;
                 //line.additional_height = Math.max(line.additional_height, txt.text_height + 2);
             };
@@ -1198,6 +1212,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     width: width - 1,
                     fill: this.res_svg_item.line.line_color,
                     selectable: true,
+                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
                     hoverCursor: "pointer",
                 })
                 canvas.add(res_svg_item.icon_item);
@@ -1209,13 +1224,17 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     fontSize: 11,
                     textAlign: 'center',
                     hoverCursor: "pointer",
-                    selectable: true,
+                    //selectable: true,
                 });
                 txt.res_svg_item = res_svg_item;
                 res_svg_item.text_item = txt;
                 canvas.add(txt);
 
-                res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item, res_svg_item.text_item]);
+
+                res_svg_item.svg_items = res_svg_item.svg_items.concat([
+                    res_svg_item.icon_item
+                    /*,res_svg_item.text_item*/]);
+                res_svg_item.svg_items.push(res_svg_item.text_item);
             }
 
         } else
@@ -1230,6 +1249,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 width: width - 1,
                 fill: "lightgray",
                 selectable: true,
+                evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
                 hoverCursor: "pointer",
             })
             canvas.add(res_svg_item.icon_item);
@@ -1241,13 +1261,15 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 fontSize: 11,
                 textAlign: 'center',
                 hoverCursor: "pointer",
-                selectable: true,
+                //selectable: true,
             });
             txt.res_svg_item = res_svg_item;
             res_svg_item.text_item = txt;
             canvas.add(txt);
 
-            res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item, res_svg_item.text_item]);
+            res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item
+                /*, res_svg_item.text_item*/]);
+            res_svg_item.svg_items.push(res_svg_item.text_item);
         }
     }
 
@@ -1343,9 +1365,10 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         }
         res_lines = res_lines_checked;
     }
+
     /* ***** Draw research*/
     {
-        var func_drawIconBox = function (research, res_id, __x_offset, __y_offset)
+        var func_drawIconBox = function (research, res_id, __x_offset, __y_offset, line)
         {
             var res_svg_item = new ResSvgItem();
             res_svg_item.svg_items = [];
@@ -1368,7 +1391,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             /* Draw line items */
             for (var res_id in line.items) {
                 var research = line.items[res_id];
-                func_drawIconBox(research, res_id, 0, 0);
+                func_drawIconBox(research, res_id, 0, 0, line);
             }
             /* Draw line sub items */
             if (line.sub_items != undefined) {
@@ -1376,7 +1399,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 line.additional_height = Math.max(line.additional_height, sub_item_offset)
                 for (var res_id in line.sub_items) {
                     var research = line.sub_items[res_id];
-                    func_drawIconBox(research, res_id, 0, sub_item_offset);
+                    func_drawIconBox(research, res_id, 0, sub_item_offset, line);
                 }
             }
             drawn_lines.push(line);
@@ -1439,13 +1462,34 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
     /* Draw paper */
     var paper_elem_id = container_id + "_timeTableSvgCanva";
     {
-        $('#' + container_id).html('<canvas height="' + y_size + '" width="' + x_size + '" id="' + paper_elem_id + '"></canvas>');
+
+        $('#' + container_id).html('<canvas height="' + y_size + '" width="' + x_size + '" id="' + paper_elem_id + '"></canvas><div id="canvas_context_dialog" style="diaplay:none"></div>');
         
-        canvas = new fabric.Canvas(paper_elem_id, { renderOnAddRemove: false });//StaticCanvas
+        canvas = new fabric.Canvas(paper_elem_id, {
+            renderOnAddRemove: false, //Indicates whether fabric.Collection.add, fabric.Collection.insertAt and fabric.Collection.remove should also re-render canvas. Disabling this option could give a great performance boost when adding/removing a lot of objects to/from canvas at once (followed by a manual rendering after addition/deletion)
+            perPixelTargetFind: true, //When true, object detection happens on per-pixel basis rather than on per-bounding-box
+            selection: false, //Indicates whether group selection should be enabled
+            //skipTargetFind: true, When true, target detection is skipped when hovering over canvas. This can be used to improve performance.
+            stateful: false, //Indicates whether objects' state should be saved
+
+        });//StaticCanvas
         // !!! WARNING: renderOnAddRemove: false  - greatly imptoves perfomance!!!
-        //canvas.selection = false; // disable group selection
         canvas.on("after:render", function () { canvas.calcOffset(); }); //this line fixes wrong mouse offset (i hate that fabric.js already!)
+
+        /* Setting default settings for all new objects in Fabric.js (our goal - improve perfomance) */
         fabric.Object.prototype.selectable = false;
+        fabric.Object.prototype.hasBorders = false; //When set to `false`, object's controlling borders are not rendered
+        fabric.Object.prototype.hasControls = false;
+        fabric.Object.prototype.hasRotatingPoint = false; //When set to `false`, object's controlling rotating point will not be visible or selectable
+        fabric.Object.prototype.evented = false; //When set to `false`, an object can not be a target of events. All events propagate through it. 
+        // **** evented = false - that greatly improves perfomance of hovering events!
+
+        fabric.Object.prototype.lockMovementX = true;
+        fabric.Object.prototype.lockMovementY = true;
+        fabric.Object.prototype.lockRotation = true;
+        fabric.Object.prototype.lockScalingX = true;
+        fabric.Object.prototype.lockScalingY = true;
+        fabric.Object.prototype.lockUniScaling = true;
 
         /* bugfix for fabric.js */
         fabric.Line.prototype._setWidthHeight = function (options) {
@@ -1461,10 +1505,10 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
     }
 
-    /* Sort svg items by z_order */
-    svg_elems.sort(function (elm1, elm2) {
-        return elm1.z_order - elm2.z_order;
-    });
+    /* Sort svg items by z_order  NEED REMOVE IT BECAUSE PORTED TO FABRIC.JS*/
+    //svg_elems.sort(function (elm1, elm2) {
+    //    return elm1.z_order - elm2.z_order;
+    //});
 
     /* Draw svg items in given order */
     {
@@ -1591,8 +1635,8 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             var svg_res_item = res_svg_items_hash[res_id];
             for (var u in svg_res_item.child_res) {
 
-                parent =  svg_res_item;
-                child = svg_res_item.child_res[u];
+                var parent = svg_res_item;
+                var child = svg_res_item.child_res[u];
 
                 var conn_number;
                 if (child.parent_res.length == 1)
@@ -1603,18 +1647,23 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     conn_number = child.parent_lines.length - child.parent_res.length / 2;
                 }
 
+                if (!parent.icon_item)
+                {
+                    continue; //IE !!!
+
+                }
                 var obj1 = {
-                    x: parent.icon_item.oCoords.tl.x,
-                    y: parent.icon_item.oCoords.tl.y,
-                    width: parent.icon_item.width,
-                    height: parent.icon_item.height,
+                    x: parent.icon_item.getLeft(),
+                    y: parent.icon_item.getTop(),
+                    width: parent.icon_item.getWidth(), //..."width" property did not worked here for scaled image
+                    height: parent.icon_item.getHeight(),
                 };
 
                 var obj2 = {
-                    x: child.icon_item.oCoords.tl.x,
-                    y: child.icon_item.oCoords.tl.y,
-                    width: child.icon_item.width,
-                    height: child.icon_item.height,
+                    x: child.icon_item.getLeft(),
+                    y: child.icon_item.getTop(),
+                    width: child.icon_item.getWidth(),
+                    height: child.icon_item.getHeight(),
                 };
                 var path = connectionPath(obj1, obj2, conn_number);
                 var line = new fabric.Path(path, {
@@ -1666,26 +1715,95 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
             var highlight_rect_show = function (img_item)
             {
-                img_item.rect_border = new fabric.Rect(
-                    {
-                        left: img_item.oCoords.tl.x - 1,
-                        top: img_item.oCoords.tl.y - 1,
-                        height: img_item.height + 1,
-                        width: img_item.width + 1,
-                        stroke: 'green',
-                        strokeWidth: 3,
-                        fill: false,
-                    });
-                canvas.add(img_item.rect_border);
+                img_item.strokeWidth_old = img_item.strokeWidth;
+                img_item.set({
+                    strokeWidth: 4,
+                });
             }
             var highlight_rect_hide = function (img_item) {
-                canvas.remove(img_item.rect_border);
-                img_item.rect_border = null;
+                img_item.set({
+                    strokeWidth: img_item.strokeWidth_old,
+                });
             }
             var hovered_items = [];
             var hover_event = null;
             var hover_on = function (res_svg_item)
             {
+                //alert($('#' + paper_elem_id).offset().top);
+                var dialog_left = res_svg_item.icon_item.getWidth() + res_svg_item.icon_item.getLeft() + $('#' + paper_elem_id).offset().left;// 
+                var dialog_top = res_svg_item.icon_item.getTop() + $('#' + paper_elem_id).offset().top;// ;
+
+                if ($("#canvas_context_dialog2").length == 0) {
+                    $('body').append('<div id="canvas_context_dialog2"></div>');
+                }
+                var dialog = $("#canvas_context_dialog2");
+                dialog.css(
+                    {
+                        display: "inherit",
+                        position: "absolute",
+                        top: dialog_top,
+                        left: dialog_left,
+                        width: "260px",
+                        "background-color": "white",
+                        padding: "2px",
+                        "border-color": res_svg_item.line.line_color,
+                        "border-width": "2px",
+                    });
+                dialog.addClass("ui-widget");
+                dialog.addClass("ui-widget-content");
+                dialog.addClass("ui-corner-all");
+                var research = res_svg_item.research_stat_obj;
+
+
+                var header_id = paper_elem_id + "_research_dialog_header";
+                var html = '\
+                <table>\
+                <tr>\
+                <td>\
+                    <span>Research: <b>' + research.name + '</b></span>\
+                </td>\
+                </tr>\
+                <tr>\
+                <td>\
+                    &nbsp;&nbsp;<span id="open_res_details_from_tree" class="span_button">Show Details</span>\
+                    <br/>\
+                    &nbsp;&nbsp;<span id="open_res_path_from_tree" class="span_button">Show Path</span>\
+                </td>\
+                </tr>\
+                </table>\
+                ';
+                dialog.html(html);
+
+                $('#open_res_details_from_tree').click(research.grid_id, function (event) {
+                    if ($("#canvas_context_dialog2").length > 0) {
+                        $("#canvas_context_dialog2").remove();
+                    }
+                    ShowResearchDetails(event.data);
+                });
+                $('#open_res_path_from_tree').click(research.grid_id, function (event) {
+                    if ($("#canvas_context_dialog2").length > 0) {
+                        $("#canvas_context_dialog2").remove();
+                    }
+                    window.open("Research.php?tree=1&component_id=" + event.data);
+                    ShowResearchDetails(event.data);
+                });
+
+                res_svg_item.context_menu_dialog = dialog;
+                //res_svg_item.context_menu_dialog = $("#canvas_context_dialog").dialog({
+                //    //track: true
+                //    dialogClass: 'noTitleStuff',
+                //    width: 200,
+                //    height: 60,
+                //    resizable: false,
+                //    //position: {
+                //    //    //within: $('#' + paper_elem_id),
+                //    //    //at: "left+" + dialog_left + " top+" + dialog_top,
+                //    //    //my: "left top",
+                //    //    //collision: "none",
+                //    //},
+                //    //position: [dialog_left, dialog_top],
+                //}).css("top", dialog_top).css("left", dialog_left);
+
                 /* Highlight child lines/icons */
                 if (res_svg_item.child_lines) {
                     for (var i in res_svg_item.child_lines) {
@@ -1731,6 +1849,14 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
             }
             var hover_off = function (res_svg_item) {
+                
+                if (res_svg_item.context_menu_dialog)
+                {
+                    res_svg_item.context_menu_dialog.remove();
+                    //res_svg_item.context_menu_dialog.dialog('close');
+                    //delete res_svg_item.context_menu_dialog;
+                }
+
                 //Hide highlight for child lines/icons 
                 if (res_svg_item.child_lines) {
                     for (var i in res_svg_item.child_lines) {
@@ -1773,42 +1899,18 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
             }
             canvas.on('object:over', function (options) {
-                //console.log('object:over', options.target.type);
-                if (hovered_items, length > 0)
-                {
-                    for (var ie in hovered_items)
-                    {
-                        hover_off(hovered_items[ie]);
-                        hovered_items[ie].hovered = false;
-                    }
-                }
                 if (options.target) {
                     if (options.target.res_svg_item) {
                         var res_svg_item = options.target.res_svg_item;
-                        if (res_svg_item.hovered == undefined || res_svg_item.hovered == false) {
-                            if (hover_event != null) {
-                                clearTimeout(hover_event);
-                            }
-                            hover_event = setTimeout(function () {
-                                hover_on(res_svg_item);
-                                res_svg_item.hovered = true;
-                                hover_event = null;
-                                hovered_items.push(res_svg_item);
-                            }, 400)
-                        }
+                        hover_on(res_svg_item);
                     }
                 }
             });
-
             canvas.on('object:out', function (options) {
-                //console.log('object:out', options.target.type);
                 if (options.target) {
                     if (options.target.res_svg_item) {
                         var res_svg_item = options.target.res_svg_item;
-                        if (res_svg_item.hovered) { //may be not hovered if we clearedTimeout in above hover function
-                            hover_off(res_svg_item);
-                            res_svg_item.hovered = false;
-                        }
+                        hover_off(res_svg_item);
                     }
                 }
             });
@@ -1831,8 +1933,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         }
         setTimeout(check_images_load_state, 100);
     }
-
-    
 }
 
 

@@ -454,6 +454,10 @@ function DrawResearchDetailsParameters(research_id) {
             for (var p in comps_ids) {
                 var comp_id = comps_ids[p];
                 var DataObject = FindDataObject(comp_id);
+                if (DataObject == null)
+                {
+                    continue; //skip wrong components
+                }
                 var comp = DataObject.loaded_data_hash[comp_id];
                 var row = {
                     DataObject: DataObject,

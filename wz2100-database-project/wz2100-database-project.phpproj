@@ -156,6 +156,7 @@
     <Content Include="scripts\designer_functions.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\fabric.js\all.js" />
     <Content Include="scripts\Fight.js">
       <SubType>Content</SubType>
     </Content>
@@ -2536,6 +2537,7 @@
     <Folder Include="data_master\" />
     <Folder Include="data_master\stats\" />
     <Folder Include="scripts\" />
+    <Folder Include="scripts\fabric.js\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\css\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\css\blitzer\" />
