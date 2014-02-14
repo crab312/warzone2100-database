@@ -1346,22 +1346,30 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         var res_lines_checked = [];
         for (var i in res_lines) {
             /* Check each line */
-            var line = JSON.parse(JSON.stringify(res_lines[i]));
-            if (checkLine(line)) {
-                res_lines_checked.push(line);
+            var line = res_lines[i];
+            var line_cleared = JSON.parse(JSON.stringify(line));
+            var line_not_empty = false;
+            if (checkLine(line_cleared)) {
+                line_cleared.child_lines = [];
+                res_lines_checked.push(line_cleared);
+                line_not_empty = true;
+            }
 
-                var child_lines_filtered = [];
-                for (var j in line.child_lines)
-                {
-                    /* Check each child line (if parent line was checked ok)*/
-                    var child_line = JSON.parse(JSON.stringify(line.child_lines[j])); 
-                    if (checkLine(child_line))
+            for (var j in line.child_lines) {
+                var child_line_cleared = JSON.parse(JSON.stringify(line.child_lines[j]));
+                if (checkLine(child_line_cleared)) {
+                    if (line_not_empty)
                     {
-                        child_lines_filtered.push(child_line);
+                        line_cleared.child_lines.push(child_line_cleared);
+                    }
+                    else
+                    {
+                        //push child line in res_lines because parent line was removed
+                        res_lines_checked.push(child_line_cleared);
                     }
                 }
-                line.child_lines = child_lines_filtered;
             }
+
         }
         res_lines = res_lines_checked;
     }
@@ -1582,7 +1590,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 });
                 canvas.add(line);
             }
-
+            /* Time periodicall lines */
             for (var i = 0; i <= x_size; i = i + vertical_lines_period_thin) {
                 var x = i + x_zero_time;
                 var time = Math.floor(i / sec_per_pixel); //time in seconds
@@ -1600,7 +1608,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     canvas.insertAt(line, 0);
 
                     var txt_top = new fabric.Text(time.tohhMMSS(), { left: x, top: top_line_y - 10, fontSize: 12, fontWeight: 'bold' });
-                    txt_top.setLeft(this.x - txt_top.getWidth() / 2 + 1);
+                    txt_top.setLeft(x - txt_top.getWidth() / 2 + 1);
                     txt_top.setTop(top_line_y - 10 - txt_top.getHeight() / 2);
                     canvas.insertAt(txt_top, 0);
 
@@ -1674,13 +1682,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     selectable: false,
                 });
 
-                //var line = new fabric.Line([obj1.x, obj1.y, obj2.x, obj2.y],
-                //{
-                //    //top: Math.min(obj1.y, obj2.y),
-                //    //left: obj1.x,
-                //    stroke: 'green',
-                //    selectable: false,
-                //});
                 canvas.insertAt(line, 0); //make sure connection line will be inserted under research rectangles (icons)
 
                 parent.child_lines.push(line);
@@ -1692,7 +1693,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
         /* DRAW HOVERING EFFECTS */
         {
-            //following code allows to use object:over and object:out
+            /* following code allows to use object:over and object:out */
             canvas.findTarget = (function (originalFn) {
                 return function () {
                     var target = originalFn.apply(this, arguments);
@@ -1729,80 +1730,97 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             var hover_event = null;
             var hover_on = function (res_svg_item)
             {
-                //alert($('#' + paper_elem_id).offset().top);
-                var dialog_left = res_svg_item.icon_item.getWidth() + res_svg_item.icon_item.getLeft() + $('#' + paper_elem_id).offset().left;// 
-                var dialog_top = res_svg_item.icon_item.getTop() + $('#' + paper_elem_id).offset().top;// ;
+                /* Show details popup */
+                {
+                    var dialog_left = res_svg_item.icon_item.getWidth() + res_svg_item.icon_item.getLeft() + $('#' + paper_elem_id).offset().left;// 
+                    var dialog_top = res_svg_item.icon_item.getTop() + $('#' + paper_elem_id).offset().top;// ;
 
-                if ($("#canvas_context_dialog2").length == 0) {
-                    $('body').append('<div id="canvas_context_dialog2"></div>');
-                }
-                var dialog = $("#canvas_context_dialog2");
-                dialog.css(
-                    {
-                        display: "inherit",
-                        position: "absolute",
-                        top: dialog_top,
-                        left: dialog_left,
-                        width: "260px",
-                        "background-color": "white",
-                        padding: "2px",
-                        "border-color": res_svg_item.line.line_color,
-                        "border-width": "2px",
+                    if ($("#canvas_context_dialog2").length == 0) {
+                        $('body').append('<div id="canvas_context_dialog2"></div>');
+                    }
+                    var dialog = $("#canvas_context_dialog2");
+                    dialog.css(
+                        {
+                            display: "inherit",
+                            position: "absolute",
+                            top: dialog_top,
+                            left: dialog_left,
+                            width: "260px",
+                            "background-color": "white",
+                            padding: "2px",
+                            "border-color": res_svg_item.line.line_color,
+                            "border-width": "2px",
+                        });
+                    dialog.addClass("ui-widget");
+                    dialog.addClass("ui-widget-content");
+                    dialog.addClass("ui-corner-all");
+                    var research = res_svg_item.research_stat_obj;
+
+                    var header_id = paper_elem_id + "_research_dialog_header";
+                    var results_container_id = paper_elem_id + "_research_dialog_results";
+                    var html = '\
+                        <span style="padding:2px"><b>' + research.name + '</b></span>\
+                        <div style="padding-left: 5px;font-size:0.9em">\
+                            <table>\
+                            <tr>\
+                            <td>\
+                                Minimum Research Time: ' + research.minResearchTime.tohhMMSS() + '\
+                            </td>\
+                            </tr>\
+                            <tr>\
+                            <td>\
+                                <span id="open_res_details_from_tree" class="span_button"><span class="ui-icon ui-icon-script" style="display:inline-block;"></span>Show Details</span>\
+                                <br/>\
+                                <span id="open_res_path_from_tree" class="span_button"><span class="ui-icon ui-icon-transfer-e-w" style="display:inline-block;"></span>Show Path</span>\
+                            </td>\
+                            </tr>\
+                            <tr>\
+                            <td>\
+                                <div id="' + results_container_id + '"></div>\
+                            </td>\
+                            </tr>\
+                            </table>\
+                        </div>\
+                        ';
+                    dialog.html(html);
+
+                    $('#open_res_details_from_tree').click(research.grid_id, function (event) {
+                        if ($("#canvas_context_dialog2").length > 0) {
+                            $("#canvas_context_dialog2").remove();
+                        }
+                        ShowResearchDetails(event.data);
                     });
-                dialog.addClass("ui-widget");
-                dialog.addClass("ui-widget-content");
-                dialog.addClass("ui-corner-all");
-                var research = res_svg_item.research_stat_obj;
+                    $('#open_res_path_from_tree').click(research.grid_id, function (event) {
+                        if ($("#canvas_context_dialog2").length > 0) {
+                            $("#canvas_context_dialog2").remove();
+                        }
+                        window.open("Research.php?tree=1&component_id=" + event.data);
+                        ShowResearchDetails(event.data);
+                    });
 
+                    /* Show results of research */
+                    {
+                        $('#' + results_container_id).html('');
+                        if (research.results_string != undefined && research.results_string != '') {
+                            var results_array = research.results_string.split(',');
+                            var html = '';
+                            for (var e in results_array) {
+                                html += results_array[e] + '</br>';
+                            }
+                            $('#' + results_container_id).append(html);
+                        }
+                        if (research.resultComponents != undefined || research.resultStructures != undefined)
+                        {
+                            var cont2_id = paper_elem_id + "_details_results";
+                            $('#' + results_container_id).append('<div id="' + cont2_id + '"></div>');
+                            DrawResultComponents(research, cont2_id, true);
+                        }
 
-                var header_id = paper_elem_id + "_research_dialog_header";
-                var html = '\
-                <table>\
-                <tr>\
-                <td>\
-                    <span>Research: <b>' + research.name + '</b></span>\
-                </td>\
-                </tr>\
-                <tr>\
-                <td>\
-                    &nbsp;&nbsp;<span id="open_res_details_from_tree" class="span_button">Show Details</span>\
-                    <br/>\
-                    &nbsp;&nbsp;<span id="open_res_path_from_tree" class="span_button">Show Path</span>\
-                </td>\
-                </tr>\
-                </table>\
-                ';
-                dialog.html(html);
-
-                $('#open_res_details_from_tree').click(research.grid_id, function (event) {
-                    if ($("#canvas_context_dialog2").length > 0) {
-                        $("#canvas_context_dialog2").remove();
+                        
                     }
-                    ShowResearchDetails(event.data);
-                });
-                $('#open_res_path_from_tree').click(research.grid_id, function (event) {
-                    if ($("#canvas_context_dialog2").length > 0) {
-                        $("#canvas_context_dialog2").remove();
-                    }
-                    window.open("Research.php?tree=1&component_id=" + event.data);
-                    ShowResearchDetails(event.data);
-                });
-
-                res_svg_item.context_menu_dialog = dialog;
-                //res_svg_item.context_menu_dialog = $("#canvas_context_dialog").dialog({
-                //    //track: true
-                //    dialogClass: 'noTitleStuff',
-                //    width: 200,
-                //    height: 60,
-                //    resizable: false,
-                //    //position: {
-                //    //    //within: $('#' + paper_elem_id),
-                //    //    //at: "left+" + dialog_left + " top+" + dialog_top,
-                //    //    //my: "left top",
-                //    //    //collision: "none",
-                //    //},
-                //    //position: [dialog_left, dialog_top],
-                //}).css("top", dialog_top).css("left", dialog_left);
+                    
+                    res_svg_item.context_menu_dialog = dialog;
+                }
 
                 /* Highlight child lines/icons */
                 if (res_svg_item.child_lines) {
@@ -2066,3 +2084,100 @@ function connectionPath(bb1, bb2, child_conn_number)
     return path;
 }
 
+function DrawResultComponents(research, container_id, use_short_form)
+{
+    var grid_data = [];
+    if (research.resultComponents != undefined) {
+        var comps_ids = research.resultComponents.split(',');
+        for (var p in comps_ids) {
+            var comp_id = comps_ids[p];
+            var DataObject = FindDataObject(comp_id);
+            if (DataObject == null) {
+                continue; //skip wrong components
+            }
+            var comp = DataObject.loaded_data_hash[comp_id];
+            var row = {
+                DataObject: DataObject,
+                comp_id: comp_id,
+            };
+            grid_data.push(row);
+        }
+    }
+    if (research.resultStructures != undefined) {
+        var comps_ids = research.resultStructures.split(',');
+        for (var p in comps_ids) {
+            var comp_id = comps_ids[p];
+            var DataObject = FindDataObject(comp_id);
+            var comp = DataObject.loaded_data_hash[comp_id];
+            var row = {
+                DataObject: DataObject,
+                comp_id: comp_id,
+            };
+            grid_data.push(row);
+        }
+    }
+    if (use_short_form) {
+        var html = '<table>';
+        for (var i in grid_data)
+        {
+            var rowObject = grid_data[i];
+            html += '<tr>';
+            html += '<td>';
+            var DataObject = rowObject.DataObject;
+            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+            var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
+            html += '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp, 48) + '</a>';
+            html += '</td>';
+            html += '<td>';
+            html += '<a href="' + href + '">' + rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name + '</a>';
+            html += '</td>';
+            html += '</tr>';
+        }
+        html += '</table>';
+        $('#' + container_id).html(html);
+    } else {
+        var cont2_id = container_id + "_details_result_components_table_container";
+        $('#' + container_id).html('<div id="' + cont2_id + '"></div>');
+        var grid_element_id = ResetGridContainer(cont2_id);
+        var grid = $(grid_element_id);
+        grid.jqGrid
+        ({
+            datatype: "local",
+            data: grid_data,
+            rowNum: grid_data.length,
+            height: 'auto',
+            colModel:
+                [
+                    { label: "", name: "grid_id", key: true, hidden: true },
+                    {
+                        label: "Component type", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            return rowObject.DataObject.sysid;
+                        },
+                    },
+                    {
+                        label: " ",
+                        name: 'pic',
+                        width: '65px',
+                        sortable: false,
+                        search: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            var DataObject = rowObject.DataObject;
+                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
+                            return '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp) + '</a>';
+                        },
+                    },
+                    {
+                        label: "Component name", name: "name",
+                        formatter: function (cellvalue, options, rowObject) {
+                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            return '<a href="' + href + '">' + rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name + '</a>';
+                        },
+                    },
+
+                ],
+            loadonce: true,
+        });
+    }
+}

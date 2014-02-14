@@ -226,8 +226,8 @@ function InitDataObjects() {
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
         obj.icon_folder = "Body";
-        obj.GetIconHtml_Function = function (rowObject) {
-            return GetIcon_element(this.icon_folder, rowObject);
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            return GetIcon_element(this.icon_folder, rowObject, size);
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
@@ -299,8 +299,8 @@ function InitDataObjects() {
             data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
         };
         obj.icon_folder = "Structures";
-        obj.GetIconHtml_Function = function (rowObject) {
-            return GetIcon_element(this.icon_folder, rowObject);
+        obj.GetIconHtml_Function = function (rowObject, size) {
+            return GetIcon_element(this.icon_folder, rowObject, size);
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
@@ -505,10 +505,10 @@ function InitDataObjects() {
         ];
         Researches = obj;
         obj.icon_folder = "Research";
-        obj.GetIconHtml_Function = function (rowObject) {
+        obj.GetIconHtml_Function = function (rowObject, size) {
             var img_filename = GetIcon_filename(rowObject.grid_id);
             if (GetIcon_CheckIconFilenameHashed(img_filename)) {
-                return GetIcon_element(this.icon_folder, rowObject);
+                return GetIcon_element(this.icon_folder, rowObject, size);
             }
             if (rowObject.statID != undefined) {
                 var stat_id = rowObject.statID;
@@ -516,7 +516,7 @@ function InitDataObjects() {
                 for (var i = 0; i < Objects.length; i++) {
                     if (Objects[i].GetIconHtml_Function != undefined) {
                         if (Objects[i].loaded_data_hash == undefined ? false : Objects[i].loaded_data_hash[stat_id] != undefined) {
-                            return Objects[i].GetIconHtml_Function(Objects[i].loaded_data_hash[stat_id]);
+                            return Objects[i].GetIconHtml_Function(Objects[i].loaded_data_hash[stat_id], size);
                         }
                     }
                 }

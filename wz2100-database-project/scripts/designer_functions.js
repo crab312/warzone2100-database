@@ -1703,7 +1703,6 @@ function CalculateBuilding(player, structure) {
     return StructureDesign;
 }
 
-
 function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_object_base, ref_object_upgraded, non_weapon_design) {
 
    
@@ -1761,7 +1760,6 @@ function CalculateWeaponStats_AddToObjects(player, weapon, ref_object, ref_objec
 function CalcDPSToTopBody(player_attacker, player_attacked, attack_weapon) {
 
 }
-
 
 function WeaponDamage_htmlCell(rowObject) {
     var html_res = "";

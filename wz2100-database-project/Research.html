@@ -28,7 +28,6 @@
 
 
 var player = 0;
-var page_loaded = false;
 
 timeline_options = {
     tanks: {
@@ -74,6 +73,7 @@ $(function () {
 
     $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
         url_pushState('');
+        ShowResearchListView();
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
@@ -93,9 +93,7 @@ $(function () {
 
     LoadAllObjects(function () {
         DoResearchAll(player_all_researched, true, function () {
-            //DrawResearchTimeline();
-            ShowResearchListView();
-            page_loaded = true;
+            SelectContentByURLData();
         });
     })
 
@@ -104,36 +102,51 @@ $(function () {
 
 });
 
-$(window).on("popstate", function () {
-    if (page_loaded) {  //this called also on PAGE FIRST LOAD
-        var uri_vars = getUrlVars();
-        if (uri_vars["details_id"] != undefined) {
-            /* open Details View */
-            DrawDetailsTab_Init(getUrlVars()["details_id"]);
-        } else if (uri_vars["tree"] != undefined) {
-            /* open Tree View */
-
-            if (uri_vars["component_id"] != undefined) {
-                /* Show research tree for only one component */
-                var tree_options2 = {};
-                tree_options2.path_to_component = uri_vars["component_id"];
-                ShowResearchTree(tree_options2);
-            } else {
-                ShowResearchTree();
-            }
-        } else if (uri_vars["timeline"] != undefined) {
-            /* open TimeLine View */
-            ShowResearchTimeline();
-        } else {
-            /* open List View */
-            $("#tabs_left").tabs("option", "active", 0);
-        }
-
+$(window).on("popstate", function (event) {
+    /* Chrome, Opera, Firefox - page load / forward/backward */
+    /* IE - forward/backward
+    event.originalEvent.state == null when onpopstate triggered in Chrome/Firefox
+    */
+    if (event.originalEvent.state) {  //this called also on PAGE FIRST LOAD
+        console.log('onpopstate triggered');
+        SelectContentByURLData();
     }
 });
 
+function SelectContentByURLData()
+{
+    var uri_vars = getUrlVars();
+    if (uri_vars["details_id"] != undefined) {
+        /* open Details View */
+        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    } else if (uri_vars["tree"] != undefined) {
+        /* open Tree View */
+
+        if (uri_vars["component_id"] != undefined) {
+            /* Show research tree for only one component */
+            var tree_options2 = {};
+            tree_options2.path_to_component = uri_vars["component_id"];
+            ShowResearchTree(tree_options2);
+        } else {
+            ShowResearchTree();
+        }
+    } else if (uri_vars["timeline"] != undefined) {
+        /* open TimeLine View */
+        ShowResearchTimeline();
+    } else {
+        /* open List View */
+        $("#tabs_left").tabs("option", "active", 0);
+    }
+}
+
 function ShowResearchListView() {
     $("#tabs_left").tabs("option", "active", 0);
+
+    if ($('#left-tabs-listview').children().length > 0)
+    {
+        /* Do not draw list view if it is drawn already */
+        return;
+    }
 
     var descr_html = "Below listed all possible research items in Warzone2100.<br/>\
 List sorted by <b>minimum research time</b>. \
@@ -285,7 +298,6 @@ function DrawDetailsTab_Init(research_id) {
 
     if (research_id != undefined)
     {
-        //url_pushState('?details_id=' + research_id);
         DrawResearchDetailsParameters(research_id);
     }
 
@@ -325,91 +337,97 @@ function DrawResearchDetailsParameters(research_id) {
     $("#research_icon").html(Researches.GetIconHtml_Function(research));
     $("#research_name_label").text(research.name);
 
+    /* Draw description */
+    {
+        $('#details_description').html('');
+        /* Show button "Overview research path" */
+        var res_comp_row = ResearchedComponents[player_all_researched][research_id];
+        if (res_comp_row != undefined) {
+            var research = Researches.loaded_data_hash[res_comp_row.research_id];
+            var res_path_button_html = '<br/><button type="button" id="show_respath_button_span">Overview research path</button>'
+            $('#details_description').append(res_path_button_html);
+            $('#show_respath_button_span').button().click(null, function (event) {
+                event.preventDefault();
+                window.open("Research.php?tree=1&component_id=" + research_id);
+            }).css("font-size", "0.8em");
+        }
+    }
+
     /* Draw parameters of research */
-    $('#research_details').html('<div id="research_details_container"></div>');
-    grid_data = [];
     {
-        var row = new Object;
-        row.name = 'Price';
-        row.base = PropDescr("price").format_html(research.researchPower);
-        row.group = '';
-        row.descr = 'Price needed to start research';
-        grid_data.push(row);
-    }
-    {
-        var row = new Object;
-        row.name = 'Research points';
-        row.base = PropDescr("researchPoints").format_html(research.researchPoints);
-        row.group = '';
-        row.descr = 'Each Research Facility produces 12 - 54 Research Points per second. It depends on the presence of Research Module and Research Upgrades';
-        grid_data.push(row);
-    }
-    {
-        var row = new Object;
-        row.name = 'Minimum Time to research';
-        row.base = PropDescr("minResearchTime").format_html(research.minResearchTime.tohhMMSS());
-        row.group = '';
-        row.descr = 'Minimum time calculated by program. In real games time time can be reachable depending of game start conditions/number of laboratories etc.';
-        grid_data.push(row);
-    }
+        $('#research_details').html('<div id="research_details_container"></div>');
+        grid_data = [];
+        {
+            var row = new Object;
+            row.name = 'Price';
+            row.base = PropDescr("price").format_html(research.researchPower);
+            row.group = '';
+            row.descr = 'Price needed to start research';
+            grid_data.push(row);
+        }
+        {
+            var row = new Object;
+            row.name = 'Research points';
+            row.base = PropDescr("researchPoints").format_html(research.researchPoints);
+            row.group = '';
+            row.descr = 'Each Research Facility produces 12 - 54 Research Points per second. It depends on the presence of Research Module and Research Upgrades';
+            grid_data.push(row);
+        }
+        {
+            var row = new Object;
+            row.name = 'Minimum Time to research';
+            row.base = PropDescr("minResearchTime").format_html(research.minResearchTime.tohhMMSS());
+            row.group = '';
+            row.descr = 'Minimum time calculated by program. In real games time time can be reachable depending of game start conditions/number of laboratories etc.';
+            grid_data.push(row);
+        }
 
-    var grid_element_id = ResetGridContainer("research_details_container");
-    var grid = $(grid_element_id);
-    grid.jqGrid
-    ({
-        datatype: "local",
-        data: grid_data,
-        rowNum: grid_data.length,
-        height: 'auto',
-        colModel:
-            [
-                { name: "", width: '20px', sortable: false, search: false },
-                { name: "name", label: 'Parameter', key: true, width: '200px' },
-                {
-                    name: "base", label: 'Base value', width: '60px', fixed: true,
-                    formatter: function (cellvalue, options, rowObject) {
-                        if (typeof cellvalue != "string" && isNaN(cellvalue)) {
-                            return '';
+        var grid_element_id = ResetGridContainer("research_details_container");
+        var grid = $(grid_element_id);
+        grid.jqGrid
+        ({
+            datatype: "local",
+            data: grid_data,
+            rowNum: grid_data.length,
+            height: 'auto',
+            colModel:
+                [
+                    { name: "", width: '20px', sortable: false, search: false },
+                    { name: "name", label: 'Parameter', key: true, width: '200px' },
+                    {
+                        name: "base", label: 'Base value', width: '60px', fixed: true,
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (typeof cellvalue != "string" && isNaN(cellvalue)) {
+                                return '';
+                            }
+                            return cellvalue;
                         }
-                        return cellvalue;
-                    }
-                },
-                { name: "group", label: 'group', width: '100px' },
-                {
-                    name: "descr", label: 'Description', width: '300px', fixed: true,
-                    formatter: function (cellvalue, options, rowObject) {
-                        if (cellvalue == undefined) {
-                            cellvalue = ' - ';
-                        }
-                        return '<label style="color:gray;font-size:0.9em">' + cellvalue + '</label>'
                     },
+                    { name: "group", label: 'group', width: '100px' },
+                    {
+                        name: "descr", label: 'Description', width: '300px', fixed: true,
+                        formatter: function (cellvalue, options, rowObject) {
+                            if (cellvalue == undefined) {
+                                cellvalue = ' - ';
+                            }
+                            return '<label style="color:gray;font-size:0.9em">' + cellvalue + '</label>'
+                        },
 
-                },
-            ],
-        loadonce: true,
-        grouping: true,
-        groupingView: {
-            groupField: ['group'],
-            groupText: ['<b> {0} </b>'],
-            groupColumnShow: [false]
-        },
-    });
+                    },
+                ],
+            loadonce: true,
+            grouping: true,
+            groupingView: {
+                groupField: ['group'],
+                groupText: ['<b> {0} </b>'],
+                groupColumnShow: [false]
+            },
+        });
+    }
 
     /* Draw Research Path */
     var res_path_data = GetResearchPath_SubTree(research_id, player_all_researched, 2);
     DrawResearchPath_Tree("research_path_container", res_path_data);
-
-    /* Show button "Overview research path" */
-    var res_comp_row = ResearchedComponents[player_all_researched][research_id];
-    if (res_comp_row != undefined) {
-        var research = Researches.loaded_data_hash[res_comp_row.research_id];
-        var res_path_button_html = '<br/><button type="button" id="show_respath_button_span">Overview research path</button>'
-        $('#details_description').append(res_path_button_html);
-        $('#show_respath_button_span').button().click(null, function (event) {
-            event.preventDefault();
-            window.open("Research.php?tree=1&component_id=" + research_id);
-        }).css("font-size", "0.8em");
-    }
 
     /* Show pre-requisite research icons */
     {
@@ -448,78 +466,7 @@ function DrawResearchDetailsParameters(research_id) {
 
     /* Show result components */
     {
-        var grid_data = [];
-        if (research.resultComponents != undefined) {
-            var comps_ids = research.resultComponents.split(',');
-            for (var p in comps_ids) {
-                var comp_id = comps_ids[p];
-                var DataObject = FindDataObject(comp_id);
-                if (DataObject == null)
-                {
-                    continue; //skip wrong components
-                }
-                var comp = DataObject.loaded_data_hash[comp_id];
-                var row = {
-                    DataObject: DataObject,
-                    comp_id: comp_id,
-                };
-                grid_data.push(row);
-            }
-        }
-        if (research.resultStructures != undefined) {
-            var comps_ids = research.resultStructures.split(',');
-            for (var p in comps_ids) {
-                var comp_id = comps_ids[p];
-                var DataObject = FindDataObject(comp_id);
-                var comp = DataObject.loaded_data_hash[comp_id];
-                var row = {
-                    DataObject: DataObject,
-                    comp_id: comp_id,
-                };
-                grid_data.push(row);
-            }
-        }
-        $('#details_result_components').html('<div id="details_result_components_table_container"></div>');
-        var grid_element_id = ResetGridContainer("details_result_components_table_container");
-        var grid = $(grid_element_id);
-        grid.jqGrid
-        ({
-            datatype: "local",
-            data: grid_data,
-            rowNum: grid_data.length,
-            height: 'auto',
-            colModel:
-                [
-                    { label: "", name: "grid_id", key: true, hidden: true },
-                    {
-                        label: "Component type", name: "name",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return rowObject.DataObject.sysid;
-                        },
-                    },
-                    {
-                        label: " ",
-                        name: 'pic',
-                        width: '65px',
-                        sortable: false,
-                        search: false,
-                        formatter: function (cellvalue, options, rowObject) {
-                            var DataObject = rowObject.DataObject;
-                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
-                            var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
-                            return '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp) + '</a>';
-                        },
-                    },
-                    {
-                        label: "Component name", name: "name",
-                        formatter: function (cellvalue, options, rowObject) {
-                            return rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name;
-                        },
-                    },
-
-                ],
-            loadonce: true,
-        });
+        DrawResultComponents(research, "details_result_components");
     }
 
     /* Show result upgrades */

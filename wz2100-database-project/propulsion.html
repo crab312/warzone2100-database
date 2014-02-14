@@ -53,29 +53,31 @@ $(function () {
             DrawPropulsion('nonres_propulsion_container', false);
             HideLoading('tabs_left');
 
-            if (getUrlVars()["details_id"] == undefined) {
-
-            } else {
-                DrawDetailsTab_Init(getUrlVars()["details_id"]);
-            }
-
-            page_loaded = true;
+            SelectContentByURLData();
 
         });
     });
 
 });
 
-
-$(window).on("popstate", function () {
-    if (page_loaded) {  //this called also on PAGE FIRST LOAD
-        if (getUrlVars()["details_id"] == undefined) {
-            $("#tabs_left").tabs("option", "active", 0);
-        } else {
-            DrawDetailsTab_Init(getUrlVars()["details_id"]);
-        }
+$(window).on("popstate", function (event) {
+    /* Chrome, Opera, Firefox - page load / forward/backward */
+    /* IE - forward/backward
+    event.originalEvent.state == null when onpopstate triggered in Chrome/Firefox
+    */
+    if (event.originalEvent.state) {  //this called also on PAGE FIRST LOAD
+        console.log('onpopstate triggered');
+        SelectContentByURLData();
     }
 });
+
+function SelectContentByURLData() {
+    if (getUrlVars()["details_id"] == undefined) {
+        $("#tabs_left").tabs("option", "active", 0);
+    } else {
+        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    }
+}
     
 var tmp_uniq_index = 0;
 

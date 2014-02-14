@@ -24,7 +24,6 @@
 <script>
 
 var player = 0;
-var page_loaded = false;
 var res_time = 600;
 
 var res_time;
@@ -72,39 +71,37 @@ $(function () {
                 });
             DoResearch(res_time, player, function () {
                 DrawWeaponList();
-
-                if (getUrlVars()["details_id"] == undefined) {
-                    if (getUrlVars()["damageModifiers"] != undefined) {
-                        OpenDamageModifiers();
-                    }
-                } else {
-                    DrawDetailsTab_Init(getUrlVars()["details_id"]);
-                }
+                SelectContentByURLData();
             });
-
-            page_loaded = true;
-
         });
         HideLoading('tabs_left');
     });
 
 });
 
-$(window).on("popstate", function () {
-    if (page_loaded) {  //this called also on PAGE FIRST LOAD
-        if (getUrlVars()["details_id"] == undefined) {
-            if (getUrlVars()["damageModifiers"] == undefined)
-            {
-                $("#tabs_left").tabs("option", "active", 0);
-            }else
-            {
-                $("#tabs_left").tabs("option", "active", 2);
-            }
-        } else {
-            DrawDetailsTab_Init(getUrlVars()["details_id"]);
-        }
+$(window).on("popstate", function (event) {
+    /* Chrome, Opera, Firefox - page load / forward/backward */
+    /* IE - forward/backward
+    event.originalEvent.state == null when onpopstate triggered in Chrome/Firefox
+    */
+    if (event.originalEvent.state) {  //this called also on PAGE FIRST LOAD
+        console.log('onpopstate triggered');
+        SelectContentByURLData();
     }
 });
+
+function SelectContentByURLData() {
+    if (getUrlVars()["details_id"] != undefined) {
+        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    } else if (getUrlVars()["damageModifiers"] != undefined)
+    {
+        OpenDamageModifiers();
+    }
+    else {
+        $("#tabs_left").tabs("option", "active", 0);
+    }
+}
+
 
 
 function OpenDamageModifiers() {
@@ -630,7 +627,6 @@ function openWeaponDetails(weapon_id) {
 
 
 function DrawDetailsTab_Init(weapon_id) {
-
     $("#tabs_left").tabs("option", "active", 1);
     var res_time = 600;
 

@@ -24,7 +24,6 @@
 <script>
 
 var player = 0;
-var page_loaded = false;
 
 $(function () {
 
@@ -58,25 +57,30 @@ $(function () {
                 DrawStructuresLists();
             }, false);
             HideLoading('tabs_left');
-            page_loaded = true;
-            if (getUrlVars()["details_id"] == undefined) {
-            } else {
-                DrawDetailsTab_Init(getUrlVars()["details_id"]);
-            }
+            SelectContentByURLData();
         });
     });
 
 });
 
-$(window).on("popstate", function () {
-    if (page_loaded) {  //this called also on PAGE FIRST LOAD
-        if (getUrlVars()["details_id"] == undefined) {
-            $("#tabs_left").tabs("option", "active", 0);
-        } else {
-            DrawDetailsTab_Init(getUrlVars()["details_id"]);
-        }
+$(window).on("popstate", function (event) {
+    /* Chrome, Opera, Firefox - page load / forward/backward */
+    /* IE - forward/backward
+    event.originalEvent.state == null when onpopstate triggered in Chrome/Firefox
+    */
+    if (event.originalEvent.state) {  //this called also on PAGE FIRST LOAD
+        console.log('onpopstate triggered');
+        SelectContentByURLData();
     }
 });
+
+function SelectContentByURLData() {
+    if (getUrlVars()["details_id"] == undefined) {
+        $("#tabs_left").tabs("option", "active", 0);
+    } else {
+        DrawDetailsTab_Init(getUrlVars()["details_id"]);
+    }
+}
 
 function DrawStructuresLists() {
     listed_buildings = {};
