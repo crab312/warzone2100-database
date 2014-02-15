@@ -258,6 +258,7 @@ function DrawPropulsionDetailsParameters(propulsion_id) {
         scrollToId('#tabs_left');
     }
 
+    $('#description_container').html('');
     /* Show button "Overview research path" */
     var res_comp_row = ResearchedComponents[player_all_researched][propulsion_id];
     if (res_comp_row != undefined) {

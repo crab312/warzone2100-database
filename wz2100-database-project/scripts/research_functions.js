@@ -576,7 +576,7 @@ function CreateResearchLines() {
     /* Production upgrades + Construction Upgrades */
     {
         var line = {};
-        line.height_em = 0.7;
+        line.height_em = 0.9;
         line.line_color = "darkblue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
@@ -590,7 +590,7 @@ function CreateResearchLines() {
     /* Research upgrades */
     {
         var line = {};
-        line.height_em = 1.1;
+        line.height_em = 0.9;
         line.line_color = "blue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
@@ -732,7 +732,7 @@ function CreateResearchLines() {
     /* Subline - Cyborg Armor/Thermal Armor upgrades */
     {
         var line = {};
-        line.height_em = 0.75;
+        line.height_em = 0.7;
         line.line_color = "green";
         line.filterResearch_func = function (research) {
             return is_cyborg_body_upgrade(research);
@@ -793,7 +793,7 @@ function CreateResearchLines() {
     /* Sensors, Sensor Towers */
     {
         var line = {};
-        line.height_em = 1;
+        line.height_em = 0.9;
         line.line_color = "blue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
@@ -906,6 +906,7 @@ function CreateResearchLines() {
         {
             for (var i in weap_res_classes_array) {
                 var line = {};
+                line.weap_classes = weap_res_classes_array[i].res_classes;
                 line.height_em = 1;
                 line.line_color = "darkred";
                 line.child_lines = [];
@@ -954,6 +955,7 @@ function CreateResearchLines() {
 
                     }
                     var do_we_have_defense_as_result = false;
+                    var defense_belongs_to_weapon_line = false;
                     if (research.resultStructures != undefined) {
                         var struc_list = research.resultStructures.split(',');
                         for (var is in struc_list) {
@@ -963,12 +965,24 @@ function CreateResearchLines() {
                                 if (struc.type == "DEFENSE" || struc.type == "GENERIC")
                                 {
                                     do_we_have_defense_as_result = true;
-                                    break;
+
+                                    if (struc.weapons)
+                                    {
+                                        var weap_id = struc.weapons.split(',')[0];//check first weapon
+                                        var weap = Weapons.loaded_data_hash[weap_id];
+                                        if (weap)
+                                        {
+                                            if (this.weap_classes.indexOf(weap.weaponSubClass) >= 0)
+                                            {
+                                                defense_belongs_to_weapon_line = true;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                    return parent_res_included_in_line && do_we_have_defense_as_result;
+                    return defense_belongs_to_weapon_line || (parent_res_included_in_line && do_we_have_defense_as_result);
                 }
                 res_lines.push(line);
 
@@ -997,7 +1011,7 @@ function CreateResearchLines() {
     var other_line = {};
     {
         var line = other_line;
-        line.height_em = 1;
+        line.height_em = 0.85;
         line.line_color = "orange";
         line.filterResearch_func = function (research) {
             return false;
@@ -1060,7 +1074,6 @@ function CreateResearchLines() {
 var SvgItem = function () { };
 SvgItem.prototype = (function () {
     var me = {};
-    me.z_order = 0;
     me.x = 0;
     me.y = 0;
     me.drawFunction = null;
@@ -1082,7 +1095,6 @@ ResSvgItem.prototype = (function () {
     me.line = null;
     me.svg_items = [];
     me.res_time = 0;
-    me.z_order = 0;
     return me;
 })();
 
@@ -1104,17 +1116,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
     var y_offset_bottom = 50;
     var line_space = 2;
     var canvas;
-    /* Calculate maximum research time */
-    {
-        var max_res_time = 0;
-        for (var i in Researches.loaded_data) {
-            var res_time = ResearchTime[player_all_researched][Researches.loaded_data[i].grid_id]
-            if (res_time != undefined) {
-                max_res_time = Math.max(res_time, max_res_time);
-            }
-        }
-        x_size = max_res_time * sec_per_pixel + 200;
-    }
 
     /* Distance between two vertical lines*/
     var vertical_lines_period_thin = 60; //pixels
@@ -1124,152 +1125,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             vertical_lines_period_thick = 300;
         } else if (sec_per_pixel <= 0.5) {
             vertical_lines_period_thick = 180;
-        }
-    }
-
-    var draw_research_icon = function (res_svg_item, x, y, scale)
-    {
-        var research = res_svg_item.research_stat_obj;
-        var width = icon_width * scale;
-        var height = icon_height * scale;
-        var icon_src = GetResearchIcon_src(research.grid_id);
-        var elm_icon;
-        var res_text = "";
-        var res_text_items = research.name.split(' ');
-        var text_lines = 1;
-        var line = res_svg_item.line;
-        if (res_text_items.length == 1)
-        {
-            res_text = res_text_items[0];
-        } else
-        {
-            for (var ii = 0; ii < res_text_items.length; ii++)
-            {
-                res_text += res_text_items[ii].substring(0, 7);
-                if ((ii+1) % 2 == 0 && ii>0)
-                {
-                    res_text += "\n";
-                    text_lines++;
-                } else
-                {
-                    res_text += " ";
-                }
-            }
-        }
-        var text_y_offset = (text_lines - 1) * 8 + 2;
-        res_svg_item.text_height = text_lines * 8;
-        res_svg_item.res_text = res_text;
-        if (icon_src != null)
-        {
-            /* DRAW IMAGE */
-            var img = new Image();
-            img.src = icon_src;
-            img.res_svg_item = res_svg_item;
-            img.scale = scale;
-            img.onload = function () {
-                var res_svg_item = this.res_svg_item;
-                var img = new fabric.Image(this, {
-                    top: y + 1,
-                    left: x + 1,
-                    selectable: true,
-                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
-                    hoverCursor: "pointer",
-                    scaleY: this.scale,
-                    scaleX: this.scale,
-                    stroke: this.res_svg_item.line.line_color, //that defines border color
-                    strokeWidth: 2,
-                });
-                canvas.add(img);
-                res_svg_item.icon_item = img
-                img.res_svg_item = res_svg_item;
-
-                /* ТЕКСТЫ ТОРМОЗЯТ ЖУТКО В ИЕ - БАГ Fabric.js */
-                var txt = new fabric.Text(res_svg_item.res_text, {
-                    left: x + img.getWidth(), //...img.width did not worked for scaled image
-                    top: y + 1,
-                    fontSize: 11,
-                    textAlign: 'center',
-                });
-                txt.res_svg_item = res_svg_item;
-                res_svg_item.text_item = txt;
-                canvas.add(txt);
-
-                res_svg_item.svg_items = res_svg_item.svg_items.concat([
-                    res_svg_item.icon_item
-                    /*, res_svg_item.text_item*/]);
-                res_svg_item.svg_items.push(res_svg_item.text_item);
-                //var line = res_svg_item.line;
-                //line.additional_height = Math.max(line.additional_height, txt.text_height + 2);
-            };
-            img.onerror = function () {
-                //image loading error - draw empty rect
-                this.res_svg_item.icon_item = new fabric.Rect({
-                    left: x + 1,
-                    strokeWidth: 2,
-                    stroke: this.res_svg_item.line.line_color,
-                    top: y + 1,
-                    height: height - 1,
-                    width: width - 1,
-                    fill: this.res_svg_item.line.line_color,
-                    selectable: true,
-                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
-                    hoverCursor: "pointer",
-                })
-                canvas.add(res_svg_item.icon_item);
-                this.res_svg_item.icon_item.res_svg_item = this.res_svg_item;
-
-                var txt = new fabric.Text(res_svg_item.res_text, {
-                    left: x + 3,
-                    top: y + 3,
-                    fontSize: 11,
-                    textAlign: 'center',
-                    hoverCursor: "pointer",
-                    //selectable: true,
-                });
-                txt.res_svg_item = res_svg_item;
-                res_svg_item.text_item = txt;
-                canvas.add(txt);
-
-
-                res_svg_item.svg_items = res_svg_item.svg_items.concat([
-                    res_svg_item.icon_item
-                    /*,res_svg_item.text_item*/]);
-                res_svg_item.svg_items.push(res_svg_item.text_item);
-            }
-
-        } else
-        {
-            /* DRAW RECT */
-            res_svg_item.icon_item = new fabric.Rect({
-                left: x + 1,
-                stroke: res_svg_item.line.line_color,
-                strokeWidth: 2,
-                top: y + 1,
-                height: height - 1,
-                width: width - 1,
-                fill: "lightgray",
-                selectable: true,
-                evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
-                hoverCursor: "pointer",
-            })
-            canvas.add(res_svg_item.icon_item);
-            res_svg_item.icon_item.res_svg_item = res_svg_item;
-
-            var txt = new fabric.Text(res_text, {
-                left: x + 3,
-                top: y + 3,
-                fontSize: 11,
-                textAlign: 'center',
-                hoverCursor: "pointer",
-                //selectable: true,
-            });
-            txt.res_svg_item = res_svg_item;
-            res_svg_item.text_item = txt;
-            canvas.add(txt);
-
-            res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item
-                /*, res_svg_item.text_item*/]);
-            res_svg_item.svg_items.push(res_svg_item.text_item);
         }
     }
 
@@ -1374,9 +1229,187 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         res_lines = res_lines_checked;
     }
 
-    /* ***** Draw research*/
+
+    var all_lines = res_lines;
+    for (var i in res_lines)
     {
-        var func_drawIconBox = function (research, res_id, __x_offset, __y_offset, line)
+        if (res_lines.child_lines) {
+            all_lines = all_lines.concat(res_lines.child_lines)
+        }
+    }
+
+    /* Calculate maximum research time */
+    {
+        var max_res_time = 0;
+        for (var i in all_lines) {
+            var line = all_lines[i];
+            var check_max_time = function (research)
+            {
+                var res_time = ResearchTime[player_all_researched][research.grid_id]
+                if (res_time != undefined) {
+                    max_res_time = Math.max(res_time, max_res_time);
+                }
+            }
+            for (var it in line.items)
+            {
+                check_max_time(line.items[it]);
+            }
+            for (var it in line.sub_items) {
+                check_max_time(line.sub_items[it]);
+            }
+        }
+        x_size = max_res_time * sec_per_pixel + 250;
+    }
+
+    /* ***** Draw research*/
+    var draw_research_icon = function (res_svg_item, x, y, scale) {
+        var research = res_svg_item.research_stat_obj;
+        var width = icon_width * scale;
+        var height = icon_height * scale;
+        var icon_src = GetResearchIcon_src(research.grid_id);
+        var elm_icon;
+        var res_text = "";
+        var res_text_items = research.name.split(' ');
+        var text_lines = 1;
+        var line = res_svg_item.line;
+
+        /* Wrap text - name of research */
+        if (res_text_items.length == 1) {
+            res_text = res_text_items[0];
+        } else {
+            for (var ii = 0; ii < res_text_items.length; ii++) {
+                res_text += res_text_items[ii].substring(0, 9);
+                if ((ii + 1) % 2 == 0 && ii > 0 && ii < res_text_items.length - 1) {
+                    res_text += "\n";
+                    text_lines++;
+                } else {
+                    res_text += " ";
+                }
+            }
+        }
+        var text_y_offset = (text_lines - 1) * 8 + 2;
+        res_svg_item.text_height = text_lines * 8;
+        res_svg_item.res_text = res_text;
+        if (icon_src != null) {
+            /* DRAW IMAGE */
+            var img = new Image();
+            img.src = icon_src;
+            img.res_svg_item = res_svg_item;
+            img.scale = scale;
+            img.text_lines = text_lines;
+            img.onload = function () {
+                var res_svg_item = this.res_svg_item;
+                var img = new fabric.Image(this, {
+                    top: y + 1,
+                    left: x + 1,
+                    selectable: true,
+                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
+                    hoverCursor: "pointer",
+                    scaleY: this.scale,
+                    scaleX: this.scale,
+                    stroke: this.res_svg_item.line.line_color, //that defines border color
+                    strokeWidth: 2,
+                });
+                canvas.add(img);
+                res_svg_item.icon_item = img
+                img.res_svg_item = res_svg_item;
+
+                var text_place_at_top = this.text_lines == 1 && res_svg_item.res_time_collision_offset==0;
+                var text_x = text_place_at_top ? x + 1 : x + img.getWidth() - 4; //...img.width did not worked for scaled image
+                var text_y = text_place_at_top ? y - 9 : y - 4;
+                var text_aligh = text_place_at_top ? 'center' : 'left';
+
+                var txt = new fabric.Text(res_svg_item.res_text, {
+                    left: text_x,
+                    top: text_y,
+                    fontSize: 11,
+                    textAlign: text_aligh,
+                    textBackgroundColor: "rgba( 255, 255, 255, .5 ) ",
+                    fontFamily: 'Arial',
+                });
+                txt.res_svg_item = res_svg_item;
+                res_svg_item.text_item = txt;
+                canvas.add(txt);
+
+                res_svg_item.svg_items = res_svg_item.svg_items.concat([
+                    res_svg_item.icon_item
+                    /*, res_svg_item.text_item*/]);
+                res_svg_item.svg_items.push(res_svg_item.text_item);
+                //var line = res_svg_item.line;
+                //line.additional_height = Math.max(line.additional_height, txt.text_height + 2);
+            };
+            img.onerror = function () {
+                //image loading error - draw empty rect
+                this.res_svg_item.icon_item = new fabric.Rect({
+                    left: x + 1,
+                    strokeWidth: 2,
+                    stroke: this.res_svg_item.line.line_color,
+                    top: y + 1,
+                    height: height - 1,
+                    width: width - 1,
+                    fill: this.res_svg_item.line.line_color,
+                    selectable: true,
+                    evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
+                    hoverCursor: "pointer",
+                })
+                canvas.add(res_svg_item.icon_item);
+                this.res_svg_item.icon_item.res_svg_item = this.res_svg_item;
+
+                var txt = new fabric.Text(res_svg_item.res_text, {
+                    left: x + 3,
+                    top: y + 3,
+                    fontSize: 11,
+                    textAlign: 'left',
+                    textBackgroundColor: "rgba( 255, 255, 255, .5 ) ",
+                    fontFamily: 'Arial',
+                });
+                txt.res_svg_item = res_svg_item;
+                res_svg_item.text_item = txt;
+                canvas.add(txt);
+
+
+                res_svg_item.svg_items = res_svg_item.svg_items.concat([
+                    res_svg_item.icon_item
+                    /*,res_svg_item.text_item*/]);
+                res_svg_item.svg_items.push(res_svg_item.text_item);
+            }
+
+        } else {
+            /* DRAW RECT */
+            res_svg_item.icon_item = new fabric.Rect({
+                left: x + 1,
+                stroke: res_svg_item.line.line_color,
+                strokeWidth: 2,
+                top: y + 1,
+                height: height - 1,
+                width: width - 1,
+                fill: "lightgray",
+                selectable: true,
+                evented: true, //When set to `false`, an object can not be a target of events. All events propagate through it. 
+                hoverCursor: "pointer",
+            })
+            canvas.add(res_svg_item.icon_item);
+            res_svg_item.icon_item.res_svg_item = res_svg_item;
+
+            var txt = new fabric.Text(res_text, {
+                left: x,
+                top: y + 3,
+                fontSize: 11,
+                textAlign: 'center',
+                fontFamily: 'Arial',
+            });
+            txt.res_svg_item = res_svg_item;
+            res_svg_item.text_item = txt;
+            canvas.add(txt);
+
+            res_svg_item.svg_items = res_svg_item.svg_items.concat([res_svg_item.icon_item
+                /*, res_svg_item.text_item*/]);
+            res_svg_item.svg_items.push(res_svg_item.text_item);
+        }
+    }
+    //draw..
+    {
+        var func_drawIconBox = function (research, res_id, __x_offset, __y_offset, line, is_sub_item)
         {
             var res_svg_item = new ResSvgItem();
             res_svg_item.svg_items = [];
@@ -1385,12 +1418,26 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             res_svg_item.res_time = ResearchTime[player_all_researched][res_id];
             res_svg_item.x = x_zero_time + res_svg_item.res_time * sec_per_pixel + __x_offset;
             res_svg_item.y = __y_offset;
-            res_svg_item.z_order = 100;
+            res_svg_item.res_time_collision_offset = 0;
+            res_svg_item.scale = is_sub_item ? 0.85 : 1;
             res_svg_item.drawFunction = function () {
-                draw_research_icon(this, this.x, this.y, this.line.height_em);
+                draw_research_icon(this, this.x, this.y + this.res_time_collision_offset, this.line.height_em * this.scale);
             }
             svg_elems.push(res_svg_item);
             res_svg_items_hash[res_id] = res_svg_item;
+
+            /* Collision resolution */
+            if (line.time_hash == undefined)
+            {
+                line.time_hash = {};
+            }
+            var time_hash_value = Math.ceil(research.minResearchTime / 30);
+            if (line.time_hash[time_hash_value] == undefined) {
+                line.time_hash[time_hash_value] = [res_svg_item];
+            } else {
+                line.time_hash[time_hash_value].push(res_svg_item);
+                res_svg_item.res_time_collision_offset = 35 * line.height_em * (line.time_hash[time_hash_value].length - (is_sub_item ? 2 : 1)); //(is_sub_item ? 2 : 1) - sub_item has offset already
+            }
         }
 
         var func_drawline = function (line)
@@ -1399,15 +1446,15 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             /* Draw line items */
             for (var res_id in line.items) {
                 var research = line.items[res_id];
-                func_drawIconBox(research, res_id, 0, 0, line);
+                func_drawIconBox(research, res_id, 0, 0, line, false);
             }
             /* Draw line sub items */
             if (line.sub_items != undefined) {
-                var sub_item_offset = scaled_icon_height * 0.65;
+                var sub_item_offset = scaled_icon_height * 0.65 + 10;
                 line.additional_height = Math.max(line.additional_height, sub_item_offset)
                 for (var res_id in line.sub_items) {
                     var research = line.sub_items[res_id];
-                    func_drawIconBox(research, res_id, 0, sub_item_offset, line);
+                    func_drawIconBox(research, res_id, 0, sub_item_offset, line, true);
                 }
             }
             drawn_lines.push(line);
@@ -1465,7 +1512,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
     
     
     var y_size = 2000;//res_lines[res_lines.length - 1].pos_y + res_lines[res_lines.length - 1].height_expected + y_offset_bottom + line_space;
-    var x_size = max_res_time * sec_per_pixel + 200;
+    var x_size = max_res_time * sec_per_pixel + 250;
 
     /* Draw paper */
     var paper_elem_id = container_id + "_timeTableSvgCanva";
@@ -1512,11 +1559,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         };
 
     }
-
-    /* Sort svg items by z_order  NEED REMOVE IT BECAUSE PORTED TO FABRIC.JS*/
-    //svg_elems.sort(function (elm1, elm2) {
-    //    return elm1.z_order - elm2.z_order;
-    //});
 
     /* Draw svg items in given order */
     {
@@ -1758,8 +1800,9 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
                     var header_id = paper_elem_id + "_research_dialog_header";
                     var results_container_id = paper_elem_id + "_research_dialog_results";
+                    var dialog_close_btn_id = paper_elem_id + "_dialog_close_btn_id";
                     var html = '\
-                        <span style="padding:2px"><b>' + research.name + '</b></span>\
+                        <span class="ui-icon ui-icon-close" style="float:left; cursor:pointer;margin-left:-15px;background-color:white" id="' + dialog_close_btn_id + '"></span><span style="padding:2px"><b>' + research.name + '</b></span>\
                         <div style="padding-left: 5px;font-size:0.9em">\
                             <table>\
                             <tr>\
@@ -1795,8 +1838,12 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                             $("#canvas_context_dialog2").remove();
                         }
                         window.open("Research.php?tree=1&component_id=" + event.data);
-                        ShowResearchDetails(event.data);
                     });
+                    $('#' + dialog_close_btn_id).click(res_svg_item, function (event) {
+                        var res_svg_item = event.data;
+                        res_svg_item.context_menu_dialog.remove();
+                    });
+
 
                     /* Show results of research */
                     {
@@ -2012,13 +2059,30 @@ function GetResearchIcon_src(research_id) {
         return GetIcon_src(Researches.icon_folder, research_id);
     } else {
         /* Try find icon for Research */
-        var comp_res = Researches.loaded_data_hash[research_id];
-        if (comp_res.statID != undefined) {
-            has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_res.statID));
+        var research = Researches.loaded_data_hash[research_id];
+        if (research.statID != undefined) {
+            has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(research.statID));
             if (has_icon) {
-                StatID_DataObject = FindDataObject(comp_res.statID);
+                StatID_DataObject = FindDataObject(research.statID);
                 if (StatID_DataObject != null) {
-                    return GetIcon_src(StatID_DataObject.icon_folder, comp_res.statID);
+                    return GetIcon_src(StatID_DataObject.icon_folder, research.statID);
+                }
+            }
+        }
+        if (!has_icon)
+        {
+            /* enumerate research result components */
+            if (research.resultComponents != undefined) {
+                var comps_ids = research.resultComponents.split(',');
+                for (var p in comps_ids) {
+                    var comp_id = comps_ids[p];
+                    has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id));
+                    if (has_icon) {
+                        DataObject = FindDataObject(comp_id);
+                        if (DataObject != null) {
+                            return GetIcon_src(DataObject.icon_folder, comp_id);
+                        }
+                    }
                 }
             }
         }
@@ -2124,7 +2188,8 @@ function DrawResultComponents(research, container_id, use_short_form)
             html += '<tr>';
             html += '<td>';
             var DataObject = rowObject.DataObject;
-            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+            var has_details_page = DataObject.page_url != undefined;
+            var href = has_details_page ? DataObject.page_url + "?details_id=" + rowObject.comp_id : 'javascript:;';
             var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
             html += '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp, 48) + '</a>';
             html += '</td>';
@@ -2163,7 +2228,8 @@ function DrawResultComponents(research, container_id, use_short_form)
                         search: false,
                         formatter: function (cellvalue, options, rowObject) {
                             var DataObject = rowObject.DataObject;
-                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            var has_details_page = DataObject.page_url != undefined;
+                            var href = has_details_page ? DataObject.page_url + "?details_id=" + rowObject.comp_id : 'javascript:;';
                             var comp = rowObject.DataObject.loaded_data_hash[rowObject.comp_id];
                             return '<a href="' + href + '">' + DataObject.GetIconHtml_Function(comp) + '</a>';
                         },
@@ -2171,7 +2237,8 @@ function DrawResultComponents(research, container_id, use_short_form)
                     {
                         label: "Component name", name: "name",
                         formatter: function (cellvalue, options, rowObject) {
-                            var href = DataObject.page_url + "?details_id=" + rowObject.comp_id;
+                            var has_details_page = DataObject.page_url != undefined;
+                            var href = has_details_page ? DataObject.page_url + "?details_id=" + rowObject.comp_id : 'javascript:;';
                             return '<a href="' + href + '">' + rowObject.DataObject.loaded_data_hash[rowObject.comp_id].name + '</a>';
                         },
                     },

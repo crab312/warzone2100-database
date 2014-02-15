@@ -98,7 +98,7 @@ $(function () {
     })
 
     DrawSection_type2_1_html("intro_header", "Introduction").append($('#intro_content'));
-    DrawSection_type2_1_html("time_table_header", "Research Timeline").append($('#time_table_container'));
+    //DrawSection_type2_1_html("time_table_header", "Research Timeline").append($('#time_table_container'));
 
 });
 
@@ -136,6 +136,7 @@ function SelectContentByURLData()
     } else {
         /* open List View */
         $("#tabs_left").tabs("option", "active", 0);
+        ShowResearchListView();
     }
 }
 
@@ -1484,6 +1485,7 @@ function show_short_res_table(container_id, grid_data)
                     In warzone2100 we have up to <b>400</b> different researches. <u>Remember:</u> before use a stuff you have to research that stuff.
                     To research something you have to build <b>Research Facility</b>. 
                 </p>
+               Warning: Research Tree Tab is very big and can be <span style="color:red">slow</span>.
             </div>
             <div id="tabs_left" >
                 <ul>

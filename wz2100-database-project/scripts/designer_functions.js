@@ -702,33 +702,42 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
         }
         //res += '<div style="padding:5px;">Min time to research: <span style="float:right; display:inline"><b>' + minTime.toHHMMSS() + '</b></span></div>';
         if (ResearchTimeState[player_current_design] < minTime) {
-            res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>This design is not available on current selected research time</b></div>';
+            res += '<div style="display:inline-block;padding:5px;"><span style="display:inline-block;float:left;" class="ui-icon ui-icon-alert"></span><b>This design is not available on current selected research time</b></div>';
         }
     }else{
         res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>I do not know is this design researchable or not</b></div>';
     }
 
     for (var i = 0; i < turrets_ids.length; i++) {
+        var res_path_href = "Research.php?tree=1&component_id=" + turrets_ids[i];
+        var res_href = "Research.php?details_id=" + resComp[turrets_ids[i]].research_id;
         var turret = FindTurretById(turrets_ids[i]);
         var res_time = resComp[turrets_ids[i]] == undefined ? "don't know" : resComp[turrets_ids[i]].time_seconds.toHHMMSS();
         var comp_name = turret == null ? "unknown" : turret.name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-        res += '<div>Turret "' + comp_name + '" : <span style="float:right; display:inline"><b>' + res_time + '</b></span></div>';
+        res += '<div>Turret <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + comp_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + res_time + '</b></span></div>';
         res += '</div>'
     }
 
-    var bod_time = resComp[body_id] == undefined ? "don't know" : resComp[body_id].time_seconds.toHHMMSS();
-    var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "unknown" : Bodies.loaded_data_hash[body_id].name;
-    res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-    res += '<div>Body "' + bod_name + '" : <span style="float:right; display:inline"><b>' + bod_time + '</b></span></div>';
-    res += '</div>'
+    {
+        var res_path_href = "Research.php?tree=1&component_id=" + body_id;
+        var res_href = "Research.php?details_id=" + resComp[body_id].research_id;
+        var bod_time = resComp[body_id] == undefined ? "don't know" : resComp[body_id].time_seconds.toHHMMSS();
+        var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "unknown" : Bodies.loaded_data_hash[body_id].name;
+        res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
+        res += '<div>Body <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + bod_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + bod_time + '</b></span></div>';
+        res += '</div>';
+    }
 
-    var prop_time = resComp[propulsion_id] == undefined ? "don't know" : resComp[propulsion_id].time_seconds.toHHMMSS();
-    var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "unknown" : Propulsion.loaded_data_hash[propulsion_id].name;
-    res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-    res += '<div>Propulsion "' + prop_name + '" : <span style="float:right; display:inline"><b>' + prop_time + '</b></span></div>';
-    res += '</div>'
-
+    {
+        var res_path_href = "Research.php?tree=1&component_id=" + propulsion_id;
+        var res_href = "Research.php?details_id=" + resComp[propulsion_id].research_id;
+        var prop_time = resComp[propulsion_id] == undefined ? "don't know" : resComp[propulsion_id].time_seconds.toHHMMSS();
+        var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "unknown" : Propulsion.loaded_data_hash[propulsion_id].name;
+        res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
+        res += '<div>Propulsion <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + prop_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><span style="float:right; display:inline"><b>' + prop_time + '</b></span></div>';
+        res += '</div>';
+    }
     return res;
 
 }
