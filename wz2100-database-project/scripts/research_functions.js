@@ -1054,16 +1054,22 @@ function CreateResearchLines() {
         }
     }
 
-    /* Sort research lines by minimum time to get first item in line */
+    /* line - min res time + max res time */
     {
         for (var i in res_lines) {
             var line = res_lines[i];
             line.minResearchTime = 100 * 100;
+            line.maxResearchTime = 0;
             for (var res_id in line.items) {
                 var res_time = ResearchTime[player_all_researched][res_id];
                 line.minResearchTime = Math.min(line.minResearchTime, res_time);
+                line.maxResearchTime = Math.max(line.maxResearchTime, res_time);
             }
         }
+    }
+
+    /* Sort research lines by minimum time to get first item in line */
+    {
         res_lines.sort(function (elm1, elm2) {
             return elm1.minResearchTime - elm2.minResearchTime;
         });
@@ -1233,8 +1239,8 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
     var all_lines = res_lines;
     for (var i in res_lines)
     {
-        if (res_lines.child_lines) {
-            all_lines = all_lines.concat(res_lines.child_lines)
+        if (res_lines[i].child_lines) {
+            all_lines = all_lines.concat(res_lines[i].child_lines)
         }
     }
 
@@ -1260,6 +1266,25 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         }
         x_size = max_res_time * sec_per_pixel + 250;
     }
+
+    /* Merge early-game lines and late-game lines */
+    //{
+    //    for (var i in res_lines) {
+    //        var line_i = res_lines[i];
+    //        for (var j in res_lines) {
+    //            if (i == j) continue;
+    //            var line_j = res_lines[j];
+    //            if (line_j.merged_into_other_line != undefined || line_j.merge_lateline_linelink != undefined) continue;
+    //            if (line_i.maxResearchTime < line_j.minResearchTime - 120) {
+    //                line_j.merged_into_other_line = true;
+    //                line_i.merge_lateline_linelink = line_j;
+    //                /* merge sub-lines*/
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+
 
     /* ***** Draw research*/
     var draw_research_icon = function (res_svg_item, x, y, scale) {
@@ -1311,6 +1336,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     strokeWidth: 2,
                 });
                 canvas.add(img);
+                //canvas.insertAt(img, canvas.getObjects().length); //make sure image will be at top of z-order
                 res_svg_item.icon_item = img
                 img.res_svg_item = res_svg_item;
 
@@ -1330,13 +1356,12 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 txt.res_svg_item = res_svg_item;
                 res_svg_item.text_item = txt;
                 canvas.add(txt);
+                //canvas.insertAt(txt, 0);
 
                 res_svg_item.svg_items = res_svg_item.svg_items.concat([
                     res_svg_item.icon_item
                     /*, res_svg_item.text_item*/]);
                 res_svg_item.svg_items.push(res_svg_item.text_item);
-                //var line = res_svg_item.line;
-                //line.additional_height = Math.max(line.additional_height, txt.text_height + 2);
             };
             img.onerror = function () {
                 //image loading error - draw empty rect
@@ -1431,12 +1456,24 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             {
                 line.time_hash = {};
             }
-            var time_hash_value = Math.ceil(research.minResearchTime / 30);
+            var time_hash_value = Math.floor(research.minResearchTime / 10);
+            var iterval_items_count = 0;
+            /* Check 5 10-seconds intervals: 1:before 2:current 3:after */
+            for (var check_interval_value = time_hash_value - 2; check_interval_value <= time_hash_value + 2; check_interval_value += 1) {
+                if (line.time_hash[check_interval_value])
+                {
+                    for(var iii in line.time_hash[check_interval_value])
+                    {
+                        line.time_hash[check_interval_value][iii].res_time_collision_offset -= 15 * line.height_em; //-20
+                        res_svg_item.res_time_collision_offset += 40 * line.height_em + line.time_hash[check_interval_value][iii].res_time_collision_offset;
+                    }
+                }
+            }
+            /* add current item to current interval */
             if (line.time_hash[time_hash_value] == undefined) {
                 line.time_hash[time_hash_value] = [res_svg_item];
             } else {
                 line.time_hash[time_hash_value].push(res_svg_item);
-                res_svg_item.res_time_collision_offset = 35 * line.height_em * (line.time_hash[time_hash_value].length - (is_sub_item ? 2 : 1)); //(is_sub_item ? 2 : 1) - sub_item has offset already
             }
         }
 
@@ -1453,8 +1490,8 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                 var sub_item_offset = scaled_icon_height * 0.65 + 10;
                 line.additional_height = Math.max(line.additional_height, sub_item_offset)
                 for (var res_id in line.sub_items) {
-                    var research = line.sub_items[res_id];
-                    func_drawIconBox(research, res_id, 0, sub_item_offset, line, true);
+                    var research = line.sub_items[res_id];//sub_item_offset
+                    func_drawIconBox(research, res_id, 0, 0, line, true);
                 }
             }
             drawn_lines.push(line);
@@ -1573,35 +1610,55 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
         console.log('draw_research_tree_part2');
 
         /* SET Y COORD */
-        var next_line_offset = 0;
-        var line_height;
-        for (var iline in drawn_lines) {
-            var line = drawn_lines[iline];
-            line_height = 0;
-            for (var res_id in line.items) {
-                svg_res_item = res_svg_items_hash[res_id];
-                for (var i in svg_res_item.svg_items)
-                {
-                    var svg_item = svg_res_item.svg_items[i];
-                    line_height = Math.max(svg_item.top + svg_item.height, line_height);
-                    svg_item.setTop(y_offset_top + svg_item.top + next_line_offset);
-                    svg_item.setCoords();
+        {
+            var next_line_offset = 0;
+            var line_height;
+
+            var func_set_y_coord = function (line, line_y_offset) {
+                var max_line_height = 0;
+                var min_top_coord = null;
+                for (var res_id in line.items) {
+                    var svg_res_item = res_svg_items_hash[res_id];
+                    for (var i in svg_res_item.svg_items) {
+                        var svg_item = svg_res_item.svg_items[i];
+                        if (min_top_coord == null) min_top_coord = svg_item.getTop();
+                        min_top_coord = Math.min(min_top_coord, svg_item.getTop());
+                        max_line_height = Math.max(max_line_height, svg_item.getHeight() - min_top_coord);
+                        svg_item.setTop(y_offset_top + svg_item.getTop() + line_y_offset);
+                        svg_item.setCoords();
+                    }
                 }
-            }
-            for (var res_id in line.sub_items) {
-                svg_res_item = res_svg_items_hash[res_id];
-                for (var i in svg_res_item.svg_items) {
-                    var svg_item = svg_res_item.svg_items[i];
-                    line_height = Math.max(svg_item.top + svg_item.height, line_height);
-                    svg_item.setTop(y_offset_top + svg_item.top + next_line_offset);
-                    svg_item.setCoords();
+                for (var res_id in line.sub_items) {
+                    var svg_res_item = res_svg_items_hash[res_id];
+                    for (var i in svg_res_item.svg_items) {
+                        var svg_item = svg_res_item.svg_items[i];
+                        min_top_coord = Math.min(min_top_coord, svg_item.getTop());
+                        if (min_top_coord == null) min_top_coord = svg_item.getTop();
+                        max_line_height = Math.max(max_line_height, svg_item.getHeight() - min_top_coord);
+                        svg_item.setTop(y_offset_top + svg_item.getTop() + line_y_offset);
+                        svg_item.setCoords();
+                    }
                 }
+                return max_line_height;
             }
-            next_line_offset += line_height + line_space;
+
+            for (var iline in drawn_lines) {
+                var line = drawn_lines[iline];
+                if (line.merged_into_other_line) {
+                    continue;
+                }
+                line_height = func_set_y_coord(line, next_line_offset);
+                if (line.merge_lateline_linelink != undefined) {
+                    var merged_line = line.merge_lateline_linelink;
+                    var line2_height = func_set_y_coord(merged_line, next_line_offset);
+                    line_height = Math.max(line_height, line2_height);
+                }
+                next_line_offset += line_height + line_space;
+            }
+            y_size = next_line_offset + line_height + 100;
+            canvas.setHeight(y_size);
+            canvas.calcOffset();
         }
-        y_size = next_line_offset + line_height + 100;
-        canvas.setHeight(y_size);
-        canvas.calcOffset();
 
         /* Draw TIMELINES*/
         {
@@ -1812,9 +1869,9 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                             </tr>\
                             <tr>\
                             <td>\
-                                <span id="open_res_details_from_tree" class="span_button"><span class="ui-icon ui-icon-script" style="display:inline-block;"></span>Show Details</span>\
+                                <a href="Research.php?details_id=' + research.grid_id+ '" ><span id="open_res_details_from_tree" class="span_button"><span class="ui-icon ui-icon-script" style="display:inline-block;"></span>Show Details</span></a>\
                                 <br/>\
-                                <span id="open_res_path_from_tree" class="span_button"><span class="ui-icon ui-icon-transfer-e-w" style="display:inline-block;"></span>Show Path</span>\
+                                <a href="Research.php?tree=1&component_id=' + research.grid_id + '" "><span id="open_res_path_from_tree" class="span_button"><span class="ui-icon ui-icon-transfer-e-w" style="display:inline-block;"></span>Show Path</span></a>\
                             </td>\
                             </tr>\
                             <tr>\
@@ -1826,19 +1883,6 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                         </div>\
                         ';
                     dialog.html(html);
-
-                    $('#open_res_details_from_tree').click(research.grid_id, function (event) {
-                        if ($("#canvas_context_dialog2").length > 0) {
-                            $("#canvas_context_dialog2").remove();
-                        }
-                        ShowResearchDetails(event.data);
-                    });
-                    $('#open_res_path_from_tree').click(research.grid_id, function (event) {
-                        if ($("#canvas_context_dialog2").length > 0) {
-                            $("#canvas_context_dialog2").remove();
-                        }
-                        window.open("Research.php?tree=1&component_id=" + event.data);
-                    });
                     $('#' + dialog_close_btn_id).click(res_svg_item, function (event) {
                         var res_svg_item = event.data;
                         res_svg_item.context_menu_dialog.remove();
@@ -1909,7 +1953,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
                     res_svg_item.icon_item.set("strokeWidth", 3);
                     canvas.renderAll();
                 }
-                //res_svg_item.icon_item.bringToFront(); - very slow
+                //res_svg_item.icon_item.bringToFront();// - very slow
                 //res_svg_item.text_item.bringToFront();
 
             }
