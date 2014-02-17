@@ -566,7 +566,7 @@ function Abilities_Description(ability_name) {
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "ShortRanged":
-            res.name = "Short raged";
+            res.name = "Short ranged";
             res.descr = "Attacks from very short distance";
             res.icon_class = "ui-icon ui-icon-alert";
             break;
@@ -615,7 +615,7 @@ function Abilities_Description(ability_name) {
     return res;
 }
 
-function Form_Weapon_Abilities_html(weapon, is_structure_weapon) {
+function Form_Weapon_Abilities_html(weapon, is_structure_weapon, setted_abilities) {
     var abils_html = "";
     var abils = Weapon_GetAbilities(weapon);
     if (is_structure_weapon == true) {
@@ -624,6 +624,13 @@ function Form_Weapon_Abilities_html(weapon, is_structure_weapon) {
     for (var ability in abils) {
         if (typeof abils[ability] == "boolean") {
             if (abils[ability]) {
+                if (setted_abilities != undefined) {
+                    if (setted_abilities[ability])
+                    {
+                        continue;
+                    }
+                    setted_abilities[ability] = true;
+                }
                 var des = Abilities_Description(ability);
                 abils_html += '<div class="ui-widget-content ui-corner-all" style="padding:5px">';
                 if (des.icon_class != undefined && des.icon_class != "") {
@@ -632,6 +639,7 @@ function Form_Weapon_Abilities_html(weapon, is_structure_weapon) {
                 abils_html += '<div style="display:inline-block;"><b>' + des.name + '</b></div>';
                 abils_html += '<div style="font-size:0.8em;">' + des.descr + '</div>';
                 abils_html += '</div>'
+
             }
         } else {
             abils_html += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">' + ability + ': <b>' + abils[ability] + '</b></div>';
@@ -643,6 +651,7 @@ function Form_Weapon_Abilities_html(weapon, is_structure_weapon) {
 function FormAbilitiesHtml(TankDesign) {
 
     var abils_html = "";
+    var setted_abilities = {}; //storage for abilities. Has exffect in case od multi-turret designs
     for (var i = 0; i < TankDesign.turrets.length; i++) {
         var turret_id = TankDesign.turrets[i].grid_id;
         if (Weapons.loaded_data_hash[turret_id] == undefined) {
@@ -653,17 +662,21 @@ function FormAbilitiesHtml(TankDesign) {
                 abils_html += '<div style="font-size:0.8em;">' + descr + '</div>';
                 abils_html += '</div>'
             }
-            if (Sensor.loaded_data_hash[turret_id] != undefined) {
+            if (Sensor.loaded_data_hash[turret_id] != undefined && setted_abilities["sensor"]==undefined) {
                 form_abil_html("This is Sensor Unit", "Artillery can be attached to this unit.");
-            } else if (Repair.loaded_data_hash[turret_id] != undefined) {
+                setted_abilities["sensor"] = true;
+            } else if (Repair.loaded_data_hash[turret_id] != undefined && setted_abilities["repair"] == undefined) {
                 form_abil_html("This is Repair unit", "This unit can 'cure' damaged tanks");
-            } else if (Construction.loaded_data_hash[turret_id] != undefined) {
+                setted_abilities["repair"] = true;
+            } else if (Construction.loaded_data_hash[turret_id] != undefined && setted_abilities["truck"] == undefined) {
                 form_abil_html("This is Construction unit", "This unit can build base and defensive buildings");
-            } else if (ECM.loaded_data_hash[turret_id] != undefined) {
+                setted_abilities["truck"] = true;
+            } else if (ECM.loaded_data_hash[turret_id] != undefined && setted_abilities["ecm"] == undefined) {
                 form_abil_html("This is weird electonic unit", "I dont know what this unit can do :)");
+                setted_abilities["ecm"] = true;
             }
         }else{
-            abils_html += Form_Weapon_Abilities_html(TankDesign.turrets[i]);
+            abils_html += Form_Weapon_Abilities_html(TankDesign.turrets[i], false, setted_abilities);
         }
     }
     var abils = Body_GetAbilities(TankDesign);
@@ -700,19 +713,19 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
         for (var i = 0; i < turrets_ids.length; i++) {
             minTime = Math.max(minTime, resComp[turrets_ids[i]].time_seconds);
         }
-        //res += '<div style="padding:5px;">Min time to research: <span style="float:right; display:inline"><b>' + minTime.toHHMMSS() + '</b></span></div>';
         if (ResearchTimeState[player_current_design] < minTime) {
             res += '<div style="display:inline-block;padding:5px;"><span style="display:inline-block;float:left;" class="ui-icon ui-icon-alert"></span><b>This design is not available on current selected research time</b></div>';
         }
     }else{
-        res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>I do not know is this design researchable or not</b></div>';
+        res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>This might not be researchable for design.</b></div>';
     }
 
     for (var i = 0; i < turrets_ids.length; i++) {
+        var resComp_i = resComp[turrets_ids[i]];
         var res_path_href = "Research.php?tree=1&component_id=" + turrets_ids[i];
-        var res_href = "Research.php?details_id=" + resComp[turrets_ids[i]].research_id;
+        var res_href =  resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
         var turret = FindTurretById(turrets_ids[i]);
-        var res_time = resComp[turrets_ids[i]] == undefined ? "don't know" : resComp[turrets_ids[i]].time_seconds.toHHMMSS();
+        var res_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
         var comp_name = turret == null ? "unknown" : turret.name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
         res += '<div>Turret <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + comp_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + res_time + '</b></span></div>';
@@ -720,9 +733,10 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
     }
 
     {
+        var resComp_i = resComp[body_id];
         var res_path_href = "Research.php?tree=1&component_id=" + body_id;
-        var res_href = "Research.php?details_id=" + resComp[body_id].research_id;
-        var bod_time = resComp[body_id] == undefined ? "don't know" : resComp[body_id].time_seconds.toHHMMSS();
+        var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
+        var bod_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
         var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "unknown" : Bodies.loaded_data_hash[body_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
         res += '<div>Body <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + bod_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + bod_time + '</b></span></div>';
@@ -730,9 +744,10 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
     }
 
     {
+        var resComp_i = resComp[body_id];
         var res_path_href = "Research.php?tree=1&component_id=" + propulsion_id;
-        var res_href = "Research.php?details_id=" + resComp[propulsion_id].research_id;
-        var prop_time = resComp[propulsion_id] == undefined ? "don't know" : resComp[propulsion_id].time_seconds.toHHMMSS();
+        var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
+        var prop_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
         var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "unknown" : Propulsion.loaded_data_hash[propulsion_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
         res += '<div>Propulsion <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + prop_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><span style="float:right; display:inline"><b>' + prop_time + '</b></span></div>';
@@ -1420,7 +1435,7 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
             {
                 label: "Research Name", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    var res_html = '<a href="Research.php?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/>';
+                    var res_html = '<span class="span_button"><a style="text-decoration:none" href="Research.php?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/></span>';
                     if (rowObject.level == 0) {
                         res_html = '<b>' + res_html +'</b>';
                     }

@@ -57,6 +57,19 @@ var TerrainTypesIndexes = [
 
 $(function () {
 
+    if (($.browser.name == "Safari" && $.browser.fullVersion < '5.1') ||
+        ($.browser.name == "Opera" && $.browser.version < '13') ||
+        ($.browser.name == "Chrome" && $.browser.version < '32') ||
+        ($.browser.name == "Microsoft Internet Explorer" && $.browser.version < '10') ||
+        ($.browser.name == "Firefox" && $.browser.version < '25')) 
+    {
+        var html = '<div id="browser_warning" style="padding:10px;font-size:1.3em;background-color:#ffffdd;color;red;position:fixed;top:10px;left:10%;right:10%;z-index:1000;cursor:pointer;">Warning! You are unsing some old version of your web-browser. Some features of this site might be unsupported. Please upgrade your browser. ' + $.browser.name + $.browser.fullVersion + '</div>';
+        $('body').append(html);
+        $('#browser_warning').click(null, function(event){
+            $('#browser_warning').remove();
+        });
+    }
+
     $('head').append('<link href="./Styles/icon1.ico" rel="shortcut icon" type="image/x-icon" />');
     DrawPageHeader();
     DrawPageCaption();
