@@ -1104,7 +1104,7 @@ ResSvgItem.prototype = (function () {
     return me;
 })();
 
-function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
+function DrawResearchTree(container_id, sec_per_pixel, options, options_type2, after_draw_callback)
 {
     if (fabric.Canvas.activeInstance != undefined)
     {
@@ -1557,15 +1557,37 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
 
         $('#' + container_id).html('<canvas height="' + y_size + '" width="' + x_size + '" id="' + paper_elem_id + '"></canvas><div id="canvas_context_dialog" style="diaplay:none"></div>');
         
-        canvas = new fabric.Canvas(paper_elem_id, {
-            renderOnAddRemove: false, //Indicates whether fabric.Collection.add, fabric.Collection.insertAt and fabric.Collection.remove should also re-render canvas. Disabling this option could give a great performance boost when adding/removing a lot of objects to/from canvas at once (followed by a manual rendering after addition/deletion)
-            perPixelTargetFind: true, //When true, object detection happens on per-pixel basis rather than on per-bounding-box
-            selection: false, //Indicates whether group selection should be enabled
-            //skipTargetFind: true, When true, target detection is skipped when hovering over canvas. This can be used to improve performance.
-            stateful: false, //Indicates whether objects' state should be saved
+        var useStaticCanvas = false;
+        if (options_type2)
+        {
+            if (options_type2.useStaticCanvas)
+            {
+                useStaticCanvas = true;
+            }
+        }
+        if (useStaticCanvas)
+        {
+            canvas = new fabric.StaticCanvas(paper_elem_id, {
+                renderOnAddRemove: false, //Indicates whether fabric.Collection.add, fabric.Collection.insertAt and fabric.Collection.remove should also re-render canvas. Disabling this option could give a great performance boost when adding/removing a lot of objects to/from canvas at once (followed by a manual rendering after addition/deletion)
+                perPixelTargetFind: true, //When true, object detection happens on per-pixel basis rather than on per-bounding-box
+                selection: false, //Indicates whether group selection should be enabled
+                //skipTargetFind: true, When true, target detection is skipped when hovering over canvas. This can be used to improve performance.
+                stateful: false, //Indicates whether objects' state should be saved
+            });//StaticCanvas
+            // !!! WARNING: renderOnAddRemove: false  - greatly imptoves perfomance!!!
+        }else
+        {
+            canvas = new fabric.Canvas(paper_elem_id, {
+                renderOnAddRemove: false, //Indicates whether fabric.Collection.add, fabric.Collection.insertAt and fabric.Collection.remove should also re-render canvas. Disabling this option could give a great performance boost when adding/removing a lot of objects to/from canvas at once (followed by a manual rendering after addition/deletion)
+                perPixelTargetFind: true, //When true, object detection happens on per-pixel basis rather than on per-bounding-box
+                selection: false, //Indicates whether group selection should be enabled
+                //skipTargetFind: true, When true, target detection is skipped when hovering over canvas. This can be used to improve performance.
+                stateful: false, //Indicates whether objects' state should be saved
+            });//StaticCanvas
+            // !!! WARNING: renderOnAddRemove: false  - greatly imptoves perfomance!!!
+        }
 
-        });//StaticCanvas
-        // !!! WARNING: renderOnAddRemove: false  - greatly imptoves perfomance!!!
+
         canvas.on("after:render", function () { canvas.calcOffset(); }); //this line fixes wrong mouse offset (i hate that fabric.js already!)
 
         /* Setting default settings for all new objects in Fabric.js (our goal - improve perfomance) */
@@ -2025,7 +2047,13 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2)
             });
         }
 
+        //$('body').append('<img src="' + canvas.toDataURL('png') + '" >');
+        //$('#' + container_id).html('<img src="' + canvas.toDataURL('png') + '" >');
         canvas.renderAll(); // Note, calling renderAll() is important because we setted off automatical drawing of objects on add/insert
+        if (after_draw_callback)
+        {
+            after_draw_callback(canvas);
+        }
     }
 
     /* Wait for all images loaded - then run  draw_research_tree_part2*/

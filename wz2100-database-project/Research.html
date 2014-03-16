@@ -130,7 +130,17 @@ function SelectContentByURLData()
         } else {
             ShowResearchTree();
         }
-    } else if (uri_vars["timeline"] != undefined) {
+    } else if (uri_vars["tree_static"] != undefined) {
+        /* open Tree View */
+        var tree_options2 = { useStaticCanvas: true };
+        if (uri_vars["component_id"] != undefined) {
+            /* Show research tree for only one component */
+            tree_options2.path_to_component = uri_vars["component_id"];
+        }
+        ShowResearchTree(tree_options2);
+    }
+
+    else if (uri_vars["timeline"] != undefined) {
         /* open TimeLine View */
         ShowResearchTimeline();
     } else {
@@ -271,7 +281,38 @@ function ShowResearchTree(options_type2) {
         }
     }
 
-    DrawResearchTree("restree_container", 2, tree_options, options_type2);
+    DrawResearchTree("restree_container", 2, tree_options, options_type2, function (canvas) {
+        var container = $('#load_as_image_btn_container');
+        if (container.length > 0)
+        {
+            container.html('');
+        } else
+        {
+            $('#intro_content').append('<div id="load_as_image_btn_container"><div>');
+        }
+        $('#load_as_image_btn_container').append('<button type="button" id="load_as_image_btn">Load Research Tree As Image</button>');
+        $('#load_as_image_btn').button().click(canvas, function (event) {
+            //var canvas_ = event.data;
+            //var imgdata = canvas_.toDataURL("image/png", { format: "png" });
+            ////window.location.href = data;
+            //ShowLoading('tabs_left');
+            //$.ajax({
+            //    url: "saveme.php",
+            //    data: JSON.stringify({ imgdata: imgdata }),
+            //    datatype: "text",
+            //    success: function (msg) {
+                    
+            //        HideLoading('tabs_left');
+            //    },
+            //    error: function (msg) {
+            //        HideLoading('tabs_left');
+            //        alert('Error happened. Please try to reload page.');
+            //    }
+            //});
+        });
+
+        
+    });
 }
 
 function ShowResearchTimeline() {
@@ -1485,7 +1526,8 @@ function show_short_res_table(container_id, grid_data)
                     In warzone2100 we have up to <b>400</b> different researches. <u>Remember:</u> before use a stuff you have to research that stuff.
                     To research something you have to build <b>Research Facility</b>. 
                 </p>
-               Warning: Research Tree Tab is very big and can be <span style="color:red">slow</span>.
+               Warning: Research Tree Tab is very big and can be <span style="color:red">slow</span>. 
+               Try to use 'static' non-interactive version of Research Tree: <a href="Research.php?tree_static=1">Static Tech Tree</a>
             </div>
             <div id="tabs_left" >
                 <ul>
