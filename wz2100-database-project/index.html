@@ -18,12 +18,12 @@
 <script>
 
     $(function () {
-        DrawSection_type2_1_html("intro_header", "Introduction").append($('#intro_content'));
-        DrawSection_type2_1_html("story_header", "Story").append($('#story_content'));
-        DrawSection_type2_1_html("manual_header", "Manual").append($('#manual_content'));
-        DrawSection_type2_1_html("reference_header", "Reference").append($('#reference_content'));
-        DrawSection_type2_1_html("adv_header", "Advanced Strategy").append($('#adv_content'));
-        DrawSection_type2_1_html("tools_header", "Tools").append($('#tools_content'));
+        DrawSection_type2_1_html("intro_header", "<span lang='en'>Introduction</span><span lang='ru'>Введение</span>").append($('#intro_content'));
+        DrawSection_type2_1_html("story_header", "<span lang='en'>Story</span><span lang='ru'>История</span>").append($('#story_content'));
+        DrawSection_type2_1_html("manual_header", "<span lang='en'>Manual</span><span lang='ru'>Руководство</span>").append($('#manual_content'));
+        DrawSection_type2_1_html("reference_header", "<span lang='en'>Reference</span><span lang='ru'>Справочники</span>").append($('#reference_content'));
+        DrawSection_type2_1_html("adv_header", "<span lang='en'>Advanced Strategy</span><span lang='ru'>Стратегии игры</span>").append($('#adv_content'));
+        DrawSection_type2_1_html("tools_header", "<span lang='en'>Tools</span><span lang='ru'>Инструменты</span>").append($('#tools_content'));
 
         $("._button").button({
             icons: {
@@ -65,9 +65,20 @@
                
             <div id="intro_header"></div>
             <div id="intro_content">
-		        Warzone 2100 is a real-time strategy game, originally developed by Pumpkin Studios and published by Eidos Interactive, now developed by the Warzone 2100 Project. Compared to other real-time strategy games, it has a greater focus on artillery, radar, and counter-battery technologies, more frequent in-game cinematic updates as game play progresses, a massive research tree, as well as a vehicle design system.
+                <span lang='en'>
+                    Warzone 2100 is a real-time strategy game, originally developed by Pumpkin Studios and published by Eidos Interactive, 
+                    now developed by the Warzone 2100 Project. Compared to other real-time strategy games, it has a greater focus on artillery, 
+                    radar, and counter-battery technologies, more frequent in-game cinematic updates as game play progresses, 
+                    a massive research tree, as well as a vehicle design system.
+                </span>
+                <span lang='ru'>
+                    Warzone 2100 - это стратегия в реальном времени (RTS), в стародавние времени разработанная компанией "Pumpkin Studios". 
+                    В настоящее время Warzone 2100 разрабатывается сообществом "Warzone 2100 Project" в режиме открытого исходного кода (open source). 
+                    <br />
+                    По сравнениею с другими стратегиями, в Warzone2100 имеется система дизайна танков, огромное число доступных улучшений (исследований). Также есть интересная система система артиллерии и контр-артиллерии.
+                </span>
                 <div style="text-align:center">
-                    <a class="_button" href="Introduction.html">Read more...</a>
+                    <a class="_button" href="Introduction.html"><span lang="en">Read more...</span><span lang="ru">Узнать больше...</span></a>
                 </div>
             </div>
         </td>
@@ -85,14 +96,14 @@
         <td colspan="2" style="width:50%; vertical-align:top;">
             <div id="manual_header"></div>
             <div id="manual_content">
-                <a class="_button" href="Introduction.html">Basics</a>
+                <a class="_button" href="Introduction.html"><span lang="en">Basics</span><span lang="ru">Основы</span></a>
                 <br />
-                <a class="_button" href="keyboard_shortcuts.html">Keyboard shortcuts</a>
+                <a class="_button" href="keyboard_shortcuts.html"><span lang="en">Keyboard shortcuts</span><span lang="ru">"Горячие" клавиши</span></a>
                 <br />
                 <a href="stats.php" class="ui-helper-reset" >
 		            <h3 class="ui-accordion-header ui-helper-reset ui-state-active ui-corner-all ui-accordion-icons ui-state-disabled" style="width:230px">
                         <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span>
-                        Walkthrough
+                        <span lang="en">Walkthrough</span><span lang="ru">Обзор</span>
 		            </h3>
                 </a>
             </div>
@@ -103,44 +114,42 @@
 
             <div id="reference_header"></div>
             <div id="reference_content">
-                <a class="_button" href="structure.php">Base structures</a> 
+                <a class="_button" href="structure.php"><span lang="en">Base structures</span><span lang="ru">Постройки базы</span></a> 
                 <br />
-                <a class="_button" href="structure.php#walls_header">Defensive Structures</a>
+                <a class="_button" href="structure.php#walls_header"><span lang="en">Defensive Structures</span><span lang="ru">Защитные постройки</span></a>
                 <br />
-                <a class="_button" href="weapons.php">Weapons</a>
+                <a class="_button" href="weapons.php"><span lang="en">Weapons</span><span lang="ru">Орудия</span></a>
                 <br />
-                <a class="_button" href="Body.php">Tank bodies</a>
+                <a class="_button" href="Body.php"><span lang="en">Tank bodies</span><span lang="ru">Корпуса танков</span></a>
                 <br />
-                <a class="_button" href="propulsion.php">Propulsion</a>
+                <a class="_button" href="propulsion.php"><span lang="en">Propulsion</span><span lang="ru">Ходовая</span></a>
                 <br />
-                <a class="_button" href="cyborgs.php">Cyborgs</a>
+                <a class="_button" href="cyborgs.php"><span lang="en">Cyborgs</span><span lang="ru">Киборги</span></a>
                 <br />
-                <a class="_button" href="SensorGuide.php">Sensors & Artillery</a>
+                <a class="_button" href="SensorGuide.php"><span lang="en">Sensors & Artillery</span><span lang="ru">Артиллерия и сенсоры</span></a>
                 <br />
-                <a class="_button" href="keyboard_shortcuts.html">Keyboard shortcuts</a>
-                <br />
-                <a class="_button" href="Research.php">Tech Tree</a>
+                <a class="_button" href="Research.php"><span lang="en">Tech Tree</span><span lang="ru">Дерево исследований</span></a>
 	            </div>
         </td>
         <td style="width:33%; vertical-align:top;">
             <div id="adv_header"></div>
             <div id="adv_content">
-                <a class="_button" href="earlygamestrategy.html">Early-game strategy</a>
+                <a class="_button" href="earlygamestrategy.html"><span lang="en">Early-game strategy</span><span lang="ru">Стратегии начала игры</span></a>
                 <br />
-                <a class="_button" href="weapons.php">Weapon guide</a>
+                <a class="_button" href="weapons.php"><span lang="en">Weapon guide</span><span lang="ru">Руководство по орудиям</span></a>
                 <br />
-                <a class="_button" href="Formulas.html">Formulas</a>
+                <a class="_button" href="Formulas.html"><span lang="en">Formulas</span><span lang="ru">Формулы</span></a>
                 <br />
-                <a class="_button" href="mp_ranking.html">Multiplayer rankings</a>
+                <a class="_button" href="mp_ranking.html"><span lang="en">Multiplayer rankings</span><span lang="ru">Рейтинг игроков Мультиплеера</span></a>
                 <br />
 	        </div>
         </td>
         <td style="width:33%; vertical-align:top;">
                 <div id="tools_header"></div>
                 <div id="tools_content">
-                    <a class="_buttonDesign" href="design.php">Unit designer</a>
+                    <a class="_buttonDesign" href="design.php"><span lang="en">Unit designer</span><span lang="ru">Дизайн танков</span></a>
                     <br />
-                    <a class="_buttonDatabase" href="stats.php">Database</a>
+                    <a class="_buttonDatabase" href="stats.php"><span lang="en">Database</span><span lang="ru">База параметров</span></a>
                     <br />
 	            </div>
         </td>

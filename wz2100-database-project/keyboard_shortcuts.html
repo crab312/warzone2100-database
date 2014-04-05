@@ -31,15 +31,15 @@
             $('#tabs_left ul:first li:eq(0) a').click(null, function (event) {
 
             });
-            DrawSection_type1_html("left-tabs-1", "").append('These are the default keyboard shortcuts. If you have customized your key mapping, your shortcuts may be different');
-            DrawSection_type1_html("left-tabs-1", "Game").append($('#game'));
-            DrawSection_type1_html("left-tabs-1", "Multiplayer communication").append($('#multiplayer'));
-            DrawSection_type1_html("left-tabs-1", "Groups").append($('#groups'));
-            DrawSection_type1_html("left-tabs-1", "Unit selection").append($('#by_type'));
-            DrawSection_type1_html("left-tabs-1", "Unit orders").append($('#unit_orders'));
-            DrawSection_type1_html("left-tabs-1", "Game control").append($('#game_control'));
-            DrawSection_type1_html("left-tabs-1", "View").append($('#view'));
-            DrawSection_type1_html("left-tabs-1", "Interface").append($('#interface'));
+            DrawSection_type1_html("left-tabs-1", "").append('<span lang="en">These are the default keyboard shortcuts. If you have customized your key mapping, your shortcuts may be different</span><span lang="ru">На данной странице приведены "горячие" клавиши при настройках по умолчанию. Если вы изменили настройки, то у вас могут бытьт другие значения клавиш.</span>');
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Game</span><span lang='ru'>Игра</span>").append($('#game'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Multiplayer communication</span><span lang='ru'>Чат</span>").append($('#multiplayer'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Groups</span><span lang='ru'>Управление группами</span>").append($('#groups'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Unit selection</span><span lang='ru'>Выбор юнитов</span>").append($('#by_type'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Unit orders</span><span lang='ru'>Приказы юнитов</span>").append($('#unit_orders'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Game control</span><span lang='ru'>Управление игрой</span>").append($('#game_control'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>View</span><span lang='ru'>Управление экраном</span>").append($('#view'));
+            DrawSection_type1_html("left-tabs-1", "<span lang='en'>Interface</span><span lang='ru'>Интерфейс</span>").append($('#interface'));
             
         });
 
@@ -55,20 +55,20 @@
         <td style="width:100%;vertical-align:top">
             <div id="tabs_left" >
                 <ul>
-                    <li><a href="#left-tabs-1">Keyboard shortcuts</a></li>
+                    <li><a href="#left-tabs-1"><span lang="en">Keyboard shortcuts</span><span lang="ru">"Горячие" клавиши (сочетания клавиш)</span></a></li>
                 </ul>
                 <div id="left-tabs-1">
                                
                     <div id="game">
                         <table class="list">
-                            <tbody><tr><th><kbd>Esc</kbd></th><td>Pause/Menu</td></tr>
-                                <tr><th><kbd>F1</kbd></th><td>Factory Menu</td></tr>
-                                <tr><th><kbd>F2</kbd></th><td>Research menu</td></tr>
-                                <tr><th><kbd>F3</kbd></th><td>Build Menu</td></tr>
-                                <tr><th><kbd>F4</kbd></th><td>Unit Design</td></tr>
-                                <tr><th><kbd>F5</kbd></th><td>Intelligence</td></tr>
-                                <tr><th><kbd>F6</kbd></th><td>Commanders</td></tr>
-                                <tr><th><kbd>`</kbd></th><td>Open/close messages at top</td></tr>
+                            <tbody><tr><th><kbd>Esc</kbd></th><td><span lang="en">Pause/Menu</span><span lang="ru">Пауза / Меню игры</span></td></tr>
+                                <tr><th><kbd>F1</kbd></th><td><span lang="en">Factory menu</span><span lang="ru">Меню фабрик</span></td></tr>
+                                <tr><th><kbd>F2</kbd></th><td><span lang="en">Research menu</span><span lang="ru">Меню исследований</span></td></tr>
+                                <tr><th><kbd>F3</kbd></th><td><span lang="en">Build Menu</span><span lang="ru">Меню постройки (грузовики)</span></td></tr>
+                                <tr><th><kbd>F4</kbd></th><td><span lang="en">Unit Design</span><span lang="ru">Дизайн танков</span></td></tr>
+                                <tr><th><kbd>F5</kbd></th><td><span lang="en">Intelligence</span><span lang="ru">Информация</span></td></tr>
+                                <tr><th><kbd>F6</kbd></th><td><span lang="en">Commanders</span><span lang="ru">Командиры</span></td></tr>
+                                <tr><th><kbd>`</kbd></th><td><span lang="en">Open/close messages at top</span><span lang="ru">Показать/скрыть сообщения сверху экрана</span></td></tr>
                             </tbody>
                         </table>
                     </div> 
@@ -77,112 +77,123 @@
                             <tbody>
                                 <tr>
                                     <th><kbd>Enter</kbd></th>
-                                    <td>Send message to other players</td>
+                                    <td><span lang="en">Send message to other players</span><span lang="ru">Отправить сообщение другим игрокам</span></td>
                                 </tr>
                                 <tr>
-                                    <th><kbd>Enter</kbd>+<kbd><em>[number]</em></kbd></th>
-                                    <td>Send private message to player by number (e.g. "0Hello" will be send to player0)</td>
+                                    <th><kbd>Enter</kbd>+<kbd><em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></kbd></th>
+                                    <td><span lang="en">Send private message to player by number (e.g. "0Hello" will be send to player0)</span><span lang="ru">Послать личное сообщние игроку N. (например "0Привет" будет отправлено игроку 0)</span></td>
                                 </tr>
-                                <tr><th><kbd>ALT</kbd>+<kbd>H</kbd></th><td>Drop beacon</td></tr>
+                                <tr><th><kbd>ALT</kbd>+<kbd>H</kbd></th><td><span lang="en">Drop beacon</span><span lang="ru">Установить "маяк" - мигающую красную точку на карте</span></td></tr>
                             </tbody>
                         </table>
-                        Note: Messages starting with <kbd>.</kbd> will be sent to allies only.
+                        <span lang="en">Note: Messages starting with <kbd>.</kbd> will be sent to allies only.</span><span lang="ru">Сообщения начинающиеся с точки, будут видны только вашим союзникам.</span>
                     </div>    
                     <div id="groups">
                         <table class="list">
                             <tbody>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd><em>[number]</em></kbd></th><td>Assign group <em>[number]</em></td></tr>
-                                <tr><th><kbd><em>[number]</em></kbd></th><td>Select group <em>[number]</em></td></tr>
-                                <tr><th><kbd class="lkey">Alt</kbd>+<kbd><em>[number]</em></kbd></th><td>Select commander <em>[number]</em></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd><em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></kbd></th>
+                                    <td><span lang="en">Assign group <em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></span><span lang="ru">Прикрепить группу к <em>[номер]</em></span></td></tr>
+                                <tr><th><kbd><em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></kbd></th>
+                                    <td> <span lang="en">Select group</span><span lang="ru">Выбрать группу</span><em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></td></tr>
+                                <tr><th><kbd class="lkey">Alt</kbd>+<kbd><em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></kbd></th>
+                                    <td><span lang="en">Select commander</span><span lang="ru">Выбрать командира</span> <em><span lang="en">[number]</span><span lang="ru">[номер]</span></em></td></tr>
                             </tbody>
                         </table>
                     </div>    
                     <div id="by_type">
                         <table class="list">
                             <tbody>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>U</kbd></th><td>Select all <u>u</u>nits</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Z</kbd></th><td>Select all similar units</td></tr>
-                                <tr><th><span class="dblclick"><span class="click">double-click</span></span></th><td>Select all similar units</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>S</kbd></th><td>Select all units on <u>s</u>creen</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>D</kbd></th><td>Select all heavily <u>d</u>amaged units</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>A</kbd></th><td>Select all <u>a</u>ttack units (units with weapons)</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>V</kbd></th><td>Select all <u>V</u>TOLs</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>H</kbd></th><td>Select all <u>h</u>over units</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>W</kbd></th><td>Select all <u>w</u>heeled units</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>F</kbd></th><td>Select all hal<u>f</u>-tracked units</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>T</kbd></th><td>Select all <u>t</u>racked units</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>U</kbd></th><td><span lang="en">Select all units</span><span lang="ru">Выбрать все юниты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Z</kbd></th><td><span lang="en">Select all similar units</span><span lang="ru">Выбрать только одинаковые юниты</span></td></tr>
+                                <tr><th><span class="dblclick"><span class="click"><span lang="en">double-click</span><span lang="ru">двойнок клик</span></span></span></th><td><span lang="en">Select all similar units</span><span lang="ru">Выбрать только одинаковые юниты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>S</kbd></th><td><span lang="en">Select all units on screen</span><span lang="ru">Выбрать все юниты на экране</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>D</kbd></th><td><span lang="en">Select all heavily damaged units</span><span lang="ru">Выбрать все тяжело поврежденные юнгиты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>A</kbd></th><td><span lang="en">Select all attack units (units with weapons)</span><span lang="ru">Выбрать все боевые юниты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>V</kbd></th><td><span lang="en">Select all VTOLs</span><span lang="ru">Выбрать СВВП-юниты (VTOL)</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>H</kbd></th><td><span lang="en">Select all hover units</span><span lang="ru">Выбрать юниты на возд. подушке (hover)</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>W</kbd></th><td><span lang="en">Select all wheeled units</span><span lang="ru">Выбрать все колесные юниты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>F</kbd></th><td><span lang="en">Select all half-tracked units</span><span lang="ru">Выбрать все полугусеничные юниты</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>T</kbd></th><td><span lang="en">Select all tracked units</span><span lang="ru">Выбрать все гусеничные юниты</span></td></tr>
                             </tbody>
                         </table>
                     </div>  
                     <div id="unit_orders">
                         <table class="list">
                             <tbody>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<span class="click">click</span></th><td>Queue order *</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>0</kbd></th><td>Open orders menu</td></tr>
-                                <tr><th><span class="click">right-click</span></th><td>Open orders menu</td></tr>
-                                <tr><th><kbd>/</kbd></th><td>Do or Die! (Do not retreat automatically)</td></tr>
-                                <tr><th><kbd>.</kbd></th><td>Retreat at Heavy Damage</td></tr>
-                                <tr><th><kbd>,</kbd></th><td>Retreat at Medium Damage</td></tr>
-                                <tr><th><kbd>F</kbd></th><td>Fire at Will</td></tr>
-                                <tr><th><kbd>E</kbd></th><td>Return Fire</td></tr>
-                                <tr><th><kbd>C</kbd></th><td>Hold Fire</td></tr>
-                                <tr><th><kbd>S</kbd></th><td>Hold Position</td></tr>
-                                <tr><th><kbd>P</kbd></th><td>Pursue</td></tr>
-                                <tr><th><kbd>Q</kbd></th><td>Patrol</td></tr>
-                                <tr><th><kbd>I</kbd></th><td>Optimum Range</td></tr>
-                                <tr><th><kbd>U</kbd></th><td>Long Range</td></tr>
-                                <tr><th><kbd>R</kbd></th><td>Return for Repair</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>R</kbd></th><td>Return for Recycling</td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<span class="click"><span lang="en">click</span><span lang="ru">клик</span></span></th><td><span lang="en">Queue order *</span><span lang="ru">Очередь приказов *</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>0</kbd></th><td><span lang="en">Open orders menu</span><span lang="ru">Открыть меню приказов</span></td></tr>
+                                <tr><th><span class="click">right-click</span></th><td><span lang="en">Open orders menu</span><span lang="ru">Открыть меню приказов</span></td></tr>
+                                <tr><th><kbd>/</kbd></th><td><span lang="en">Do or Die! (Do not retreat automatically)</span><span lang="ru">Сделай или умри! (не отступать автоматически)</span></td></tr>
+                                <tr><th><kbd>.</kbd></th><td><span lang="en">Retreat at Heavy Damage</span><span lang="ru">Отступать при тяжелом уроне</span></td></tr>
+                                <tr><th><kbd>,</kbd></th><td><span lang="en">Retreat at Medium Damage</span><span lang="ru">Отступать при среднем уроне</span></td></tr>
+                                <tr><th><kbd>F</kbd></th><td><span lang="en">Fire at Will</span><span lang="ru">Стрелять самостоятельно</span></td></tr>
+                                <tr><th><kbd>E</kbd></th><td><span lang="en">Return Fire</span><span lang="ru">Стрелять только в ответ</span></td></tr>
+                                <tr><th><kbd>C</kbd></th><td><span lang="en">Hold Fire</span><span lang="ru">Не стрелять</span></td></tr>
+                                <tr><th><kbd>S</kbd></th><td><span lang="en">Hold Position</span><span lang="ru">Держать позицию</span></td></tr>
+                                <tr><th><kbd>P</kbd></th><td><span lang="en">Pursue</span><span lang="ru">Предследовать</span></td></tr>
+                                <tr><th><kbd>Q</kbd></th><td><span lang="en">Patrol</span><span lang="ru">Патрулировать</span></td></tr>
+                                <tr><th><kbd>I</kbd></th><td><span lang="en">Optimum Range</span><span lang="ru">Оптимальная дальность огня</span></td></tr>
+                                <tr><th><kbd>U</kbd></th><td><span lang="en">Long Range</span><span lang="ru">Максиальная дальность огня</span></td></tr>
+                                <tr><th><kbd>R</kbd></th><td><span lang="en">Return for Repair</span><span lang="ru">Вернуться для починки</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>R</kbd></th><td><span lang="en">Return for Recycling</span><span lang="ru">Вернуться для утилизации (удаление юнита)</span></td></tr>
                             </tbody>
                         </table>
+                        <span lang="en">
 <p>
 * "Queue order" means that when you <kbd class="lkey">Ctrl</kbd>+<span class="click">click</span>, the unit will do what it would do if you had clicked, but it will do it <em>after</em> it's finished what it's currently doing. You can hold down <kbd class="lkey">Ctrl</kbd> and tell the unit to do a whole bunch of things, and it will do them in order.
 </p>
+                        </span>
+                        <span lang="ru">
+<p>
+* "Очередь приказов" означает что когда вы удерживаете нажатой клавишу <kbd class="lkey">Ctrl</kbd> то вы можете отдать несколько приказов юниту, которые будут выполняться им последовтально.
+</p>
+                        </span>
+
                     </div> 
                     <div id="game_control">
                         <table class="list">
                         <tbody>
-                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>=</kbd></th><td>Increase game speed</td></tr>
-                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>−</kbd></th><td>Decrease game speed</td></tr>
-                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll up</span></th><td>Increase game speed</td></tr>
-                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll down</span></th><td>Decrease game speed</td></tr>
-                            <tr><th><span class="click">NUM</span><kbd>.</kbd></th><td>Toggle sound</td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>=</kbd></th><td><span lang="en">Increase game speed</span><span lang="ru">Увеличить скорость игры</span></td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>−</kbd></th><td><span lang="en">Decrease game speed</span><span lang="ru">Замедлить игру</span></td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll up</span></th><td><span lang="en">Increase game speed</span><span lang="ru">Увеличить скорость игры</span></td></tr>
+                            <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd class="lkey">Alt</kbd>+<span class="click">scroll down</span></th><td><span lang="en">Decrease game speed</span><span lang="ru">Замедлить игру</span></td></tr>
+                            <tr><th><span class="click">NUM</span><kbd>.</kbd></th><td><span lang="en">Toggle sound</span><span lang="ru">Включить/выключить звук</span></td></tr>
                         </tbody>
                         </table>
                     </div>         
                     <div id="view">
                         <table class="list">
                             <tbody>
-                                <tr><th><kbd>B</kbd></th><td>Center view on Command Center</td></tr>
-                                <tr><th><kbd>F12</kbd></th><td>View location of previous message</td></tr>
+                                <tr><th><kbd>B</kbd></th><td><span lang="en">Center view on Command Center</span><span lang="ru">Установить экран на расположении командного центра</span></td></tr>
+                                <tr><th><kbd>F12</kbd></th><td><span lang="en">View location of previous message</span><span lang="ru">Установить экран на местоположении последнего сообщения игры</span></td></tr>
                             </tbody>
                         </table>
 
                         <table class="list">
                             <tbody>
-                                <tr><th><span class="click">scroll up</span></th><td>Zoom in</td></tr>
-                                <tr><th><span class="click">scroll down</span></th><td>Zoom out</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>+</kbd></th><td>Zoom in</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>-</kbd></th><td>Zoom out</td></tr>
-                                <tr><th><kbd>Backspace</kbd></th><td>Snap (rotate) view to North</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>8</kbd></th><td>Pitch back (rotate up)</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>2</kbd></th><td>Pitch forward (rotate down)</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>5</kbd></th><td>Reset pitch (reset vertical rotation)</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>4</kbd></th><td>Rotate left</td></tr>
-                                <tr><th><span class="click">NUM</span><kbd>6</kbd></th><td>Rotate right</td></tr>
-                                <tr><th><kbd><em>space</em></kbd></th><td>Tracking camera (follow selected unit)</td></tr>
+                                <tr><th><span class="click">scroll up</span></th><td><span lang="en">Zoom in</span><span lang="ru">Приблизить</span></td></tr>
+                                <tr><th><span class="click">scroll down</span></th><td><span lang="en">Zoom out</span><span lang="ru">Отдалить</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>+</kbd></th><td><span lang="en">Zoom in</span><span lang="ru">Приблизить</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>-</kbd></th><td><span lang="en">Zoom out</span><span lang="ru">Отдалить</span></td></tr>
+                                <tr><th><kbd>Backspace</kbd></th><td><span lang="en">Snap (rotate) view to North</span><span lang="ru">Повернуть лицом к северу</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>8</kbd></th><td><span lang="en">Pitch back (rotate up)</span><span lang="ru">Повернуть назад</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>2</kbd></th><td><span lang="en">Pitch forward (rotate down)</span><span lang="ru">Повернуть вперед</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>5</kbd></th><td><span lang="en">Reset pitch (reset vertical rotation)</span><span lang="ru">Отменить поворот</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>4</kbd></th><td><span lang="en">Rotate left</span><span lang="ru">Повернуть влево</span></td></tr>
+                                <tr><th><span class="click">NUM</span><kbd>6</kbd></th><td><span lang="en">Rotate right</span><span lang="ru">Повернуть вправо</span></td></tr>
+                                <tr><th><kbd><em>space</em></kbd></th><td><span lang="en">Tracking camera (follow selected unit)</span><span lang="ru">Следящая камера (следовать за выделенным юнитом)</span></td></tr>
                             </tbody>
                         </table>
                     </div>    
                     <div id="interface">
                         <table class="list">
                             <tbody>
-                                <tr><th><kbd>Z</kbd></th><td>Toggle sensor display</td></tr>
-                                <tr><th><kbd>F10</kbd></th><td>Take screenshot</td></tr>
-                                <tr><th><kbd class="lkey">Shift</kbd>+<kbd>Tab</kbd></th><td>Toggle radar colors</td></tr>
-                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Tab</kbd></th><td>Toggle radar terrain</td></tr>
-                                <tr><th><kbd>Tab</kbd></th><td>Hide/show interface</td></tr>
-                                <tr><th>Hold down <kbd>Ctrl</kbd></th><td>See Nexus resistance</td></tr>
+                                <tr><th><kbd>Z</kbd></th><td><span lang="en">Toggle sensor display</span><span lang="ru">Включить/отключить показ дальности сенсоров</span></td></tr>
+                                <tr><th><kbd>F10</kbd></th><td><span lang="en">Take screenshot</span><span lang="ru">Сделать снимок экрана (скриншот)</span></td></tr>
+                                <tr><th><kbd class="lkey">Shift</kbd>+<kbd>Tab</kbd></th><td><span lang="en">Toggle radar colors</span><span lang="ru">Перелючатель цветов на миникарте</span></td></tr>
+                                <tr><th><kbd class="lkey">Ctrl</kbd>+<kbd>Tab</kbd></th><td><span lang="en">Toggle radar terrain</span><span lang="ru">Переключатель отображения миникарты</span></td></tr>
+                                <tr><th><kbd>Tab</kbd></th><td><span lang="en">Hide/show interface</span><span lang="ru">Показать/скрыть элементы управления (интерфейс)</span></td></tr>
+                                <tr><th>Hold down <kbd>Ctrl</kbd></th><td><span lang="en">See Nexus resistance</span><span lang="ru">Показать Нексус-сопротивление</span></td></tr>
                             </tbody>
                         </table>
                     </div>                 

@@ -39,7 +39,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="saveme.php" />
-    <Compile Include="Script1.php" />
     <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\search.php">
       <SubType>Code</SubType>
     </Compile>

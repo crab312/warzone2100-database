@@ -136,6 +136,7 @@ function InitDataObjects() {
                         data_obj.loaded_data_hash[terrainIndex][prop_type] = vect[prop_index];
                     }
                 }
+                data_obj.grid_colModel = JSON.parse(JSON.stringify(data_obj.grid_colModel_default));
                 for (var prop_type in PropulsionType.loaded_data_hash) {
                     data_obj.grid_colModel.push(
                     {
@@ -145,10 +146,13 @@ function InitDataObjects() {
                 DrawLeftGrid(data_obj);
             });
         };
-        obj.grid_colModel = [
+
+        var col_model_default = [
             { label: 'Ter.Id', name: "grid_id", key: true, width: "40px", fixed: true },
             { label: '<span lang="en">Terrain Name</span><span lang="ru">Название территории</span>', name: "terrain_name", width: "150px", fixed: true },
         ];
+        obj.grid_colModel_default = col_model_default;
+        obj.grid_colModel = JSON.parse(JSON.stringify(col_model_default));
         obj.non_researchable = true;
         TerrainTable = obj;
         Objects.push(obj);
@@ -255,11 +259,10 @@ function InitDataObjects() {
             { label: "<span lang='en'>Hit Points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 60 },
             { label: "<span lang='en'>Armor Kineric</span><span lang='ru'>Броня кинетич.</span>", name: "armourKinetic", width: 60 },
             { label: "<span lang='en'>Armor Thermal</span><span lang='ru'>Броня огнен.</span>", name: "armourHeat", width: 60 },
-           // { label: "Min Research Time", name: "minResearchTime", },
         ];
         obj.groupingView = {
             groupField: ['size'],
-            groupColumnShow: [false],//style="height:27px; width:100%; font-size:1.2em; color: darkred;padding-left:50px;padding-top: 10px;"
+            groupColumnShow: [false],
             groupText: ['<div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top:16px; font-size:1.1em" ><b>{0}</b></div>'],
             groupCollapse: false,
             groupOrder: ['asc'],
@@ -285,9 +288,13 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
-            { label: "Name", name: "name", width: 90, formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
-            //{ label: "Class", name: "type" },
-            { label: "Max Speed", name: "speed", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue/128).toFixed(2) }, width: 60 },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", width: 90, formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>' }, },
+            {
+                label: "<span lang='en'>Max Speed</span><span lang='ru'>Макс. скорость</span>", name: "speed", sorttype: "int",
+                formatter: function (cellvalue, options, rowObject) {
+                    return (cellvalue / 128).toFixed(2)
+                }, width: 60
+            },
             {
                 label: "Engine power %", name: "buildPower",
                 formatter: function (cellvalue, options, rowObject) {
@@ -297,10 +304,10 @@ function InitDataObjects() {
                 },
                 sorttype: "int", width:60
             },
-            { label: "Price %", name: "buildPower", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width:60 },
-            { label: "Build time %", name: "buildPoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-            { label: "Hit Points %", name: "hitpoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-            { label: "Weight %", name: "weight", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+            { label: "<span lang='en'>Price %</span><span lang='ru'>Стоимость %</span>", name: "buildPower", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+            { label: "<span lang='en'>Build time %</span><span lang='ru'>Время производства %</span>", name: "buildPoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+            { label: "<span lang='en'>Hit Points %</span><span lang='ru'>Очки жизни (HP) %</span>", name: "hitpoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+            { label: "<span lang='en'>Weight %</span><span lang='ru'>Вес %</span>", name: "weight", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
         ];
         Propulsion = obj;
         Objects.push(obj);
@@ -322,21 +329,13 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
-            { label: "Name", name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>' }, },
-            { label: "Class", name: "strength" },
-            { label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
-            { label: "Build time", name: "buildPoints", width: 45, sorttype: "int" },
-            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
-            { label: "Armor kinetic", name: "armour", width: 45, sorttype: "int" },
-            { label: "Armor thermal", name: "armour", width: 45, sorttype: "int" },
-            //{
-            //    label: "Weapons", sortable:false, width: 100,
-            //    formatter: function (cellvalue, options, rowObject) {
-            //        if (rowObject.weapons != undefined) {
-                        
-            //        }
-            //    },
-            //},
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>' }, },
+            { label: "<span lang='en'>Class</span><span lang='ru'>Класс</span>", name: "strength" },
+            { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+            { label: "<span lang='en'>Build time</span><span lang='ru'>Время постройки</span>", name: "buildPoints", width: 45, sorttype: "int" },
+            { label: "<span lang='en'>Hit points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 45, sorttype: "int" },
+            { label: "<span lang='en'>Armor kinetic</span><span lang='ru'>Броня кинетич.</span>", name: "armour", width: 45, sorttype: "int" },
+            { label: "<span lang='en'>Armor thermal</span><span lang='ru'>Броня огнен.</span>", name: "armour", width: 45, sorttype: "int" },
         ];
         obj.groupingView = {
             groupField: ['strength'],
@@ -367,9 +366,7 @@ function InitDataObjects() {
             var data_obj = this;
             data_obj.LoadDataFunction(data_obj, function () {
                 var container_id = "Grid_COntainer2";
-               // ResetGridContainer("Props_Container", false);
                 DrawGrid(data_obj, container_id, null);
-                //DrawLeftGrid(data_obj);
             });
         };
 
@@ -414,37 +411,37 @@ function InitDataObjects() {
 
         obj.grid_colModel = [
             {
-                label: "Weapon Class", name: "grid_id", key: true, width: 110, fixed:true,
+                label: "<span lang='en'>Weapon Class</span><span lang='ru'>Класс орудия</span>", name: "grid_id", key: true, width: 110, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     return "<div style='font-size:0.9em'><b>" + cellvalue + "</b></div>";
                 },
             },
             {
-                name: "Weapons", width: '530px',
+                label: "<span lang='en'>Weapons</span><span lang='ru'>Орудия</span>", name: "Weapons", width: '530px',
                 formatter: formatter_weapon_icons,
             },
             {
-                label: "Half-Tracked", name: "Half-Tracked", width:'80px',
+                label: "<span lang='en'>Half-Tracked</span><span lang='ru'>Полугусеницы</span>", name: "Half-Tracked", width: '80px',
                 formatter: formatter_modifier
             },
             {
-                label: "Wheeled", name: "Wheeled", width: '80px',
+                label: "<span lang='en'>Wheeled</span><span lang='ru'>Колеса</span>", name: "Wheeled", width: '80px',
                 formatter: formatter_modifier,
             },
             {
-                label: "Tracked", name: "Tracked", width: '80px',
+                label: "<span lang='en'>Tracked</span><span lang='ru'>Гусеницы</span>", name: "Tracked", width: '80px',
                 formatter: formatter_modifier, 
             },
             {
-                label: "Hover", name: "Hover", width: '80px',
+                label: "<span lang='en'>Hover</span><span lang='ru'>Воздушная подушка</span>", name: "Hover", width: '80px',
                 formatter: formatter_modifier, 
             },
             {
-                label: "Cyborgs", name: "Legged", width: '80px',
+                label: "<span lang='en'>Cyborgs</span><span lang='ru'>Киборги</span>", name: "Legged", width: '80px',
                 formatter: formatter_modifier, 
             },
             {
-                label: "VTOL", name: "Lift", width: '80px',
+                label: "<span lang='en'>VTOL</span><span lang='ru'>СВВП (VTOL)</span>", name: "Lift", width: '80px',
                 formatter: formatter_modifier, 
             },
         ];
@@ -473,23 +470,23 @@ function InitDataObjects() {
                 },
             },
             {
-                name: "Weapons", width: '580px',
+                label: "<span lang='en'>Weapons</span><span lang='ru'>Орудия</span>", name: "Weapons", width: '580px',
                 formatter: formatter_weapon_icons,
             },
             {
-                label: "SOFT", name: "SOFT", width: '80px',
+                label: "<span lang='en'>SOFT</span><span lang='ru'>Слабая (SOFT)</span>", name: "SOFT", width: '80px',
                 formatter: formatter_modifier,
             },
             {
-                label: "MEDIUM", name: "MEDIUM", width: '80px',
+                label: "<span lang='en'>MEDIUM</span><span lang='ru'>Средняя (MEDIUM)</span", name: "MEDIUM", width: '80px',
                 formatter: formatter_modifier,
             },
             {
-                label: "HARD", name: "HARD", width: '80px',
+                label: "<span lang='en'>HARD</span><span lang='ru'>Укрепленная (HARD)</span", name: "HARD", width: '80px',
                 formatter: formatter_modifier,
             },
             {
-                label: "BUNKER", name: "BUNKER", width: '80px',
+                label: "<span lang='en'>BUNKER</span><span lang='ru'>Бункер</span", name: "BUNKER", width: '80px',
                 formatter: formatter_modifier,
             },
         ];
@@ -509,13 +506,13 @@ function InitDataObjects() {
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
             {
-                label: "Name", name: "name", formatter: function (cellvalue, options, rowObject) {
+                label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", formatter: function (cellvalue, options, rowObject) {
                     return '<b>' + cellvalue + '</b>';
                 },
                 width: 350,
             },
             {
-                label: "Price", name: "researchPower", formatter: function (cellvalue, options, rowObject) {
+                label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "researchPower", formatter: function (cellvalue, options, rowObject) {
                     return '$' + cellvalue;
                 },
                 width: 50,
@@ -560,9 +557,9 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "repairPoints", name: "repairPoints" },
-            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name" },
+            { label: "<span lang='en'>repairPoints</span><span lang='ru'>Очки ремонта</span>", name: "repairPoints" },
+            { label: "<span lang='en'>Hit points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 45, sorttype: "int" },
         ];
         Repair = obj;
         Objects.push(obj);
@@ -579,10 +576,10 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Power of build ray", name: "buildPoints" },
-            { label: "Price", name: "buildPower" },
-            { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name" },
+            { label: "<span lang='en'>Power of build ray</span><span lang='ru'>Очки строительства</span>", name: "buildPoints" },
+            { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower" },
+            { label: "<span lang='en'>Hit points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 45, sorttype: "int" },
         ];
         obj.icon_folder = "SupportTurrets";
         obj.GetIconHtml_Function = function (rowObject, size) {
@@ -604,10 +601,10 @@ function InitDataObjects() {
             },
             grid_colModel: [
                 { label: "ID", name: "grid_id", key: true, hidden: true },
-                { label: "Name", name: "name" },
-                { label: "Range", name: "range" },
-                { label: "Price", name: "buildPower" },
-                { label: "Hit points", name: "hitpoints", width: 45, sorttype: "int" },
+                { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name" },
+                { label: "<span lang='en'>Range</span><span lang='ru'>Дальность</span>", name: "range" },
+                { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower" },
+                { label: "<span lang='en'>Hit points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 45, sorttype: "int" },
             ],
             icon_folder: "SupportTurrets",
             GetIconHtml_Function: function (rowObject, size) {
@@ -628,8 +625,8 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Range", name: "range" },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name" },
+            { label: "<span lang='en'>Range</span><span lang='ru'>Дальность</span>", name: "range" },
         ];
         obj.icon_folder = "SupportTurrets";
         obj.GetIconHtml_Function = function (rowObject, size) {
@@ -650,9 +647,9 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name" },
-            { label: "Armour", name: "armour" },
-            { label: "Hit Points", name: "hitpoints" },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name" },
+            { label: "<span lang='en'>Armour</span><span lang='ru'>Броня</span>", name: "armour" },
+            { label: "<span lang='en'>Hit points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints" },
         ];
         obj.non_researchable = true;
         Features = obj;
@@ -670,10 +667,10 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, hidden: true },
-            { label: "Name", name: "name", width: 160, fixed: true },
+            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", width: 160, fixed: true },
             //{ label: "Type", name: "type", width: 50, fixed: true },
             {
-                label: "Body", name: "compBody", width: 80, fixed: true,
+                label: "<span lang='en'>Body</span><span lang='ru'>Корпус</span>", name: "compBody", width: 80, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Bodies.loaded_data_hash[cellvalue] != undefined) {
                         return Bodies.loaded_data_hash[cellvalue].name;
@@ -683,7 +680,7 @@ function InitDataObjects() {
                 },
             },
             {
-                label: "Propulsion", name: "compPropulsion", width: 100, fixed: true,
+                label: "<span lang='en'>Propulsion</span><span lang='ru'>Ходовая</span>", name: "compPropulsion", width: 100, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Propulsion.loaded_data_hash[cellvalue] != undefined) {
                         return Propulsion.loaded_data_hash[cellvalue].name;
@@ -694,7 +691,7 @@ function InitDataObjects() {
             },
             
             {
-                label: "Weapons", name: "weapons", width: 200, fixed: true,
+                label: "<span lang='en'>Weapons</span><span lang='ru'>Орудия</span>", name: "weapons", width: 200, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (cellvalue == undefined) {
                         return '';
@@ -824,7 +821,8 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
     if (DataObject.GetIconHtml_Function != undefined) {
 
         finalColModel = [{
-            name: 'pic',
+            label: "<span lang='en'>pic</span><span lang='ru'>иконка</span>",
+            name: "pic",
             width: '65px',
             sortable: false,
             search: false,
@@ -878,7 +876,7 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
         viewrecords: true,
         pgbuttons: false, //hide paging buttons
         pginput: false,   //hide current page number
-        recordtext: "records: {2}",
+        recordtext: "<span lang='en'>records</span><span lang='ru'>записей</span>: {2}",
         ignoreCase: true, //make search case insensitive
         grouping: DataObject.groupingView != undefined,
         groupingView: groupEnabled ? DataObject.groupingView : undefined,
@@ -893,8 +891,8 @@ function DrawGrid(DataObject, container_id, on_select_callback, container_height
     grid.jqGrid('navGrid', grid_toolbar_id, { view: true, edit: false, add: false, del: false, search: true, refresh: false, cloneToTop: true });
 
     myAddButton({
-        caption: "Choose columns",
-        title: "Hide/Show additional columns",
+        caption: "<span lang='en'>Choose columns</span><span lang='ru'>Выбор колонок</span>",
+        title: "<span lang='en'>Hide/Show additional columns</span><span lang='ru'>Показать/спрятать дополнительные колонки</span>",
         onClickButton: function () {
             ShowSelectColumns(DataObject);
             // grid.jqGrid('columnChooser');
@@ -985,7 +983,7 @@ function LoadDataObject(DataObject, callback_function) {
                 },
                 error: function (msg) {
                     HideLoading('tabs_left');
-                    alert('Error happened. Please try to reload page.');
+                    alert("<span lang='en'>Error happened. Please try to reload page.</span><span lang='ru'>Произошла ошибка. Попробуйте перезагрузить страницу.</span>");
                 }
             });
         }
@@ -1016,8 +1014,8 @@ function ShowProps(RowData) {
         height: "auto",
         colModel:
             [
-                { label: "Name", name: "id", key: true, width: "120",fixed:true },
-                { label: "Value", name: "value" },
+                { label: "<span lang='en'>Name</span><span lang='ru'>Наименование</span>", name: "id", key: true, width: "120", fixed: true },
+                { label: "<span lang='en'>Value</span><span lang='ru'>Значение</span>", name: "value" },
             ],
         autowidth: true,
         //width: 500,
@@ -1053,7 +1051,7 @@ function ShowSelectColumns(DataObject) {
 
     LeftRootsBox_OpenedDialog = $("#dialog_grid").dialog(
     {
-        title: "Choose your columns",
+        title: "<span lang='en'>Choose your columns</span><span lang='ru'>Включите или отключите показ колонок по вашем вкусу</span>",
         buttons:
         {
             "Save": function () {
@@ -1067,7 +1065,7 @@ function ShowSelectColumns(DataObject) {
                     }
                 }
                 if (sel_cnt == 0) {
-                    alert('Please select 1 column at least.');
+                    alert("<span lang='en'>Please select 1 column at least.</span><span lang='ru'>Вы должны выбрать хотя бы одну колонку.</span>");
                 } else {
                     localStorage[DataObject.sysid + "_SelectedColumns"] = JSON.stringify(selected_columns);
                     DrawLeftGrid(DataObject);
@@ -1094,9 +1092,9 @@ function ShowSelectColumns(DataObject) {
         height: "auto",
         colModel:
             [
-                { label: "System Name", name: "name", key: true, width: 100 },
-                { label: "Name", name: "label", width: 150 },
-                { label: "Description", name: "col_descr", width: 150 },
+                { label: "<span lang='en'>System Name</span><span lang='ru'>Системное имя</span>", name: "name", key: true, width: 100 },
+                { label: "<span lang='en'>Name</span><span lang='ru'>Наименование</span>", name: "label", width: 150 },
+                { label: "<span lang='en'>Description</span><span lang='ru'>Описание</span>", name: "col_descr", width: 150 },
                 {
                     label: ' - ',
                     name: 'col_visible',
@@ -1149,7 +1147,13 @@ function DrawPageHeader() {
                             \
                                 	<li>\
                                         <form action="http://forums.wz2100.net/search.php" method="get" id="search">\
-                                            <input name="keywords" type="text" maxlength="128" title="Search for keywords" class="quicksearch" value="Search…" onclick="if(this.value==\'Search…\')this.value=\'\';" onblur="if(this.value==\'\')this.value=\'Search…\';">\
+                                            <span lang="en">\
+                                                <input name="keywords" type="text" maxlength="128" title="Search for keywords" class="quicksearch" value="Search…" onclick="if(this.value==\'Search…\')this.value=\'\';" onblur="if(this.value==\'\')this.value=\'Search…\';">\
+                                            </span>\
+                                            <span lang="ru">\
+                                                <input name="keywords" type="text" maxlength="128" title="Поиск по ключевым словам" class="quicksearch" value="Поиск…" onclick="if(this.value==\'Поиск…\')this.value=\'\';" onblur="if(this.value==\'\')this.value=\'Поиск…\';">\
+                                            </span>\
+                                            \
                                         </form>\
                                     </li>\
                                 \
@@ -1252,21 +1256,21 @@ function SetSiteLanguage()
             en: '\
             span[lang = "en"]\
             {\
-                /*display: none;*/\
+                /*display: none !important;*/\
             }\
             span[lang = "ru"]\
             {\
-                display: none;\
+                display: none !important;\
             }   \
         ',
             ru: '\
             span[lang = "en"]\
             {\
-                display: none;\
+                display: none !important;\
             }\
             span[lang = "ru"]\
             {\
-                /*display: none;*/\
+                /*display: none !important;*/\
             }   \
             '
     };
@@ -1304,7 +1308,7 @@ function DrawResearchSlider(container_id, init_value, slide_function) {
     $('#' + container_id).html('');
     var slider_id = container_id + "_research_slider";
     var input_id = container_id + "_research_slider_input";
-    var slider_elem = $('<label for="' + input_id + '">Research time:</label><input type="text" id="' + input_id + '" style="border: 0; font-weight: bold;" /><div id="' + slider_id + '"></div>');
+    var slider_elem = $('<label for="' + input_id + '"><span lang="en">Research time:</span><span lang="ru">Время исследований:</span></label><input type="text" id="' + input_id + '" style="border: 0; font-weight: bold;" /><div id="' + slider_id + '"></div>');
     slider_elem.appendTo($("#" + container_id));
 
     var func_val_slider = function (value) {
@@ -1484,7 +1488,7 @@ function DrawDamageModifiersTable(container_id) {
     var grid = $(ResetGridContainer(container_id + '_1'));
     grid.jqGrid
     ({
-        caption: 'Weapon to Propulsion damage modifiers',
+        caption: '<span lang="en">Weapon to Propulsion damage modifiers</span><span lang="ru">Модификаторы урона орудий по типам ходовой</span>',
         datatype: "local",
         data: grid_data,
         rowNum: grid_data.length,
@@ -1513,7 +1517,7 @@ function DrawDamageModifiersTable(container_id) {
     var grid = $(ResetGridContainer(container_id + '_2'));
     grid.jqGrid
     ({
-        caption:'Weapon to Structure damage modifiers',
+        caption: '<span lang="en">Weapon to Structure damage modifiers</span><span lang="ru">Модификаторы урона орудий по типам построек</span>',
         datatype: "local",
         data: grid_data,
         rowNum: grid_data.length,
