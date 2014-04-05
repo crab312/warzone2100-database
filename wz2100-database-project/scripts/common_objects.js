@@ -57,18 +57,23 @@ var TerrainTypesIndexes = [
 
 $(function () {
 
-    if (($.browser.name == "Safari" && $.browser.fullVersion < '5.1') ||
-        ($.browser.name == "Opera" && $.browser.version < '13') ||
-        ($.browser.name == "Chrome" && $.browser.version < '32') ||
-        ($.browser.name == "Microsoft Internet Explorer" && $.browser.version < '10') ||
-        ($.browser.name == "Firefox" && $.browser.version < '25')) 
-    {
-        var html = '<div id="browser_warning" style="padding:10px;font-size:1.3em;background-color:#ffffdd;color;red;position:fixed;top:10px;left:10%;right:10%;z-index:1000;cursor:pointer;">Warning! You are unsing some old version of your web-browser. Some features of this site might be unsupported. Please upgrade your browser. ' + $.browser.name + $.browser.fullVersion + '</div>';
-        $('body').append(html);
-        $('#browser_warning').click(null, function(event){
-            $('#browser_warning').remove();
-        });
-    }
+    //Browser version check
+    //if (($.browser.name == "Safari" && $.browser.fullVersion < '5.1') ||
+    //    ($.browser.name == "Opera" && $.browser.version < '13') ||
+    //    ($.browser.name == "Chrome" && $.browser.version < '32') ||
+    //    ($.browser.name == "Microsoft Internet Explorer" && $.browser.version < '10') ||
+    //    ($.browser.name == "Firefox" && $.browser.version < '25')) 
+    //{
+    //    var html = '<div id="browser_warning" style="padding:10px;font-size:1.3em;background-color:#ffffdd;color;red;position:fixed;top:10px;left:10%;right:10%;z-index:1000;cursor:pointer;">Warning! You are unsing some old version of your web-browser. Some features of this site might be unsupported. Please upgrade your browser. ' + $.browser.name + $.browser.fullVersion + '</div>';
+    //    $('body').append(html);
+    //    $('#browser_warning').click(null, function(event){
+    //        $('#browser_warning').remove();
+    //    });
+    //}
+
+    /* multi-language stuff: 2 lines*/
+    $('head').append('<style type="text/css" id="lang_css"></style>');
+    SetSiteLanguage();
 
     $('head').append('<link href="./Styles/icon1.ico" rel="shortcut icon" type="image/x-icon" />');
     DrawPageHeader();
@@ -141,8 +146,8 @@ function InitDataObjects() {
             });
         };
         obj.grid_colModel = [
-            { label: "Ter.Id", name: "grid_id", key: true, width: "40px", fixed: true },
-            { label: "Terrain Name", name: "terrain_name", width: "150px", fixed: true },
+            { label: 'Ter.Id', name: "grid_id", key: true, width: "40px", fixed: true },
+            { label: '<span lang="en">Terrain Name</span><span lang="ru">Название территории</span>', name: "terrain_name", width: "150px", fixed: true },
         ];
         obj.non_researchable = true;
         TerrainTable = obj;
@@ -165,22 +170,22 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden:true },
-            { label: "Name", name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
+            { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
             
-            { label: "Research Line", name: "weaponSubClass" },
-            { label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
-            { label: "Range (tiles)", name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue / 128).toFixed(1) }, width: 40 },
+            { label: '<span lang="en">Research Line</span><span lang="ru">Линия исследований</span>', name: "weaponSubClass" },
+            { label: '<span lang="en">Price</span><span lang="ru">Цена</span>', name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+            { label: '<span lang="en">Range (tiles)</span><span lang="ru">Дальность (в тайлах)</span>', name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue / 128).toFixed(1) }, width: 40 },
             {
-                label: "Damage *", sortable: false,
+                label: '<span lang="en">Damage *</span><span lang="ru">Урон *</span>', sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
                     var html_res = "";
                     if (rowObject.damage != undefined) {
 
                         if (rowObject.weaponClass == "HEAT") {
                             html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
-                            html_res += " (" + rowObject.weaponClass.toLowerCase() + ")";
+                            html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
                         } else {
-                            html_res += "<b>" + rowObject.damage + "</b> (kinetic)";
+                            html_res += "<b>" + rowObject.damage + '</b> <span lang="en">(kinetic)</span><span lang="ru">(кинетич.)</span>';
                         }
                     }
                     
@@ -189,32 +194,32 @@ function InitDataObjects() {
                         
                         if (rowObject.weaponClass == "HEAT") {
                             html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
-                            html_res += " (" + rowObject.weaponClass.toLowerCase() + ")";
+                            html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
                         } else {
-                            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
+                            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + ' <span lang="en">tiles</span><span lang="ru">тайлов</span></b>';
                         }
                     }
                     
                     if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
                         html_res += "</br>";
                         if (rowObject.periodicalDamageWeaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + "</label></b> /sec" + "";
+                            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + '</label></b> <span lang="en">/sec</span><span lang="ru">/сек</span>' + "";
                             html_res += " (" + rowObject.periodicalDamageWeaponClass.toLowerCase() + ")";
                         } else {
-                            html_res += "<b>" + rowObject.periodicalDamage + " /sec" + "</b>";
+                            html_res += "<b>" + rowObject.periodicalDamage + ' <span lang="en">/sec</span><span lang="ru">/сек</span>' + "</b>";
                         }
                     }
                     return html_res;
                 }, width: 130
             },
             {
-                label: "Rate of Fire",sortable:false,
-                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + " /min";}, width: 70,//
+                label: '<span lang="en">Rate of Fire</span><span lang="ru">Скорострельность</span>', sortable: false,
+                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + ' <span lang="en">/min</span><span lang="ru">/мин</span>';}, width: 70,//
                 sorttype: function (cell,rowObject) {
                     return parseInt(cell);//Math.ceil(Weapon_ShotsPerMinute(rowObject));
                 }
             },
-            { label: "Damage</br>modifier", name: "weaponEffect", width: 50, formatter: function (cellvalue, options, rowObject) { return "<label style='font-size:0.7em'>" + cellvalue + "</label>" }, },
+            { label: '<span lang="en">Damage</br>modifier</span><span lang="ru">Тип урона</br>(модификатор урона)</span>', name: "weaponEffect", width: 50, formatter: function (cellvalue, options, rowObject) { return "<label style='font-size:0.7em'>" + cellvalue + "</label>" }, },
         ];
         //obj.groupField = "weaponEffect";
         obj.groupingView = {
@@ -244,12 +249,12 @@ function InitDataObjects() {
         };
         obj.grid_colModel = [
             { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
-            { label: "Name", name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
-            { label: "Size", name: "size",width:60 },
-            { label: "Price", name: "buildPower",width:60, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue },sorttype:"int" },
-            { label: "Hit Points", name: "hitpoints",width:60 },
-            { label: "Armor Kineric", name: "armourKinetic",width:60 },
-            { label: "Armor Thermal", name: "armourHeat",width:60 },
+            { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
+            { label: "<span lang='en'>Size</span><span lang='ru'>Размер</span>", name: "size", width: 60 },
+            { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower", width: 60, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+            { label: "<span lang='en'>Hit Points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 60 },
+            { label: "<span lang='en'>Armor Kineric</span><span lang='ru'>Броня кинетич.</span>", name: "armourKinetic", width: 60 },
+            { label: "<span lang='en'>Armor Thermal</span><span lang='ru'>Броня огнен.</span>", name: "armourHeat", width: 60 },
            // { label: "Min Research Time", name: "minResearchTime", },
         ];
         obj.groupingView = {
@@ -1158,18 +1163,57 @@ function DrawPageHeader() {
         \
         \
         			<ul class="navmenu2">\
-        				<li><a href="index.html" accesskey="h"><span class="ui-icon ui-icon-home" style="display:inline-block"></span>Guide index</a> </li>\
-        				<li><a href="weapons.php">Weapons</a> </li>\
-        				<li><a href="Body.php">Bodies</a> </li>\
-                        <li><a href="propulsion.php">Propulsion</a> </li>\
-                        <li><a href="cyborgs.php">Cyborgs</a> </li>\
-                        <li><a href="structure.php">Buildings</a> </li>\
-                        <li><a href="Research.php">Research</a> </li>\
-                        <li><a href="stats.php"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>Database</a></li>\
-                        <li><a href="design.php"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>Unit designer</a> </li>\
-        \
+        				<li><a href="index.html" accesskey="h"><span class="ui-icon ui-icon-home" style="display:inline-block"></span>\
+                                <span lang="en">Guide index</span>\
+                                <span lang="ru">Начало</span>\
+                        </a> </li>\
+        				<li><a href="weapons.php">\
+                                <span lang="en">Weapons</span>\
+                                <span lang="ru">Орудия</span>\
+                        </a> </li>\
+        				<li><a href="Body.php">\
+                                <span lang="en">Bodies</span>\
+                                <span lang="ru">Корпуса</span>\
+                        </a> </li>\
+                        <li><a href="propulsion.php">\
+                                <span lang="en">Propulsion</span>\
+                                <span lang="ru">Ходовая</span>\
+                        </a> </li>\
+                        <li><a href="cyborgs.php">\
+                                <span lang="en">Cyborgs</span>\
+                                <span lang="ru">Киборги</span>\
+                        </a> </li>\
+                        <li><a href="structure.php">\
+                                <span lang="en">Buildings</span>\
+                                <span lang="ru">Постройки</span>\
+                        </a> </li>\
+                        <li><a href="Research.php">\
+                                <span lang="en">Research</span>\
+                                <span lang="ru">Исследования</span>\
+                        </a> </li>\
+                        <li><a href="stats.php"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>\
+                                <span lang="en">Database</span>\
+                                <span lang="ru">База параметров</span>\
+                        </a></li>\
+                        <li><a href="design.php"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>\
+                                <span lang="en">Unit designer</span>\
+                                <span lang="ru">Дизайн танков</span>\
+                            </a> </li>\
+                        <li>\
+                            <span style="float:right">\
+                                <span lang="en">Language:</span>\
+                                <span lang="ru">Выберите язык:</span>\
+                            <select id="lang_select" onchange="languageChange(this.value)">\
+                                <option value="en">English (en)</option>\
+                                <option value="ru">Русский (ru)</option>\
+                            </select>              \
+                            </span>\
+                        </li>\
+        </ul>\
         				\
-        			</ul>\
+\
+\
+\
         \
         			\
         \
@@ -1183,6 +1227,60 @@ function DrawPageHeader() {
     if (elm.length > 0) {
         elm.html(html);
     }
+
+    if (localStorage["lang"] == undefined) {
+        localStorage["lang"] = "en";
+    }
+    $('#lang_select').val(localStorage["lang"]);
+}
+
+function languageChange(lang_tag) {
+    //alert(lang_tag);
+    localStorage["lang"] = lang_tag;
+    SetSiteLanguage();
+}
+
+function SetSiteLanguage()
+{
+    if (localStorage["lang"] == undefined)
+    {
+        localStorage["lang"] = "en";
+    }
+    var lang_tag = localStorage["lang"];
+
+    var lang_css_list = {
+            en: '\
+            span[lang = "en"]\
+            {\
+                /*display: none;*/\
+            }\
+            span[lang = "ru"]\
+            {\
+                display: none;\
+            }   \
+        ',
+            ru: '\
+            span[lang = "en"]\
+            {\
+                display: none;\
+            }\
+            span[lang = "ru"]\
+            {\
+                /*display: none;*/\
+            }   \
+            '
+    };
+    var lang_css_str = "";
+    if (lang_css_list[lang_tag] == undefined)
+    {
+        localStorage["lang"] = "en";
+        lang_css_str = lang_css_list["en"];
+    } else
+    {
+        lang_css_str = lang_css_list[lang_tag];
+    }
+
+    $("#lang_css").html(lang_css_str);
 }
 
 function DrawPageCaption() {

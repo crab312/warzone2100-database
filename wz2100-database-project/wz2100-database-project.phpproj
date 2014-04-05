@@ -38,6 +38,8 @@
     <Compile Include="Research.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="saveme.php" />
+    <Compile Include="Script1.php" />
     <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\search.php">
       <SubType>Code</SubType>
     </Compile>
@@ -2502,6 +2504,7 @@
     <Content Include="scripts\research_functions.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\wz2100_translations_1.js" />
     <Content Include="SensorGuide.html">
       <SubType>Content</SubType>
     </Content>
