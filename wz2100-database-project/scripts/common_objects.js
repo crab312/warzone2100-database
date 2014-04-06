@@ -1876,11 +1876,38 @@ var MessagesTranslation = {
     "Tank Design": {
         ru: "Дизайн юнита",
     },
-    "": {
-        ru: "",
+
+    /* Weapons.html */
+    "Price added to total price of tank design.": {
+        ru: "Стоимость, которая будет добавлена к суммарной стоимости юнита",
     },
-    "": {
-        ru: "",
+    "Build Time (factory with 1 module)": {
+        ru: "Время постройки (в фабрике с 1 модулем)",
+    },
+    "This time adds to total build time of tank design.": {
+        ru: "Данное время будет добавлено к суммарному времени постройки юнита",
+    },
+    "Weight": {
+        ru: "Вес",
+    },
+    "This weight adds to total weight of tank design.": {
+        ru: "Данный вес будет прибавлен к суммарному весу юнита. Вес снижает скорость юнита.",
+    },
+    "Hit Points": {
+        ru: "Очки жизни (HP)",
+    },
+    "Hit points are added to total hitpoint of tank design. Note: weapon hitpoints become increased with each composite alloys upgrade.": {
+        ru: "Очки жизни будут добавлены к суммарным очкам жизни юнита. Очки жизни орудия увеличиваются при исследовании улучшений композитных сплавов.",
+    },
+
+    "sec": {
+        ru: "сек",
+    },
+    "tiles": {
+        ru: "тайлов",
+    },
+    "min": {
+        ru: "мин",
     },
     "": {
         ru: "",

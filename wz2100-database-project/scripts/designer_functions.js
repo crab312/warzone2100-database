@@ -1803,10 +1803,10 @@ function WeaponDamage_htmlCell(rowObject) {
         var rad_dmg = PropDescr('radiusDamage').format_str(rowObject.radiusDamage);
         html_res += "</br>";
         if (rowObject.weaponClass == "HEAT") {
-            html_res += "<label style='color: darkred'><b>" + rad_dmg + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
+            html_res += "<label style='color: darkred'><b>" + rad_dmg + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " " + Translate("tiles");
             html_res += " " + Translate(rowObject.weaponClass.toLowerCase()) + "";
         } else {
-            html_res += "<b>" + rad_dmg + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
+            html_res += "<b>" + rad_dmg + " /" + (rowObject.radius / 128).toFixed(1) + " " + Translate("tiles") + "</b>";
         }
     }
 
@@ -1817,7 +1817,7 @@ function WeaponDamage_htmlCell(rowObject) {
             html_res += "<label style='color: darkred'><b>" + period_dmg + "</label></b> /sec" + "";
             html_res += " " + Translate(rowObject.periodicalDamageWeaponClass.toLowerCase()) + "";
         } else {
-            html_res += "<b>" + period_dmg + " /sec" + "</b>";
+            html_res += "<b>" + period_dmg + " /" + Translate("sec") + "</b>";
         }
     }
     return html_res;

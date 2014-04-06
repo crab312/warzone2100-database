@@ -111,9 +111,9 @@ function OpenDamageModifiers() {
     }
     $("#tabs_left").tabs("option", "active", 2);
     var html = "";
-    html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;">Propulsion Damage Modifiers</div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
+    html += '<div class="ui-widget-header ui-corner-top" style="padding: 5px;"><span lang="en">Propulsion Damage Modifiers</span><span lang="ru">Модификаторы урона по типам ходовой</span></div><div id="propulsion_modifiers" class="ui-widget-content ui-corner-bottom"></div>';
 
-    html += '<div class="ui-widget-header ui-corner-top"  style="padding: 5px; margin-top:10px">Structure Damage Modifiers</div><div id="structure_modifiers"></div>';
+    html += '<div class="ui-widget-header ui-corner-top"  style="padding: 5px; margin-top:10px"><span lang="en">Structure Damage Modifiers</span><span lang="ru">Модификаторы урона по типам построек</span></div><div id="structure_modifiers"></div>';
     $("#left-tabs-2").html(html);
 
     LoadDataObject(StructureModifiers, function () {
@@ -144,10 +144,10 @@ function DrawWeaponList() {
         $("#cyborg_weapons").html('');
         $("#vtol_weapons").html('');
         $("#other_weapons").html('');
-        var tank_weapons = DrawSection_type2_html("tank_weapons", "Tank Weapons");  
-        var cyborg_weapons = DrawSection_type2_html("cyborg_weapons", "Cyborg Weapons");
-        var vtol_weapons = DrawSection_type2_html("vtol_weapons", "VTOL Weapons");
-        var other_weapons = DrawSection_type2_html("other_weapons", "Other Weapons");
+        var tank_weapons = DrawSection_type2_html("tank_weapons", "<span lang='en'>Tank Weapons</span><span lang='ru'>Танковые орудия</span>");
+        var cyborg_weapons = DrawSection_type2_html("cyborg_weapons", "<span lang='en'>Cyborg Weapons</span><span lang='ru'>Орудия киборгов</span>");
+        var vtol_weapons = DrawSection_type2_html("vtol_weapons", "<span lang='en'>VTOL Weapons</span><span lang='ru'>Орудия СВВП (VTOL)</span>");
+        var other_weapons = DrawSection_type2_html("other_weapons", "<span lang='en'>Other Weapons</span><span lang='ru'>Другие орудия</span>");
 
         /* Researchable weapons */
         var collected_weapons = {};
@@ -163,7 +163,15 @@ function DrawWeaponList() {
                 return true;
             };
             var elem = DrawSection_type1_html(tank_weapons.attr('id'), "");
-            elem.append('<span>Tank weapons are split into sections by the chosen "research line". Each section contains a list of weapons which use the same upgrades, e.g. when you research machinegun damage you increase the damage of all weapons in the MACHINE GUN section.<br/>Click on a weapon to see it\'s detailed view.</span>');
+            elem.append('\
+                <span lang="en">\
+                    <span>Tank weapons are split into sections by the chosen "research line". Each section contains a list of weapons which use the same upgrades, e.g. when you research machinegun damage you increase the damage of all weapons in the MACHINE GUN section.<br/>Click on a weapon to see it\'s detailed view.</span>\
+                </span>\
+                <span lang="ru">\
+                    <span>Танковые орудия разделены по группам по типу линии исследований. Орудия в одной линии исследований используют одни и те же улучшения, например, когда вы исследует повышение урона для Пулемета, то все орудия из секции "Пулеметы"(MACHINE GUN) получают это улучшение.<br/>Кликните на орудие чтобы просмотреть детальную информацию</span>\
+                    </span>\
+                \
+                ');
             DrawWeaponLines(tank_weapons.attr('id'), func_tank_weapons);
         }
 
@@ -217,11 +225,11 @@ function DrawWeaponList() {
                 collected_weapons[weapon.grid_id] = 1;
                 return true;
             };
-            var elem1 = DrawSection_type1_html(vtol_weapons.attr('id'), "Bombs");
+            var elem1 = DrawSection_type1_html(vtol_weapons.attr('id'), "<span lang='en'>Bombs</span><span lang='ru'>Бомбы</span>");
             DrawWeapons(elem1.attr('id'), null, func_vtol_weapons_bombs, VTOL_cols);
-            var elem2 = DrawSection_type1_html(vtol_weapons.attr('id'), "Interceptors (Air-to-Air weapons)");
+            var elem2 = DrawSection_type1_html(vtol_weapons.attr('id'), "<span lang='en'>Interceptors (Air-to-Air weapons)</span><span lang='ru'>Перехватчики (орудия типа Воздух-Воздух)</span>");
             DrawWeapons(elem2.attr('id'), null, func_vtol_weapons_aa, VTOL_cols);
-            var elem3 = DrawSection_type1_html(vtol_weapons.attr('id'), "Other VTOL Weapons");
+            var elem3 = DrawSection_type1_html(vtol_weapons.attr('id'), "<span lang='en'>Other VTOL Weapons</span><span lang='ru'>Прочие СВВП-орудия (VTOL)</span>");
             DrawWeapons(elem3.attr('id'), null, func_vtol_weapons, VTOL_cols);
         }
 
@@ -329,7 +337,7 @@ function DrawWeaponLines(container_id, weapon_filer_function) {
 
 var VTOL_cols = [
     {
-        label: "VTOL Ammo", name: "ammo", width: 45, formatter: function (cellvalue, options, rowObject) {
+        label: "<span lang='en'>VTOL Ammo</span><span lang='ru'>Кол-во снарядов</span>", name: "ammo", width: 45, formatter: function (cellvalue, options, rowObject) {
             return CalcVTOL_numshots(rowObject);
         }, sorttype: "int"
     },
@@ -408,35 +416,35 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
                 },
             },
             {
-                label: "Range", name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
+                label: Translate("Range"), name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) {
                     return PropDescr("longRange_tiles").format_str(cellvalue);
                 }, width: 40
             },
             {
-                label: "Damage", sortable: false,
+                label: Translate("Damage"), sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
                     return WeaponDamage_htmlCell(rowObject);
                 },
                 width: 130
             },
             {
-                label: "Rate of Fire", sortable: false,
-                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + " /min"; }, width: 78,//
+            label: Translate("Rate of Fire"), sortable: false,
+                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + " /" + Translate("min"); }, width: 78,//
             },
             {
-                label: "HP", sortable: false,
+                label: "<span lang='en'>HP</span><span lang='ru'>Очки жизни (HP)</span>", sortable: false,
                 formatter: function (cellvalue, options, rowObject) {
                     return rowObject.hitpoints;
                 },
                 width: 70,
             },
             {
-                label: "Price", name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
+                label: Translate("Price"), name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) {
                     return '<label style="color:#116611">$' + cellvalue + '</label>';
                 }, sorttype: "int"
             },
             {
-                label: "<label title='Minimum time of research'>Research</label>",
+                label: "<span lang='en'><label title='Minimum time of research'>Research</label></span><span lang='ru'><label title='Минимальное время для исследования'>Исследование</label></span>",
                 name: "minResearchTime",
                 width: 80,
                 formatter: function (cellvalue, options, rowObject) {
@@ -453,7 +461,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
                 },
             },
             {
-                label: "<label title='Propulsion damage modifiers (Class)'>Class</label>",
+                label: "<span lang='en'><label title='Propulsion damage modifiers (Class)'>Class</label></span><span lang='ru'><label title='Модификаторы урона по типам ходовой (Тип)'>Тип</label></span>",
                 width: 70,
                 name: "weaponEffect",
                 formatter: function (cellvalue, options, rowObject) {
@@ -462,7 +470,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
             },
         ].concat(additional_columns).concat([
                         {
-                            label: "Abilities",
+                            label: "<span lang='en'>Abilities</span><span lang='ru'>Способности</span>",
                             width: 300,
                             formatter: function (cellvalue, options, rowObject) {
                                 var abils = Weapon_GetAbilities(rowObject);
@@ -493,7 +501,7 @@ function show_nonres() {
     if ($('#nonres_weaps').length == 0) {
         sect = $('<div id="nonres_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Unavailable weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Unavailable weapons</span><span lang='ru'>Недоступные орудия</span>");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
             {
@@ -511,9 +519,9 @@ function showAA() {
     if ($('#aa_weaps').length == 0) {
         sect = $('<div id="aa_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var aa_weap = DrawSection_type2_html(sect.attr('id'), "Anti-Air Weapons");
+        var aa_weap = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Anti-Air Weapons</span><span lang='ru'>ПВО (противовоздушные орудия)</span>");
         var sect2 = DrawSection_type1_html(aa_weap.attr('id'), "");
-        sect2.append("<label>Weapons which can attack only flying <i>VTOL units</i>. This weapons cannot hit ground objects.</label>");
+        sect2.append("<span lang='en'>Weapons which can attack only flying <i>VTOL units</i>. This weapons cannot hit ground objects.</span><span lang='ru'>Орудия, которые могут атаковать только воздушные цели. Такие орудия не могут поражать наземные цели.</span>");
         DoResearch(res_time, player, function () {
             {
                 var func = function (weapon) {
@@ -535,7 +543,7 @@ function showArty() {
     if ($('#arty_weaps').length == 0) {
         sect = $('<div id="arty_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Artillery");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Artillery</span><span lang='ru'>Артиллерия</span>");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
             {
@@ -558,7 +566,7 @@ function showAPWeaps() {
     if ($('#AP_weaps').length == 0) {
         sect = $('<div id="AP_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-cyborg Weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Anti-cyborg Weapons</span><span lang='ru'>Противопехотные орудия (против киборгов)</span>");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
             {
@@ -581,7 +589,7 @@ function showAntiDef() {
     if ($('#AntiDef_weaps').length == 0) {
         sect = $('<div id="AntiDef_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Anti-defense weapons");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Anti-defense weapons</span><span lang='ru'>Орудия для разрушения защитных сооружений</span>");
         var sect2 = DrawSection_type1_html(weap_sect.attr('id'), "");
         DoResearch(res_time, player, function () {
             {
@@ -604,14 +612,14 @@ function showOverpowred() {
     if ($('#OP_weaps').length == 0) {
         sect = $('<div id="OP_weaps"></div>');
         $('#loadable_weapon_lists').append(sect);
-        var weap_sect = DrawSection_type2_html(sect.attr('id'), "Weapons which are overpowered in Multiplayer");
+        var weap_sect = DrawSection_type2_html(sect.attr('id'), "<span lang='en'>Weapons which are overpowered in Multiplayer</span><span lang='ru'>Орудия, которые можно считать неслабансированно сильными в Мультиплеере</span>");
         DoResearch(res_time, player, function () {
             {
-                var low_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at low-oil games");
+                var low_sect = DrawSection_type1_html(weap_sect.attr('id'), "<span lang='en'>Overpowered weapons at low-oil games</span><span lang='ru'>Несбалансированные орудия в играх low-oil</span>");
                 var op_list1 = ["MG4ROTARYMk1"];
                 DrawWeapons(low_sect.attr('id'), op_list1);
 
-                var hi_sect = DrawSection_type1_html(weap_sect.attr('id'), "Overpowered weapons at high-oil games");
+                var hi_sect = DrawSection_type1_html(weap_sect.attr('id'), "<span lang='en'>Overpowered weapons at high-oil games</span><span lang='ru'>Несбалансированные орудия в играх high-oil</span>");
                 var op_list2 = ["Bomb4-VTOL-HvyINC", "Bomb5-VTOL-Plasmite", "Howitzer150Mk1", "Mortar-Incenediary"];
                 DrawWeapons(hi_sect.attr('id'), op_list2);
             }
@@ -695,11 +703,11 @@ function DrawWeaponDetailsParameters(weap_id) {
     grid_data = [];
     {
         var row = new Object;
-        row.name = 'Price';
+        row.name = Translate('Price');
         row.base = PropDescr("price").format_html(weapon.buildPower);
         row.upgraded = PropDescr("price").format_html(weapon_upgraded.buildPower);
         row.group = '';
-        row.descr = 'Price added to total price of tank design.';
+        row.descr = Translate('Price added to total price of tank design.');
         grid_data.push(row);
     }
     {
@@ -719,29 +727,29 @@ function DrawWeaponDetailsParameters(weap_id) {
         }
 
         var row = new Object;
-        row.name = 'Build Time (factory with 1 module)';
+        row.name = Translate('Build Time (factory with 1 module)');
         row.base = (weapon.buildPower / fact_build_points).toMMSS();
         row.upgraded = (weapon_upgraded.buildPower / fact_build_points_upgraded).toMMSS();
         row.group = '';
-        row.descr = 'This time adds to total build time of tank design.';
+        row.descr = Translate('This time adds to total build time of tank design.');
         grid_data.push(row);
     }
     {
         var row = new Object;
-        row.name = 'Weight';
+        row.name = Translate('Weight');
         row.base = weapon.weight;
         row.upgraded = weapon_upgraded.weight;
         row.group = '';
-        row.descr = 'This weight adds to total weight of tank design';
+        row.descr = Translate('This weight adds to total weight of tank design.');
         grid_data.push(row);
     }
     {
         var row = new Object;
-        row.name = 'Hit Points';
+        row.name = Translate('Hit Points');
         row.base = weapon.hitpoints;
         row.upgraded = weapon_upgraded.hitpoints;
         row.group = '';
-        row.descr = 'Hit points are added to total hitpoint of tank design. Note: weapon hitpoints become increased with each composite alloys upgrade.';
+        row.descr = Translate('Hit points are added to total hitpoint of tank design. Note: weapon hitpoints become increased with each composite alloys upgrade.');
         grid_data.push(row);
     }
     grid_data = grid_data.concat(CalcWeaponRelatedParameters(weapon, weapon_upgraded));
@@ -756,7 +764,7 @@ function DrawWeaponStaticData(weapon_id) {
     var weapon = Weapons.loaded_data_hash[weapon_id];
 
     /* Show auto-generated description of weapon */
-    var auto_descr = ('[' + weapon.weaponClass + ' ' + weapon.weaponEffect + ' ' + weapon.weaponSubClass + ']').toLowerCase();
+    var auto_descr = ('[' + Translate(weapon.weaponClass.toLowerCase()) + ' ' + Translate(weapon.weaponEffect.toLowerCase()) + ' ' + Translate(weapon.weaponSubClass.toLowerCase() ) + ']').toLowerCase();
     var struc_weapon_descr = "";
 
     var armed_strucs = [];
@@ -771,9 +779,9 @@ function DrawWeaponStaticData(weapon_id) {
 
     if (armed_strucs.length > 0) {
         if (can_research(weapon_id)) {
-            struc_weapon_descr += '<p>List of defensive structures armed with this weapon:</p>';
+            struc_weapon_descr += '<p><span lang="en">List of defensive structures armed with this weapon:</span><span lang="ru">Список защитных построек, на которых установлено данное Орудие:</span></p>';
         }else{
-            struc_weapon_descr += '<p>This weapon can not be researched, but you can get <b>defensive structures</b> armed with this weapon.</p>';
+            struc_weapon_descr += '<p><span lang="en">This weapon can not be researched, but you can get <b>defensive structures</b> armed with this weapon.</span><span lang="ru">Данное Орудие не может быть исследовано, но при этом оно используется на следующих защитных постройках:</span></p>';
         }
         
         struc_weapon_descr += '<ul>';
@@ -792,7 +800,7 @@ function DrawWeaponStaticData(weapon_id) {
     var res_comp_row = ResearchedComponents[player_all_researched][weapon_id];
     if (res_comp_row != undefined) {
         var research = Researches.loaded_data_hash[res_comp_row.research_id];
-        var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
+        var res_path_button_html = '<br/> <span lang="en">Research required:</span><span lang="ru">Требуемое исследование:</span><a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span"><span lang="en">Overview research path</span><span lang="ru">Просмотр требуемых исследований</span></button>'
         $('#details_description').append(res_path_button_html);
 
         $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
@@ -824,7 +832,7 @@ function DrawWeaponStaticData(weapon_id) {
             </td>
         </tr>
         <tr>
-            <td id="page_caption" data-caption="Weapons Guide">
+            <td id="page_caption" data-caption="<span lang='en'>Weapons Guide</span><span lang='ru'>Орудия - Руководство по орудиям</span>">
 
             </td>
         </tr>
@@ -832,40 +840,49 @@ function DrawWeaponStaticData(weapon_id) {
         <td style="width:100%;vertical-align:top">
             <div id="tabs_left" >
                 <ul>
-                    <li><a href="#left-tabs-1">Weapons Guide</a></li>
-                    <li><a href="#left-tabs-detail">Weapon detail</a></li>
-                    <li><a href="#left-tabs-2">Damage Modifiers</a></li>
+                    <li><a href="#left-tabs-1"><span lang="en">Weapons Guide</span><span lang="ru">Орудия</span></a></li>
+                    <li><a href="#left-tabs-detail"><span lang="en">Weapon detail</span><span lang="ru">Детальная информация про орудие</span></a></li>
+                    <li><a href="#left-tabs-2"><span lang="en">Damage Modifiers</span><span lang="ru">Модификаторы урона / сопротивления</span></a></li>
                 </ul>
                 <div id="left-tabs-1">
                     <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" >
 	                    <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                             <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                           Introduction
+                           <span lang="en">Introduction</span><span lang="ru">Введение</span>
 	                    </h3>
-                        <div id="Div2" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">  
+                        <div id="Div2" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
+
+                        <span lang="en">
 Weapons are a very important part of tank design. Weapon types are grouped into Artillery, Anti-Tank and All-rounder with weapon damage being greatly dependent on enemy propulsion type. 
 See <a href="javascript:OpenDamageModifiers()">Weapon damage modifiers</a> for exact values.<br />
-Each weapon can have two damage types: <span style="color:blue">kinetic</span> or <span style="color:red">thermal</span>.                            
+Each weapon can have two damage types: <span style="color:blue">kinetic</span> or <span style="color:red">thermal</span>.   
+                        </span>
+                        <span lang="ru">
+Орудие это главное в дизайне юнитов. В игре есть несколько типов орудий: артиллерия, противотанковые орудия, противопехотные орудия, орудия общего назначения(All-rounder). Урон по цели сильно зависит от типа ходовой цели. Например, урон пулеметов по киборгам в несколько раз выше, чем урон по гусеничным танкам.
+Смотрите <a href="javascript:OpenDamageModifiers()">Модификаторы урона по типам ходовой</a><br />
+Каждое орудие может иметь один из следующих видов атаки: <span style="color:blue">кинетическая</span> или <span style="color:red">огненная</span>.   
+                        </span>
+                         
                         </div>
                     </div>
                     <table>
                         <tr>
                             <td>
                                 <ul  class="MyStyledLinkMenu" style="display:inline-block">
-                                    <li><a href="#tank_weapons">Tank Weapons</a></li>
-                                    <li><a href="#cyborg_weapons">Cyborg Weapons</a></li>
-                                    <li><a href="#vtol_weapons">VTOL Weapons</a></li>
-                                    <li><a href="#other_weapons">Other Weapons</a></li>
-                                    <li><a href="javascript:show_nonres()">Unavailable Weapons</a></li>
+                                    <li><a href="#tank_weapons"><span lang="en">Tank Weapons</span><span lang="ru">Танковые орудия</span></a></li>
+                                    <li><a href="#cyborg_weapons"><span lang="en">Cyborg Weapons</span><span lang="ru">Орудия киборгов</span></a></li>
+                                    <li><a href="#vtol_weapons"><span lang="en">VTOL Weapons</span><span lang="ru">Орудия СВВП (VTOL)</span></a></li>
+                                    <li><a href="#other_weapons"><span lang="en">Other Weapons</span><span lang="ru">Другие орудия</span></a></li>
+                                    <li><a href="javascript:show_nonres()"><span lang="en">Unavailable Weapons</span><span lang="ru">Недоступные в игре орудия</span></a></li>
                                 </ul>
                             </td>
                             <td>
                                 <ul class="MyStyledLinkMenu" style="display:inline-block">
-                                    <li><a href="javascript:showAA()">Anti-Air (AA) Weapons</a></li>
-                                    <li><a href="javascript:showArty()">Artillery</a></li>
-                                    <li><a href="javascript:showAPWeaps()">Anti-Cyborg Weapons</a></li>
-                                    <li><a href="javascript:showAntiDef()">Anti-defense weapons</a></li>
-                                    <li><a href="javascript:showOverpowred()">Overpowered Weapons</a></li>
+                                    <li><a href="javascript:showAA()">A<span lang="en">nti-Air (AA) Weapons</span><span lang="ru">ПВО</span></a></li>
+                                    <li><a href="javascript:showArty()"><span lang="en">Artillery</span><span lang="ru">Артиллерия</span></a></li>
+                                    <li><a href="javascript:showAPWeaps()"><span lang="en">Anti-Cyborg Weapons</span><span lang="ru">Противопехотные орудия (против киборгов)</span></a></li>
+                                    <li><a href="javascript:showAntiDef()"><span lang="en">Anti-defense weapons</span><span lang="ru">Орудия для разрушения укреплений</span></a></li>
+                                    <li><a href="javascript:showOverpowred()"><span lang="en">Overpowered Weapons</span><span lang="ru">Несбалансированные орудия</span></a></li>
                                 </ul>
                             </td>
                             <td style="width:40%">
@@ -873,7 +890,7 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
                                     <div id="research_slider">
 
                                     </div>
-                                    <label style="font-size:0.9em; color:gray;float:right">Use slider to see numeric values for different states of research.</label>
+                                    <label style="font-size:0.9em; color:gray;float:right"><span lang="en">Use slider to see numeric values for different states of research.</span><span lang="ru">Используйте ползунок чтобы смотреть параметры для различных уровней технологий.</span></label>
                                 </div>
                             </td>
                         </tr>
@@ -907,9 +924,9 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
                                 </div>
                             </td>
                             <td>
-                                You can see details for any weapon, just select another weapon. <br />
+                                <span lang="en">You can see details for any weapon, just select another weapon. </span><span lang="ru">Вы можете просмотреть детальную информацию для любого орудия. Просто выберите другое орудие.</span><br />
                                 <div style="width:100%;text-align:center">
-                                    <button id="select_weapon_button" type="button" style="display:inline-block">Select Weapon...</button>
+                                    <button id="select_weapon_button" type="button" style="display:inline-block"><span lang="en">Select Weapon...</span><span lang="ru">Выбор орудия...</span></button>
                                 </div>
                                 
                             </td>
@@ -922,7 +939,7 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
                                             <div class="ui-accordion ui-widget ui-helper-reset" role="tablist" style="margin-top:20px">
 	                                            <h3 style="text-align:left" class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active ui-corner-top">
                                                     <span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s" style="float:left;"></span>
-                                                    Description
+                                                    <span lang="en">Description</span><span lang="ru">Описание</span>
 	                                            </h3>
                                                 <div id="details_description" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">
                                                 </div>
@@ -933,7 +950,7 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
                                             <div id="research_slider_details">
 
                                             </div>
-                                            <label style="font-size:0.9em; color:gray;">Use slider to see numeric values for different states of research.</label>
+                                            <label style="font-size:0.9em; color:gray;"><span lang="en">Use slider to see numeric values for different states of research.</span><span lang="ru">Используйте ползунок чтобы смотреть параметры для различных уровней технологий.</span></label>
                                             </div>
                                         </td>
                                     </tr>
@@ -944,24 +961,24 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
                             <td style="vertical-align:top; width:50%">
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="main_parameters_container"></div>
 
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Detail Parameters</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">Detail Parameters</span><span lang="ru">Детальные параметры</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_details_details"></div>
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage modifiers</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">Damage modifiers</span><span lang="ru">Модификаторы урона</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_details_damage_modifiers"></div>
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">DPS stats (Damage per second)</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">DPS stats (Damage per second)</span><span lang="ru">ДПС (Урон в секунду)</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="dps_table_container"></div>
                             </td>
                             <td style="vertical-align:top; width:50%">
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px;">Abilities</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px;"><span lang="en">Abilities</span><span lang="ru">Способности</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="abilities_container"></div>
 
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">Damage Upgrades</span><span lang="ru">Улучшения урона</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>
 
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Rate of Fire Upgrades</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">Rate of Fire Upgrades</span><span lang="ru">Улучшения скорострельности</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="rof_upgrades_container"></div>
 
-                                <div class="ui-widget-header ui-corner-top" style="padding:2px">Research</div>
+                                <div class="ui-widget-header ui-corner-top" style="padding:2px"><span lang="en">Research</span><span lang="ru">Исследования</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="research_path_container"></div>
 
                             </td>
