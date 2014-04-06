@@ -86,7 +86,7 @@ function attachOpenDetailEvents() {
                   my: "center middle",
                   at: "right bottom"
               },
-              content: "Click to open Body Details",
+              content: Translate("Click to open Body Details"),
           });
           var tmp_id = $(this).attr('data-value');
           if (Bodies.loaded_data_hash[tmp_id] == undefined) {
@@ -118,7 +118,7 @@ function attachOpenDetailEvents() {
                   my: "center middle",
                   at: "right bottom"
               },
-              content: "Click to open Propulsion Details",
+              content: Translate("Click to open Propulsion Details"),
           });
           var tmp_id = $(this).attr('data-value');
           if (Propulsion.loaded_data_hash[tmp_id] == undefined) {
@@ -150,7 +150,7 @@ function attachOpenDetailEvents() {
                   my: "center middle",
                   at: "right bottom"
               },
-              content: "Click to open Turret Details",
+              content: Translate("Click to open Turret Details"),
           });
           var tmp_id = $(this).attr('data-value');
           if (Weapons.loaded_data_hash[tmp_id] == undefined) {
@@ -182,7 +182,7 @@ function attachOpenDetailEvents() {
                   my: "center middle",
                   at: "right bottom"
               },
-              content: "Click to open Turret Details",
+              content: Translate("Click to open Turret Details"),
           });
           var tmp_id = $(this).attr('data-value');
           if (Weapons.loaded_data_hash[tmp_id] == undefined) {
@@ -237,7 +237,7 @@ function attachOpenDetailEvents() {
                             }
                         },
                         {
-                            name: "name", label: 'Tank Design', key: true, width: '300px',
+                            name: "name", label: Translate('Tank Design'), key: true, width: '300px',
                             formatter: function (cellvalue, options, rowObject) {
                                 return '<label style="fonct-size:1.1em"><b>' + cellvalue + '</b></label>';
                             }
@@ -313,64 +313,64 @@ function attachOpenDetailEvents() {
         <td style="width:100%;vertical-align:top">
             <div id="tabs_left" >
                 <ul>
-                    <li><a href="#left-tabs-design">Tank Designer</a></li>
-                    <li><a href="#left-tabs-comparison">Compare tanks designs</a></li>
+                    <li><a href="#left-tabs-design"><span lang="en">Tank Designer</span><span lang="ru">Дизайнер юнитов</span></a></li>
+                    <li><a href="#left-tabs-comparison"><span lang="en">Compare tanks designs</span><span lang="ru">Сравнение юнитов</span></a></li>
                 </ul>
                 <div id="left-tabs-design">
                     <table>
                         <tr>
-                            <td><label for="designer_body">Body:</label> </td>
+                            <td><label for="designer_body"><span lang="en">Body:</span><span lang="ru">Корпус:</span></label> </td>
                             <td id="designer_body_icon">
 
                             </td>
                             <td style="padding-top:10px">
                                 <input id="designer_body" placeholder="please select body..." style="width:300px;font-size:1.1em" data-value="" readonly="readonly" title="Unit body"/> 
-                                <button type="button" id="designer_select_body_button">Select body</button>
+                                <button type="button" id="designer_select_body_button"><span lang="en">Select body</span><span lang="ru">Выбор корпуса</span></button>
                             </td>
                             <td style="width:30%; vertical-align:bottom">
                                 <div style="width:100%">
                                     <div style="float:right">
-                                        <button type="button" id="designer_save_button">Save design</button>
+                                        <button type="button" id="designer_save_button"><span lang="en">Save design</span><span lang="ru">Сохранить дизайн юнита</span></button>
 
                                     </div>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td><label for="designer_propulsion">Propulsion:</label> </td>
+                            <td><label for="designer_propulsion"><span lang="en">Propulsion:</span><span lang="ru">Ходовая:</span></label> </td>
                             <td id="designer_propulsion_icon">
 
                             </td>
                             <td>
                                 <input id="designer_propulsion" placeholder="please select propulsion..." style="width:300px;font-size:1.1em" data-value="" readonly="readonly" title="Unit propulsion"/>
-                                <button type="button" id="designer_select_propulsion_button">Select propulsion</button>
+                                <button type="button" id="designer_select_propulsion_button"><span lang="en">Select propulsion</span><span lang="ru">Выбор ходовой</span></button>
                             </td>
                         </tr>
                         <tr>
-                            <td><label for="designer_weapon">Weapon:</label></td>
+                            <td><label for="designer_weapon"><span lang="en">Weapon:</span><span lang="ru">Башня:</span></label></td>
                             <td id="designer_weapon_icon">
 
                             </td>
                             <td>
                                 <input id="designer_weapon" placeholder="please select weapon..." style="width:300px;font-size:1.1em" readonly="readonly" title="Unit turret 1"/>
-                                <button type="button" id="designer_select_weapon_button">Select weapon</button>
-                                <button type="button" id="designer_select_system_turret_button">Select system turret</button>
+                                <button type="button" id="designer_select_weapon_button"><span lang="en">Select weapon</span><span lang="ru">Выбрать орудие</span></button>
+                                <button type="button" id="designer_select_system_turret_button"><span lang="en">Select system turret</span><span lang="ru">Выбрать небоевую башню</span></button>
                             </td>
                         </tr>
                         <tr id="designer_weapon2_row">
-                            <td><label for="designer_weapon2">Weapon 2:</label></td>
+                            <td><label for="designer_weapon2"><span lang="en">Weapon 2:</span><span lang="ru">Башня 2:</span></label></td>
                             <td id="designer_weapon2_icon">
 
                             </td>
                             <td>
                                 <input id="designer_weapon2" placeholder="please select weapon 2..." style="width:300px;font-size:1.1em" readonly="readonly" title="Unit turret 2"/>
-                                <button type="button" id="designer_select_weapon2_button">Select weapon 2</button>
-                                <button type="button" id="designer_select_weapon2_button_clear">Remove weapon 2</button>
+                                <button type="button" id="designer_select_weapon2_button"><span lang="en">Select weapon 2</span><span lang="ru">Выбрать орудие 2</span></button>
+                                <button type="button" id="designer_select_weapon2_button_clear"><span lang="en">Remove weapon 2</span><span lang="ru">Удалить орудие 2</span></button>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3" style="padding:10px">
-                                <label for="designer_research_progress_input">Research time:</label>
+                                <label for="designer_research_progress_input"><span lang="en">Research time:</span><span lang="ru">Время исследований:</span></label>
                                 <input type="text" id="designer_research_progress_input" style="border: 0; font-weight: bold;" />
                                 <div id="designer_research_slider"></div>
                             </td>
@@ -379,40 +379,40 @@ function attachOpenDetailEvents() {
                     <table id="designer_all_data_container" style="vertical-align: top;">
                         <tr>
                             <td style="vertical-align: top">
-                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px">Paramaters of tank</div>
+                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px"><span lang="en">Paramaters of tank</span><span lang="ru">Параметры юнита</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_parameters_container"></div>
                                 <table>
                                     <tr>
                                         <td style="vertical-align:top">
-                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px">Resistances</div>
+                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px"><span lang="en">Resistances</span><span lang="ru">Сопротивления</span></div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="resistances_table_container"></div>
                                         </td>
                                         <td id="damage_modifier_container_weapon1" style="display:none;vertical-align:top">
-                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px">Damage modifiers (Weapon 1)</div>
+                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px"><span lang="en">Damage modifiers (Weapon 1)</span><span lang="ru">Модификаторы урона (орудие 1)</span></div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_1"></div>
                                         </td>
                                         <td id="damage_modifier_container_weapon2" style="display:none;vertical-align:top">
-                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px">Damage modifiers (Weapon 2)</div>
+                                            <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px"><span lang="en">Damage modifiers (Weapon 2)</span><span lang="ru">Модификаторы урона (орудие 2)</span></div>
                                             <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="weapon_damage_modifiers_2"></div>
                                         </td>
                                     </tr>
                                 </table>
 
                                 <div id="res_paths_block">
-                                    <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px; margin-top: 10px;">Research Paths</div>
+                                    <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px; margin-top: 10px;"><span lang="en">Research Paths</span><span lang="ru">Путь исследования</span></div>
                                     <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_researchpath_container">
                                         
                                     </div>
                                 </div>
                             </td>
                             <td style="vertical-align: top">
-                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px">Tank abilities</div>
+                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px"><span lang="en">Tank abilities</span><span lang="ru">Способности юнита</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_abilities_container"></div>
                                 <div>
-                                    <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px;">Time of Research (minimum)</div>
+                                    <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px;"><span lang="en">Time of Research (minimum)</span><span lang="ru">Время исслед. (миним.)</span></div>
                                     <div class="ui-widget-content ui-corner-bottom" style="padding:2px;" id="designer_research_requirements"></div>
                                 </div>
-                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px; margin-top:20px;" id="designer_dps_header">DPS (Damage per second)</div>
+                                <div class="my-header ui-widget-header ui-corner-top ui-state-active" style="padding:2px; margin-top:20px;" id="designer_dps_header"><span lang="en">DPS (Damage per second)</span><span lang="ru">ДПС (Урон в секунду)</span></div>
                                 <div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="designer_dps_container"></div>
                             </td>
                         </tr>

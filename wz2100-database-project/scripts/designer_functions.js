@@ -30,14 +30,14 @@ function InitDesigner() {
         event.preventDefault();
         ShowSeletDialog_forDataObject(Bodies,$("#designer_body").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
-                alert('Sorry but you have not selected a row. Nothing will happen.');
+                alert(Translate('Sorry but you have not selected a row. Nothing will happen.'));
             } else {
                 var body_id = localStorage["designer_designer_body"];
                 var body = Bodies.loaded_data_hash[selectedRowId];
                 if (body != undefined) {
                     if (body.weaponSlots >= 2) {
                         if (body.weaponSlots >= 3) {
-                            alert('Selected Multi-Turret Body but we do not support more than 2 turrets');
+                            alert(Translate('Selected Multi-Turret Body but we do not support more than 2 turrets'));
                         }
                         $('#designer_weapon2_row').show();
                     } else {
@@ -60,7 +60,7 @@ function InitDesigner() {
         event.preventDefault();
         ShowSeletDialog_forDataObject(Propulsion, $("#designer_propulsion").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
-                alert('Sorry but you have not selected a row. Nothing will happen.');
+                alert(Translate('Sorry but you have not selected a row. Nothing will happen.'));
             } else {
                 setInput(Propulsion, $("#designer_propulsion"), selectedRowId, $("#designer_propulsion_icon"));
             }
@@ -77,7 +77,7 @@ function InitDesigner() {
         event.preventDefault();
         ShowSeletDialog_forDataObject(Weapons, $("#designer_weapon").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
-                alert('Sorry but you have not selected a row. Nothing will happen.');
+                alert(Translate('Sorry but you have not selected a row. Nothing will happen.'));
             } else {
                 setInput(Weapons, $("#designer_weapon"), selectedRowId, $("#designer_weapon_icon"));
             }
@@ -94,10 +94,10 @@ function InitDesigner() {
 
         var menu_dialog_id = "designer_select_system_turret_button_dialog";
         $('body').append('<div id="' + menu_dialog_id + '"></div>');
-        var constr_button = $('<button id="designer_select_construction_button" type="button">Construction (Trucks)</button>');
-        var sens_button = $('<button id="designer_select_sensor_button" type="button">Sensor</button>');
-        var repair_button = $('<button id="designer_select_repair_button" type="button">Repair</button>');
-        var ecm_button = $('<button id="designer_select_repair_button" type="button">ECM (electoric stuff)</button>');
+        var constr_button = $('<button id="designer_select_construction_button" type="button"><span lang="en">Construction (Trucks)</span><span lang="ru">Грузовики</span></button>');
+        var sens_button = $('<button id="designer_select_sensor_button" type="button"><span lang="en">Sensor</span><span lang="ru">Сенсоры</span></button>');
+        var repair_button = $('<button id="designer_select_repair_button" type="button"><span lang="en">Repair</span><span lang="ru">Ремонтники</span></button>');
+        var ecm_button = $('<button id="designer_select_repair_button" type="button"><span lang="en">ECM (electoric stuff)</span><span lang="ru">ECM</span></button>');
         $('#' + menu_dialog_id).append(constr_button).append('<br/>');
         $('#' + menu_dialog_id).append(sens_button).append('<br/>');
         $('#' + menu_dialog_id).append(repair_button).append('<br/>');
@@ -105,7 +105,7 @@ function InitDesigner() {
 
         var method_set_val = function (selectedRowId, DataObject) {
             if (selectedRowId == null) {
-                alert('Sorry but you have not selected a row. Nothing will happen.');
+                alert(Translate('Sorry but you have not selected a row. Nothing will happen.'));
             } else {
                 setInput(DataObject, $("#designer_weapon"), selectedRowId, $("#designer_weapon_icon"));
             }
@@ -179,7 +179,7 @@ function InitDesigner() {
         event.preventDefault();
         ShowSeletDialog_forDataObject(Weapons, $("#designer_weapon2").attr('data-value'), function (selectedRowId) {
             if (selectedRowId == null) {
-                alert('Sorry but you have not selected a row. Nothing will happen.');
+                alert(Translate('Sorry but you have not selected a row. Nothing will happen.'));
             } else {
                 setInput(Weapons, $("#designer_weapon2"), selectedRowId, $("#designer_weapon2_icon"));
             }
@@ -285,7 +285,7 @@ function Designer_PreLoad(callback_function) {
                 if (body != undefined) {
                     if (body.weaponSlots >= 2) {
                         if (body.weaponSlots >= 3) {
-                            alert('Selected Multi-Turret Body but we do not support more than 2 turrets');
+                            alert(Translate('Selected Multi-Turret Body but we do not support more than 2 turrets'));
                         }
                         $('#designer_weapon2_row').show();
                     } else {
@@ -393,7 +393,7 @@ function ShowSeletDialog_forDataObject(DataObject, selected_value, callback_func
         designer_dialogs[DataObject.sysid].grid = grid; //save dialog and grid
         designer_dialogs[DataObject.sysid].dialog = $("#" + container_id).dialog(
         {
-            title: "Select an item",
+            title: "<span lang='en'>Select an item</span><span lang='ru'>Выберите элемент</span>",
             buttons:
             {
                 "Ok": function () {
@@ -515,97 +515,97 @@ function Abilities_Description(ability_name) {
     res.designer_only_ability = false;
     switch (ability_name) {
         case "CanHitVtols":
-            res.name = "Can Attack VTOLs";
-            res.descr = "This unit can attack and kill flying enemy units. Warzone units can't attack VTOLs by default.";
+            res.name = "<span lang='en'>Can Attack VTOLs</span><span lang='ru'>Может атаковать СВВП (VTOL)</span>";
+            res.descr = "<span lang='en'>This unit can attack and kill flying enemy units. Warzone units can't attack VTOLs by default.</span><span lang='ru'>Этот юнит может атаковать и уничтожать вражеские воздушные цели.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "CannotHitGround":
-            res.name = "Can't attack ground units";
-            res.descr = "This is Anti-Air unit. This unit can attack <b>only</b> flying units.";
+            res.name = "<span lang='en'>Can't attack ground units</span><span lang='ru'>Не может атаковать наземные цели</span>";
+            res.descr = "<span lang='en'>This is Anti-Air unit. This unit can attack <b>only</b> flying units.</span><span lang='ru'>Атака только по принципу \"Воздух-Воздух\". Может атаковать только летающие цели.</span>";
             res.icon_class = "ui-icon ui-icon-alert";
             break;
         case "CantFireOnMove":
-            res.name = "Can't fire on move";
-            res.descr = "This unit need stop moving before attack.";
+            res.name = "<span lang='en'>Can't fire on move</span><span lang='ru'>Не может атаковать в движении</span>";
+            res.descr = "<span lang='en'>This unit need stop moving before attack.</span><span lang='ru'>Этот юнит может вести огонь только когда стоит на месте.</span>";
             res.icon_class = "ui-icon ui-icon-shuffle";
             break;
         case "CyborgWeapon":
-            res.name = "Cyborg Weapon";
-            res.descr = "This weapon can be used only by cyborgs. ";
+            res.name = "<span lang='en'>Cyborg Weapon</span><span lang='ru'>Орудие киборгов</span>";
+            res.descr = "<span lang='en'>This weapon can be used only by cyborgs.</span><span lang='ru'>Данное орудие могут использовать только киборги и в игре оно не доступно для установки на танки.</span>";
             res.icon_class = "ui-icon ui-icon-alert";
             res.designer_only_ability = true;
             break;
         case "HasPeriodicalDamage":
-            res.name = "Over time damage";
-            res.descr = "This unit has additional continious damage";
+            res.name = "<span lang='en'>Over time damage</span><span lang='ru'>Продолжительное повреждение</span>";
+            res.descr = "<span lang='en'>This unit has additional continious damage</span><span lang='ru'>Этот юнит при атаке может \"поджигать\" вражеские танки, и они будут получать повреждения в течение некоторого времени.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "HasSplash":
-            res.name = "Area damage";
-            res.descr = "This unit has additional area damage. Area damage inflicts all units nearby main target of attack";
+            res.name = "<span lang='en'>Area damage</span><span lang='ru'>Урон по площади</span>";
+            res.descr = "<span lang='en'>This unit has additional area damage. Area damage inflicts all units nearby main target of attack</span><span lang='ru'>Этот юнит при атаке наносит урон нескольким вражеским единицам одновременно. Все вражеские единицы в некотором радиусе от цели получат повреждение.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "HeatDamage":
-            res.name = "Thermal (heat) kind of attack";
-            res.descr = "This unit attacks by thermal (heat) damage, so enemy tank should have good thermal armor";
+            res.name = "<span lang='en'>Thermal (heat) kind of attack</span><span lang='ru'>Огненный тип урона</span>";
+            res.descr = "<span lang='en'>This unit attacks by thermal (heat) damage, so enemy tank should have good thermal armor</span><span lang='ru'>Этот юнит атакует огнем. Вражеский юнит должен иметь высокую (анти)огненную броню, чтобы противостоять данному юниту.</span>";
             res.icon_class = "ui-icon ui-icon-shuffle";
             break;
         case "Indirect":
-            res.name = "Indirect (artillery)";
-            res.descr = "This unit can be attached to sensor and can attack through terrain and enemy tanks.";
+            res.name = "<span lang='en'>Indirect (artillery)</span><span lang='ru'>Артиллерия (стрельба навесом)</span>";
+            res.descr = "<span lang='en'>This unit can be attached to sensor and can attack through terrain and enemy tanks.</span><span lang='ru'>Этот юнит является артиллерией и может поражать цели которые не находятся в прямой видимости. Данный юнит может быть прикреплен к сенсору.</span>";
             res.icon_class = "ui-icon ui-icon-shuffle";
             break;
         case "LongRanged":
-            res.name = "Long ranged";
-            res.descr = "This unit has high range of fire.";
+            res.name = "<span lang='en'>Long ranged</span><span lang='ru'>Дальнобойный</span>";
+            res.descr = "<span lang='en'>This unit has high range of fire.</span><span lang='ru'>Этот юнит имеет высокую дальность огня.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "Penetrate":
-            res.name = "Penetrate";
-            res.descr = "Each projectile of this unit can hit several enemy unis on one line";
+            res.name = "<span lang='en'>Penetrate</span><span lang='ru'>Проникающие снаряды</span>";
+            res.descr = "<span lang='en'>Each projectile of this unit can hit several enemy unis on one line</span><span lang='ru'>Каждый снаряд может нанести повреждение нескольким целям на одной линии.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "ShortRanged":
-            res.name = "Short ranged";
-            res.descr = "Attacks from very short distance";
+            res.name = "<span lang='en'>Short ranged</span><span lang='ru'>Орудие ближнего боя</span>";
+            res.descr = "<span lang='en'>Attacks from very short distance</span><span lang='ru'>Данное орудие имеет очень короткую дистацию ведения огня. Цель должна быть близко чтобы её можно было атаковать.</span>";
             res.icon_class = "ui-icon ui-icon-alert";
             break;
         case "UpgradeLine":
-            res.name = "Weapon Line";
+            res.name = "<span lang='en'>Weapon Line</span><span lang='ru'>Исслед. линия орудий</span>";
             res.descr = "";
             res.designer_only_ability = true;
             break;
         case "VTOLWeapon":
-            res.name = "VTOL weapon";
-            res.descr = "This weapon can be used only on VTOL-units.";
+            res.name = "<span lang='en'>VTOL weapon</span><span lang='ru'>СВВП-орудие (VTOL)</span>";
+            res.descr = "<span lang='en'>This weapon can be used only on VTOL-units.</span><span lang='ru'>Данное орудие может использоваться только на юнитах СВВП (VTOL).</span>";
             res.icon_class = "ui-icon ui-icon-alert";
             res.designer_only_ability = true;
             break;
         case "HitRun":
-            res.name = "Hit&Run";
-            res.descr = "This weapon has high damage and a slow reload, making it excellent in hit&run tactics.";
+            res.name = "<span lang='en'>Hit&Run</span><span lang='ru'>Hit&Run - стреляй и беги</span>";
+            res.descr = "<span lang='en'>This weapon has high damage and a slow reload, making it excellent in hit&run tactics.</span><span lang='ru'>Орудие имеет большой урон и очень медленно перезаряжается, поэтому его выгодно использовать в тактике Hit&Run (тактика залпа и немедленного отступления для перезарядки).</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
 
             
         case "SlowDesign":
-            res.name = "Slow";
-            res.descr = "Speed of this unit is very slow (comparing to maximum speed for propulsion)";
+            res.name = "<span lang='en'>Slow</span><span lang='ru'>Медленный</span>";
+            res.descr = "<span lang='en'>Speed of this unit is very slow (comparing to maximum speed for propulsion)</span><span lang='ru'>Этот юнит имеет очень низкую скорость.</span>";
             res.icon_class = "ui-icon ui-icon-alert";
             break;
         case "CrossWater":
-            res.name = "Can cross water";
-            res.descr = "This unit can cross water tiles.";
+            res.name = "<span lang='en'>Can cross water</span><span lang='ru'>Может двигаться по воде</span>";
+            res.descr = "<span lang='en'>This unit can cross water tiles.</span><span lang='ru'>Юнит может двигаться по воде.</span>";
             res.icon_class = "ui-icon ui-icon-star";
             break;
         case "FlyingUnit":
-            res.name = "Flying units (VTOL)";
-            res.descr = "This is VTOl-unit.";
+            res.name = "<span lang='en'>Flying units (VTOL)</span><span lang='ru'>Летающий</span>";
+            res.descr = "<span lang='en'>This is VTOl-unit.</span><span lang='ru'>Юнит может летать.</span>";
             res.icon_class = "ui-icon ui-icon-shuffle";
             break;
         case "Cyborg":
-            res.name = "Cyborg";
-            res.descr = "This is robotic warrior (selected cyborg body and/or cyborg propulsion)";
+            res.name = "<span lang='en'>Cyborg</span><span lang='ru'>Киборг</span>";
+            res.descr = "<span lang='en'>This is robotic warrior (selected cyborg body and/or cyborg propulsion)</span><span lang='ru'>Это киборг (выбран корпус киборгов и/или ходовая киборгов).</span>";
             res.icon_class = "ui-icon ui-icon-shuffle";
             res.designer_only_ability = true;
             break;
@@ -663,16 +663,16 @@ function FormAbilitiesHtml(TankDesign) {
                 abils_html += '</div>'
             }
             if (Sensor.loaded_data_hash[turret_id] != undefined && setted_abilities["sensor"]==undefined) {
-                form_abil_html("This is Sensor Unit", "Artillery can be attached to this unit.");
+                form_abil_html("<span lang='en'>This is Sensor Unit</span><span lang='ru'>Это сенсор</span>", "<span lang='en'>Artillery can be attached to this unit.</span><span lang='ru'>Этот юнит может наводит огонь артиллерии.</span>");
                 setted_abilities["sensor"] = true;
             } else if (Repair.loaded_data_hash[turret_id] != undefined && setted_abilities["repair"] == undefined) {
-                form_abil_html("This is Repair unit", "This unit can 'cure' damaged tanks");
+                form_abil_html("<span lang='en'>This is Repair unit</span><span lang='ru'>Это ремонтник</span>", "<span lang='en'>This unit can 'cure' damaged tanks</span><span lang='ru'>Этот юнит может 'лечить' поврежденные юниты</span>");
                 setted_abilities["repair"] = true;
             } else if (Construction.loaded_data_hash[turret_id] != undefined && setted_abilities["truck"] == undefined) {
-                form_abil_html("This is Construction unit", "This unit can build base and defensive buildings");
+                form_abil_html("<span lang='en'>This is Construction unit</span><span lang='ru'>Это грузовик</span>", "<span lang='en'>This unit can build base and defensive buildings</span><span lang='ru'>Этот юнит может строить.</span>");
                 setted_abilities["truck"] = true;
             } else if (ECM.loaded_data_hash[turret_id] != undefined && setted_abilities["ecm"] == undefined) {
-                form_abil_html("This is weird electonic unit", "I dont know what this unit can do :)");
+                form_abil_html("<span lang='en'>This is weird electonic unit</span><span lang='ru'>Это юнит электронной войны</span>", "<span lang='en'>I dont know what this unit can do :)</span><span lang='ru'>Я не знаю что может делать этот юнит :)</span>");
                 setted_abilities["ecm"] = true;
             }
         }else{
@@ -714,10 +714,12 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
             minTime = Math.max(minTime, resComp[turrets_ids[i]].time_seconds);
         }
         if (ResearchTimeState[player_current_design] < minTime) {
-            res += '<div style="display:inline-block;padding:5px;"><span style="display:inline-block;float:left;" class="ui-icon ui-icon-alert"></span><b>This design is not available on current selected research time</b></div>';
+            res += '<div style="display:inline-block;padding:5px;"><span style="display:inline-block;float:left;" \
+                    class="ui-icon ui-icon-alert"></span><b><span lang="en">This design is not available on current selected research time</span><span lang="ru">Данный дизайн не доступен на выбранное время исследований</span></b></div>';
         }
     }else{
-        res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' + '<div style="display:inline-block;padding:5px;"><b>This might not be researchable for design.</b></div>';
+        res += '<span style="display:inline-block;" class="ui-icon ui-icon-alert"></span>' +
+            '<div style="display:inline-block;padding:5px;"><b><span lang="en">This might not be researchable for design.</span><span lang="ru">Это может быть невозможно исследовать.</span></b></div>';
     }
 
     for (var i = 0; i < turrets_ids.length; i++) {
@@ -725,10 +727,10 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
         var res_path_href = "Research.php?tree=1&component_id=" + turrets_ids[i];
         var res_href =  resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
         var turret = FindTurretById(turrets_ids[i]);
-        var res_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
-        var comp_name = turret == null ? "unknown" : turret.name;
+        var res_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
+        var comp_name = turret == null ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : turret.name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-        res += '<div>Turret <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + comp_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + res_time + '</b></span></div>';
+        res += '<div>Turret <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + comp_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;"><span lang="en">see path</span><span lang="ru">иссл. путь</span></a><span style="float:right;"><b>' + res_time + '</b></span></div>';
         res += '</div>'
     }
 
@@ -736,10 +738,10 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
         var resComp_i = resComp[body_id];
         var res_path_href = "Research.php?tree=1&component_id=" + body_id;
         var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
-        var bod_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
-        var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "unknown" : Bodies.loaded_data_hash[body_id].name;
+        var bod_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
+        var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : Bodies.loaded_data_hash[body_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-        res += '<div>Body <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + bod_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><b>' + bod_time + '</b></span></div>';
+        res += '<div>Body <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + bod_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;"><span lang="en">see path</span><span lang="ru">иссл. путь</span></a><span style="float:right;"><b>' + bod_time + '</b></span></div>';
         res += '</div>';
     }
 
@@ -747,10 +749,10 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
         var resComp_i = resComp[body_id];
         var res_path_href = "Research.php?tree=1&component_id=" + propulsion_id;
         var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
-        var prop_time = resComp_i == undefined ? "don't know" : resComp_i.time_seconds.toHHMMSS();
-        var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "unknown" : Propulsion.loaded_data_hash[propulsion_id].name;
+        var prop_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
+        var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : Propulsion.loaded_data_hash[propulsion_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
-        res += '<div>Propulsion <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + prop_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;">see path</a><span style="float:right;"><span style="float:right; display:inline"><b>' + prop_time + '</b></span></div>';
+        res += '<div>Propulsion <span class="span_button" onclick="window.open(\'' + res_href + '\')">"' + prop_name + '"</span> : <a href="' + res_path_href + '" style="float:right;margin-left:5px;"><span lang="en">see path</span><span lang="ru">иссл. путь</span></a><span style="float:right;"><span style="float:right; display:inline"><b>' + prop_time + '</b></span></div>';
         res += '</div>';
     }
     return res;
@@ -801,11 +803,11 @@ function Designer_Draw_DPSTable(container_id, TankWeapons, enemy_player_number) 
         colModel:
             [
                 { label: "", name: "id", width: '1px', key:true, hidden:true },
-                { label: "Class", name: "group",  width: '100px' },
-                { label: "Body", name: "body",  width: '100px' },
-                { label: "Propulsion", name: "propulsion", width: '100px' },
-                { label: "Weapon", name: "weapon", width: '100px' },
-                { label: "DPS (damage per second)", name: "dps", width: '100px' },
+                { label: "<span lang='en'>Class</span><span lang='ru'>Класс</span>", name: "group", width: '100px' },
+                { label: "<span lang='en'>Body</span><span lang='ru'>Корпус</span>", name: "body", width: '100px' },
+                { label: "<span lang='en'>Propulsion</span><span lang='ru'>Ходовая</span>", name: "propulsion", width: '100px' },
+                { label: "<span lang='en'>Weapon</span><span lang='ru'>Орудие</span>", name: "weapon", width: '100px' },
+                { label: "<span lang='en'>DPS (damage per second)</span><span lang='ru'>ДПС (урон в секунду)</span>", name: "dps", width: '100px' },
             ],
         onSelectRow: function (rowid) {
         },
@@ -928,99 +930,99 @@ function TryCalculateDesign(callback_function) {
             /* PRICE & BUILD POINTS */
             {
                 var row = new Object;
-                row.name = 'Unit price';
+                row.name = Translate('Unit price');
                 row.base = Tank.baseStats.price.toFixed(0);
                 row.upgraded = Tank.price.toFixed(0);
-                row.group = ++group_prefix + ': ' + 'Price';
-                row.descr = 'Total price of this tank (cyborg) design.';
+                row.group = ++group_prefix + ': ' + Translate('Price');
+                row.descr = Translate('Total price of this tank (cyborg) design');
                 grid_data.push(row);
             }
 
             {
                 var row = new Object;
                 if (propulsion.type == 'Legged') {
-                    row.name = 'Time to build in Factory';
+                    row.name = Translate('Time to build in Factory');
                 } else {
-                    row.name = 'Time to build in Factory: no modules';
+                    row.name = Translate('Time to build in Factory: no modules');
                 }
                 row.base = Tank.baseStats.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgraded = Tank.buildTimeSeconds_factory_nomodules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_nomodules - Tank.baseStats.buildTimeSeconds_factory_nomodules) / Tank.baseStats.buildTimeSeconds_factory_nomodules;
-                row.group = ++group_prefix + ': ' + 'Build time';
-                row.descr = 'Time needed to product this tank (cyborg) design in factory without additional factory modules.';
+                row.group = ++group_prefix + ': ' + Translate('Build time');
+                row.descr = Translate('Time needed to product this tank (cyborg) design in factory without additional factory modules.');
                 grid_data.push(row);
             }
 
             if (propulsion.type != 'Legged')
             {
                 var row = new Object;
-                row.name = 'Time to build in Factory: with 2 modules';
+                row.name = Translate('Time to build in Factory: with 2 modules');
                 row.base = Tank.baseStats.buildTimeSeconds_factory_with2modules.toMMSS();
                 row.upgraded = Tank.buildTimeSeconds_factory_with2modules.toMMSS();
                 row.upgrade_change = (Tank.buildTimeSeconds_factory_with2modules - Tank.baseStats.buildTimeSeconds_factory_with2modules) / Tank.baseStats.buildTimeSeconds_factory_with2modules;
-                row.group = group_prefix + ': ' + 'Build time';
-                row.descr = 'Time needed to product this tank (cyborg) design in factory with 2 additional factory modules';
+                row.group = group_prefix + ': ' + Translate('Build time');
+                row.descr = Translate('Time needed to product this tank (cyborg) design in factory with 2 additional factory modules.');
                 grid_data.push(row);
             }
 
             {
                 var row = new Object;
-                row.name = 'Build points';
+                row.name = Translate('Build points');
                 row.base = Tank.baseStats.buildPoints;
                 row.upgraded = Tank.buildPoints;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = group_prefix + ': ' + 'Build time';
-                row.descr = 'Build points are equal to production time.';
+                row.group = group_prefix + ': ' + Translate('Build time');
+                row.descr = Translate('Build points are equal to production time.');
                 grid_data.push(row);
             }
 
             /* Armor */
             {
                 var row = new Object;
-                row.name = 'Health Points';
+                row.name = Translate('Health Points');
                 row.base = Tank.baseStats.hitpoints;
                 row.upgraded = Tank.hitpoints.toInt();
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
-                row.group = ++group_prefix + ': ' + 'Armor';
-                row.descr = 'How much damage this tank(cyborgs) can take before death.';
+                row.group = ++group_prefix + ': ' + Translate('Armor');
+                row.descr = Translate('How much damage this tank(cyborgs) can take before death.');
                 grid_data.push(row);
             }
             {
                 var row = new Object;
-                row.name = 'Kinetic armor';
+                row.name = Translate('Kinetic armor');
                 row.base = Tank.baseStats.armourKinetic;
                 row.upgraded = Tank.armourKinetic.toInt();
                 row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
-                row.group = group_prefix + ': ' + 'Armor';
-                row.descr = 'Armor reduces damage to minimum level 33% of damage. Kinetic armor affects damage with type KINETIC.';
+                row.group = group_prefix + ': ' + Translate('Armor');
+                row.descr = Translate('Armor reduces damage to minimum level 33% of damage. Kinetic armor affects damage with type KINETIC.');
                 grid_data.push(row);
             }
             {
                 var row = new Object;
-                row.name = 'Thermal armor';
+                row.name = Translate('Thermal armor');
                 row.base = Tank.baseStats.armourHeat;
                 row.upgraded = Tank.armourHeat.toInt();
                 row.upgrade_change = ((row.upgraded - row.base) / row.base).toInt();
-                row.group = group_prefix + ': ' + 'Armor';
-                row.descr = 'Armor reduces damage to minimum level 33% of damage. Thermal armor affects damage with type HEAT.';
+                row.group = group_prefix + ': ' + Translate('Armor');
+                row.descr = Translate('Armor reduces damage to minimum level 33% of damage. Thermal armor affects damage with type HEAT.');
                 grid_data.push(row);
             }
 
             /* DAMAGE */
-            var group_label_postfix = num_turrets > 1 ? ' (Weapon 1)' : '';
+            var group_label_postfix = num_turrets > 1 ? ' ' + Translate('(Weapon 1)') : '';
             for (var i = 0; i < num_turrets; i++) {
                 if (i > 0) {
-                    group_label_postfix = ' (Weapon 2)';
+                    group_label_postfix = ' ' + Translate('(Weapon 2)');
                 }
                 var turret_id = Tank.turrets[i].grid_id;
                 if (Weapons.loaded_data_hash[turret_id] == undefined) {
                     {
                         var row = new Object;
-                        row.name = 'Damage';
-                        row.base = 'no damage';
-                        row.upgraded = 'no damage';;
+                        row.name = Translate('Damage');
+                        row.base = Translate('no damage');
+                        row.upgraded = Translate('no damage');
                         row.upgrade_change = '0';
-                        row.group = ++group_prefix +': ' + 'Damage';
+                        row.group = ++group_prefix + ': ' + Translate('Damage');
                         grid_data.push(row);
                     }
                 } else {
@@ -1034,25 +1036,25 @@ function TryCalculateDesign(callback_function) {
                 }
             }
             /* SPEED */
-            var group_name = ++group_prefix + ': ' + 'Speed';
+            var group_name = ++group_prefix + ': ' + Translate('Speed');
             {
                 var row = new Object;
-                row.name = 'Speed Road';
+                row.name = Translate('Speed Road');
                 row.base = Tank.baseStats.speed_road;
                 row.upgraded = Tank.speed_road;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = group_name
-                row.descr = 'How fast this tank can move on road (concrete) surface.';
+                row.descr = Translate('How fast this tank can move on road (concrete) surface.');
                 grid_data.push(row);
             }
             {
                 var row = new Object;
-                row.name = 'Speed Off-Road';
+                row.name = Translate('Speed Off-Road');
                 row.base = Tank.baseStats.speed_offroad;
                 row.upgraded = Tank.speed_offroad;
                 row.upgrade_change = (row.upgraded - row.base) / row.base;
                 row.group = group_name;
-                row.descr = 'Off-Road speed can be different. This parameter shows off-road speed for only one surface (SANDY_BUSH)';
+                row.descr = Translate('Off-Road speed can be different. This parameter shows off-road speed for only one surface (SANDY_BUSH).');
                 grid_data.push(row);
             }
 
@@ -1167,9 +1169,9 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
         colModel:
             [
                 { name: "", width: '20px', sortable: false, search: false },
-                { name: "name", label: 'Parameter', key: true, width: '200px' },
+                { name: "name", label: Translate('Parameter'), key: true, width: '200px' },
                 {
-                    name: "base", label: 'Base value', width: '60px', fixed: true,
+                    name: "base", label: Translate('Base value'), width: '60px', fixed: true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (typeof cellvalue != "string" && isNaN(cellvalue)) {
                             return '';
@@ -1177,9 +1179,9 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
                         return cellvalue;
                     }
                 },
-                { name: "group", label: 'group', width: '100px' },
+                { name: "group", label: Translate('group'), width: '100px' },
                 {
-                    name: "upgraded", label: 'Upgraded value', width: '60px', fixed: true,
+                    name: "upgraded", label: Translate('Upgraded value'), width: '60px', fixed: true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (typeof cellvalue != "string" && isNaN(cellvalue)) {
                             //return '<div style="width:100%;height:100%;background: lightgray;></div>'
@@ -1193,7 +1195,7 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
                     }
                 },
                 {
-                    name: "upgrade_change", label: 'Upgrade Change', width: '60px',fixed:true,
+                    name: "upgrade_change", label: Translate('Upgrade Change'), width: '60px',fixed:true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (isNaN(cellvalue)) {
                             return '';
@@ -1209,7 +1211,7 @@ function DrawComponentDetailsGrid(grid_data, container_id) {
 
                 },
                 {
-                    name: "descr", label: 'Description', width: '300px', fixed: true,
+                    name: "descr", label: Translate('Description'), width: '300px', fixed: true,
                     formatter: function (cellvalue, options, rowObject) {
                         if (cellvalue == undefined) {
                             cellvalue = ' - ';
@@ -1237,113 +1239,113 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
     var grid_data = [];
     var turret = weapon_base;
     var turret_upgraded = weapon_upgraded;
-    var damage1_label = "Damage";
-    var range_label = "Range";
+    var damage1_label = Translate("Damage");
+    var range_label = Translate("Range");
     {
         var row = new Object;
-        row.name = 'Damage';
+        row.name = Translate('Damage');
         row.base = turret.damage;
         row.upgraded = turret_upgraded.damage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Damage dealt to enemy unit with each one shot.';
+        row.descr = Translate('Damage dealt to enemy unit with each one shot.');
         grid_data.push(row);
     }
     {
         var row = new Object;
-        row.name = 'Damage Type';
+        row.name = Translate('Damage Type');
         row.base = turret.weaponClass;
         row.upgraded = '';
         row.group = damage1_label;
-        row.descr = 'Type of damage. KINETIC damage affected by Kinetic armor. HEAT damage affected by Thermal armor.';
+        row.descr = Translate('Type of damage. KINETIC damage affected by Kinetic armor. HEAT damage affected by Thermal armor.');
         grid_data.push(row);
     }
     if(turret.radiusDamage != undefined)
     {
         var row = new Object;
-        row.name = 'Splash Damage';
+        row.name = Translate('Splash Damage');
         row.base = turret.radiusDamage;
         row.upgraded = turret_upgraded.radiusDamage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Damage dealt to area. This damage does not affect main target of attack.';
+        row.descr = Translate('Damage dealt to area. This damage does not affect main target of attack.');
         grid_data.push(row);
     }
     if (turret.radius != undefined)
     {
         var row = new Object;
-        row.name = 'Splash Radius (tiles)';
+        row.name = Translate('Splash Radius (tiles)');
         row.base = turret.radius / 128;
         row.upgraded = turret_upgraded.radius / 128;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Radius of splash damage. Bigger readium means Splash damage will affect more enemy units.';
+        row.descr = Translate('Radius of splash damage. Bigger readium means Splash damage will affect more enemy units.');
         grid_data.push(row);
     }
     {
         var row = new Object;
-        row.name = 'Shots per min (rate-of-fire)';
+        row.name = Translate('Shots per min (rate-of-fire)');
         row.base = Weapon_ShotsPerMinute(turret).toFixed(2);
         row.upgraded = Weapon_ShotsPerMinute(turret_upgraded).toFixed(2);
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Rate-of-fire.';
+        row.descr = Translate('Rate-of-fire.');
         grid_data.push(row);
     }
     if (turret.reloadTime != undefined)
     {
         var row = new Object;
-        row.name = 'Salvo reload (sec)';
+        row.name = Translate('Salvo reload (sec)');
         row.base = turret.reloadTime/10;
         row.upgraded = turret_upgraded.reloadTime / 10;
         row.upgrade_change = ((row.upgraded - row.base) / row.base);
         row.group = damage1_label;
-        row.descr = 'Time to reload salvo weapon (seconds)';
+        row.descr = Translate('Time to reload salvo weapon (seconds)');
         grid_data.push(row);
     }
 
     if (turret.periodicalDamage != undefined)
     {
         var row = new Object;
-        row.name = 'Period. damage';
+        row.name = Translate('Period. damage');
         row.base = turret.periodicalDamage;
         row.upgraded = turret_upgraded.periodicalDamage.toInt();
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Additional damage per second. Note: periodical damage affects only enemy units which are stay in \'inflamed area\'';
+        row.descr = Translate('Additional damage per second. Note: periodical damage affects only enemy units which are stay in \'inflamed area\'');
         grid_data.push(row);
     }
     if (turret.periodicalDamageTime != undefined)
     {
         var row = new Object;
-        row.name = 'Period. time (seconds)';
+        row.name = Translate('Period. time (seconds)');
         row.base = turret.periodicalDamageTime / 10;
         row.upgraded = turret_upgraded.periodicalDamageTime / 10;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Duration of periodical damage.';
+        row.descr = Translate('Duration of periodical damage.');
         grid_data.push(row);
     }
     if (turret.periodicalDamageRadius != undefined)
     {
         var row = new Object;
-        row.name = 'Period. radius (tiles)';
+        row.name = Translate('Period. radius (tiles)');
         row.base = turret.periodicalDamageRadius / 128;
         row.upgraded = turret_upgraded.periodicalDamageRadius / 128;
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = damage1_label;
-        row.descr = 'Radius of periodical damage.';
+        row.descr = Translate('Radius of periodical damage.');
         grid_data.push(row);
     }
     /* RANGE */
     {
         var row = new Object;
-        row.name = 'Range (tiles)';
+        row.name = Translate('Range (tiles)');
         row.base = PropDescr("longRange_tiles").format_str(turret.longRange);
         row.upgraded = PropDescr("longRange_tiles").format_str(turret_upgraded.longRange);
         row.upgrade_change = (row.upgraded - row.base) / row.base;
         row.group = range_label;
-        row.descr = 'Maximum range of fire.';
+        row.descr = Translate('Maximum range of fire.');
         grid_data.push(row);
     }
     return grid_data;
@@ -1433,13 +1435,13 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
         colModel: [
             { label: "id", name: "id", width: 1, hidden: true, key: true },
             {
-                label: "Research Name", name: "name",
+                label: Translate("Research Name"), name: "name",
                 formatter: function (cellvalue, options, rowObject) {
                     var res_html = '<span class="span_button"><a style="text-decoration:none" href="Research.php?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/></span>';
                     if (rowObject.level == 0) {
                         res_html = '<b>' + res_html +'</b>';
                     }
-                    var time = 'cant research(!)';
+                    var time = Translate('cant research(!)');
                     if (rowObject.calculated_time != undefined) {
                         if (rowObject.calculated_time < 3600) {
                             time = rowObject.calculated_time.toMMSS();
@@ -1791,7 +1793,7 @@ function WeaponDamage_htmlCell(rowObject) {
         var dmg = PropDescr('damage').format_str(rowObject.damage);
         if (rowObject.weaponClass == "HEAT") {
             html_res += "<label style='color: darkred'><b>" + dmg + "</b></label>";
-            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
+            html_res += " " + Translate(rowObject.weaponClass.toLowerCase()) + "";
         } else {
             html_res += "<b>" + dmg + "</b>";
         }
@@ -1802,7 +1804,7 @@ function WeaponDamage_htmlCell(rowObject) {
         html_res += "</br>";
         if (rowObject.weaponClass == "HEAT") {
             html_res += "<label style='color: darkred'><b>" + rad_dmg + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
-            html_res += " " + rowObject.weaponClass.toLowerCase() + "";
+            html_res += " " + Translate(rowObject.weaponClass.toLowerCase()) + "";
         } else {
             html_res += "<b>" + rad_dmg + " /" + (rowObject.radius / 128).toFixed(1) + " tiles</b>";
         }
@@ -1813,7 +1815,7 @@ function WeaponDamage_htmlCell(rowObject) {
         var period_dmg = PropDescr('periodicalDamage').format_str(rowObject.periodicalDamage);
         if (rowObject.periodicalDamageWeaponClass == "HEAT") {
             html_res += "<label style='color: darkred'><b>" + period_dmg + "</label></b> /sec" + "";
-            html_res += " " + rowObject.periodicalDamageWeaponClass.toLowerCase() + "";
+            html_res += " " + Translate(rowObject.periodicalDamageWeaponClass.toLowerCase()) + "";
         } else {
             html_res += "<b>" + period_dmg + " /sec" + "</b>";
         }
@@ -1849,7 +1851,7 @@ function DrawPropulsionResistance(container_id, propulsion_id) {
     }
 
     var grid_element_id = ResetGridContainer(container_id);
-    $('<div style="padding:5px">Propulsion type: <b>' + propulsion.type + '</b></div>').insertBefore(grid_element_id);
+    $('<div style="padding:5px">' + Translate('Propulsion type')+': <b>' + Translate(propulsion.type) + '</b></div>').insertBefore(grid_element_id);
     var grid = $(grid_element_id);
     grid.jqGrid
     ({
@@ -1859,8 +1861,8 @@ function DrawPropulsionResistance(container_id, propulsion_id) {
         height: '100%',
         colModel:
             [
-                { name: "weap_class", label: "Weapon class", width: '150px', fixed: true },
-                { name: "resist", label: "Resistance", width: '80px', fixed: true },
+                { name: "weap_class", label: Translate("Weapon class"), width: '150px', fixed: true },
+                { name: "resist", label: Translate("Resistance"), width: '80px', fixed: true },
             ],
         loadonce: true,
     });
@@ -1871,28 +1873,28 @@ function DrawWeaponPropulsionModifiers(container_id, weapon_id) {
     var modif = PropulsionModifiers.loaded_data_hash[weapon.weaponEffect];
     for (var prop_type in PropulsionType.loaded_data_hash) {
         grid_data_mdf.push({
-            propulsion: prop_type,
+            propulsion: Translate(prop_type),
             modifier: modif[prop_type] == undefined ? ' - ' : modif[prop_type] + '%',
         });
     }
 
     if (StructureModifiers.loaded_data_hash[weapon.weaponEffect] != undefined) {
         grid_data_mdf.push({
-            propulsion: 'MEDIUM',
+            propulsion: Translate('MEDIUM'),
             modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['MEDIUM'] + '%',
         });
         grid_data_mdf.push({
-            propulsion: 'HARD',
+            propulsion: Translate('HARD'),
             modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['HARD'] + '%',
         });
         grid_data_mdf.push({
-            propulsion: 'BUNKER',
+            propulsion: Translate('BUNKER'),
             modifier: StructureModifiers.loaded_data_hash[weapon.weaponEffect]['BUNKER'] + '%',
         });
     }
 
     var grid_element_id = ResetGridContainer(container_id);
-    $('<div style="padding:5px">Weapon type: <b>' + weapon.weaponEffect + '</b></div>').insertBefore(grid_element_id);
+    $('<div style="padding:5px">' + Translate('Weapon type') +': <b>' + weapon.weaponEffect + '</b></div>').insertBefore(grid_element_id);
     var grid = $(grid_element_id);
     grid.jqGrid
     ({
@@ -1903,7 +1905,7 @@ function DrawWeaponPropulsionModifiers(container_id, weapon_id) {
         colModel:
             [
                 { name: "propulsion", label:' ', width: '150px', fixed: true },
-                { name: "modifier", width: '50px', fixed: true },
+                { name: "modifier", label: Translate('modifier'), width: '50px', fixed: true },
             ],
         loadonce: true,
     });
@@ -1945,14 +1947,14 @@ function DrawWeaponUpgradeTable(container_id, weapon_id, research_hint) {
         height: '100%',
         colModel:
             [
-                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "name", label: Translate("Research"), width: '200px', fixed: true },
                 { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
                 {
-                    label: "Research Time (min)",
+                    label: Translate("Research Time (min)"),
                     width: 80,
                     formatter: function (cellvalue, options, rowObject) {
                         if (rowObject.time_int == undefined) {
-                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                            return '<label style="color:gray;font-size:0.9em;">' +  Translate('cant research(!)') +'</label>';
                         }
                         if (rowObject.time_int < 3600) {
                             return rowObject.time_int.toMMSS();
@@ -1961,7 +1963,7 @@ function DrawWeaponUpgradeTable(container_id, weapon_id, research_hint) {
                         }
                     },
                 },
-                { name: "summ", label: "Summ Upgrade value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "summ", label: Translate("Summ Upgrade value"), width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
                // { name: "value", label: "Upgrade value", width: '70px', fixed: true },
             ],
         sortname: "time_int",
@@ -1980,7 +1982,7 @@ function DrawStructureResistance(container_id, structure_id) {
     }
 
     var grid_element_id = ResetGridContainer(container_id);
-    $('<div style="padding:5px">Structure type: <b>' + structure.strength + '</b></div>').insertBefore(grid_element_id);
+    $('<div style="padding:5px">' + Translate('Structure type') + ': <b>' + structure.strength + '</b></div>').insertBefore(grid_element_id);
     var grid = $(grid_element_id);
     grid.jqGrid
     ({
@@ -1990,8 +1992,8 @@ function DrawStructureResistance(container_id, structure_id) {
         height: '100%',
         colModel:
             [
-                { name: "weap_class", label: "Weapon class", width: '150px', fixed: true },
-                { name: "resist", label: "Resistance", width: '80px', fixed: true },
+                { name: "weap_class", label: Translate("Weapon class"), width: '150px', fixed: true },
+                { name: "resist", label: Translate("Resistance"), width: '80px', fixed: true },
             ],
         loadonce: true,
     });

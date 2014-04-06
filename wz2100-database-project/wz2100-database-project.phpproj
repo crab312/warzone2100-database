@@ -127,6 +127,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="data_master\stats\weapons.json" />
+    <Content Include="data_master\namestxt_translated.js" />
     <Content Include="design.html">
       <SubType>Content</SubType>
     </Content>

@@ -214,3 +214,15 @@ function scrollToId(elem_id) {
     }
     jQuery.browser.version = jQuery.browser.majorVersion;
 })(jQuery);
+
+//http://stackoverflow.com/questions/14488774/using-html-in-a-dialogs-title-in-jquery-ui-1-10
+//This will override the function used when setting jQuery UI dialog titles, allowing it to contain HTML.
+$.widget("ui.dialog", $.extend({}, $.ui.dialog.prototype, {
+    _title: function (title) {
+        if (!this.options.title) {
+            title.html("&#160;");
+        } else {
+            title.html(this.options.title);
+        }
+    }
+}));

@@ -54,6 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
+var current_site_version = "2.24";
 
 $(function () {
 
@@ -71,7 +72,7 @@ $(function () {
     //    });
     //}
 
-    /* multi-language stuff: 2 lines*/
+    /* multi-language stuff*/
     $('head').append('<style type="text/css" id="lang_css"></style>');
     SetSiteLanguage();
 
@@ -85,7 +86,6 @@ function InitDataObjects() {
 
     InitResearchObjects();
 
-    var current_site_version = "2.09";
     if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
         localStorage.clear();
         localStorage["site_version"] = current_site_version;
@@ -922,8 +922,31 @@ function LoadResearch(DataObject, callback_function) {
     });
 }
 
-//var readfile;
+var readfile;
 function LoadDataObject(DataObject, callback_function) {
+    //if (localStorage["translation"] == undefined)
+    //{
+    //    /* retrievind data from server */
+    //    ShowLoading('tabs_left');
+    //    $.ajax({
+    //        url: "data_master/translations.js",
+    //        //data: { url: DataObject.path_ini },
+    //        datatype: "text",
+    //        success: function (msg) {
+    //            alert('11');
+    //            readfile = msg;
+    //            HideLoading('tabs_left');
+    //        },
+    //        error: function (msg) {
+    //            HideLoading('tabs_left');
+    //            readfile = msg;
+    //            alert("Error happened. Please try to reload page");
+    //        }
+    //    });
+    //}
+
+    var do_translate_names = typeof po_Translate != "undefined";
+
     if (DataObject.loaded_data == undefined) {
 
         var method_process_loaded_data = function (DataObject, loaded_data, callback_function) {
@@ -958,6 +981,13 @@ function LoadDataObject(DataObject, callback_function) {
                     }
                 }
                 DataObject.loaded_data_hash[key] = data_row;
+                
+                if (do_translate_names && data_row.name != undefined)
+                {
+                    if (po_Translate[data_row.name] != undefined) {
+                        data_row.name = po_Translate[data_row.name][0];
+                    }
+                }
             }
             DataObject.all_columns = grid_columns;
             DataObject.loaded_data = grid_data;
@@ -983,7 +1013,7 @@ function LoadDataObject(DataObject, callback_function) {
                 },
                 error: function (msg) {
                     HideLoading('tabs_left');
-                    alert("<span lang='en'>Error happened. Please try to reload page.</span><span lang='ru'>Произошла ошибка. Попробуйте перезагрузить страницу.</span>");
+                    alert("Error happened. Please try to reload page.");
                 }
             });
         }
@@ -1239,9 +1269,11 @@ function DrawPageHeader() {
 }
 
 function languageChange(lang_tag) {
-    //alert(lang_tag);
+    var keep_site_version = localStorage["site_version"];
+    localStorage.clear(); //stats should be reloaded with translated names
     localStorage["lang"] = lang_tag;
-    SetSiteLanguage();
+    localStorage["site_version"] = keep_site_version;
+    location.reload();
 }
 
 function SetSiteLanguage()
@@ -1249,6 +1281,9 @@ function SetSiteLanguage()
     if (localStorage["lang"] == undefined)
     {
         localStorage["lang"] = "en";
+    }
+    if (localStorage["lang"] != "en") {
+        $('head').append('<script type="text/javascript" src="data_master/namestxt_translated.js"></script>');
     }
     var lang_tag = localStorage["lang"];
 
@@ -1574,6 +1609,297 @@ function EmptyComponentIcon_html(name) {
 function can_research(comp_id) {
     return ResearchedComponents[player_all_researched][comp_id] != undefined;
 }
+
+
+function Translate(str) {
+    var lang_tag = localStorage["lang"];
+    var str_langs = MessagesTranslation[str];
+    if (str_langs)
+    {
+        if (str_langs[lang_tag])
+        {
+            return str_langs[lang_tag];
+        }
+    }
+    return str;
+}
+
+var MessagesTranslation = {
+
+    /* designer_functions.js */
+    "Sorry but you have not selected a row. Nothing will happen.": {
+        ru: "Вы не выбрали строку в таблице. Ничего не произойдет.",
+    },
+    "Selected Multi-Turret Body but we do not support more than 2 turrets": {
+        ru: "Выбранный корпус не может иметь более 2 орудий",
+    },
+    "Unit price": {
+        ru: "Цена юнита",
+    },
+    "Price": {
+        ru: "Цена",
+    },
+    "Total price of this tank (cyborg) design.": {
+        ru: "Суммарная цена данного дизайна танка (киборга).",
+    },
+    "Time to build in Factory": {
+        ru: "Время производства в фабрике",
+    },
+    "Time to build in Factory: no modules": {
+        ru: "Время производства в фабрике с двумя модулями",
+    },
+    "Build time": {
+        ru: "Время производства",
+    },
+    "Time needed to product this tank (cyborg) design in factory without additional factory modules.": {
+        ru: "Время, необходимое чтобы произвести данный дизайн танка (киборга) в фабрике без дополнительных модулей.",
+    },
+    "Time to build in Factory: with 2 modules": {
+        ru: "Время производства в фабрике с 2 модулями",
+    },
+    "Time needed to product this tank (cyborg) design in factory with 2 additional factory modules.": {
+        ru: "Время, необходимое для производства данного дизайна танка (киборга) в фабрике с двумя дополнительбными модулями",
+    },
+    "Build points": {
+        ru: "Очки производства",
+    },
+    "Build points are equal to production time.": {
+        ru: "Очки производства определяют время, которое будет затрачено на производство данного дизайна.",
+    },
+    "Health Points": {
+        ru: "Очки жизни",
+    },
+    "Armor": {
+        ru: "Защита",
+    },
+    "How much damage this tank(cyborgs) can take before death.": {
+        ru: "Сколько повреждения нужно нанести юниту чтобы он был уничтожен.",
+    },
+    "Kinetic armor": {
+        ru: "Кинетическая броня",
+    },
+    "Armor reduces damage to minimum level 33% of damage. Kinetic armor affects damage with type KINETIC.": {
+        ru: "Броня снижает получаемый урон, при этом минимальный урон это 33% от урона. Кинетическая броня защищает юнит от кинетического вида урона (KINETIC).",
+    },
+    "Thermal armor": {
+        ru: "Огненная броня",
+    },
+    "Armor reduces damage to minimum level 33% of damage. Thermal armor affects damage with type HEAT.": {
+        ru: "Броня снижает получаемый урон, при этом минимальный урон это 33% от урона. Огненная броня защищает юнит от огненного вида урона (THERMAL).",
+    },
+    "(Weapon 1)": {
+        ru: "Орудие 1",
+    },
+    "(Weapon 2)": {
+        ru: "Орудие 2",
+    },
+    "Damage": {
+        ru: "Урон",
+    },
+    "no damage": {
+        ru: "нет урона",
+    },
+    "Speed": {
+        ru: "Скорость",
+    },
+    "Speed Road": {
+        ru: "Скорость по дороге",
+    },
+    "How fast this tank can move on road (concrete) surface.": {
+        ru: "Насколько быстро данный юнит будет двигаться по дороге или по бетонной поверхности",
+    },
+    "Speed Off-Road": {
+        ru: "Скорость по бездорожью",
+    },
+    "Off-Road speed can be different. This parameter shows off-road speed for only one surface (SANDY_BUSH).": {
+        ru: "Скорость по бездрожью может сильно различаться в зависимости от типа местности. Здесь приведена скорость по типу местности SANDY_BUSH.",
+    },
+    "Parameter": {
+        ru: "Параметр",
+    },
+    "Base value": {
+        ru: "Базовое значение",
+    },
+    "group": {
+        ru: "группа",
+    },
+    "Upgraded value": {
+        ru: "Значение параметра<br/>с учетом исследований",
+    },
+    "Upgrade Change": {
+        ru: "% изменения параметра<br/>в результате исследований",
+    },
+    "Description": {
+        ru: "Описание",
+    },
+    "Range": {
+        ru: "Дальность",
+    },
+    "Damage dealt to enemy unit with each one shot.": {
+        ru: "Урон наносимый цели за 1 выстрел.",
+    },
+    "Damage Type": {
+        ru: "Тип урона",
+    },
+    "Type of damage. KINETIC damage affected by Kinetic armor. HEAT damage affected by Thermal armor.": {
+        ru: "Тип урона может быть кинетическим или огненным. От кинетического урона защищает кинетическая броня. От огненного урона защищает огненная броня.",
+    },
+    "Splash Damage": {
+        ru: "Урон по площади",
+    },
+    "Damage dealt to area. This damage does not affect main target of attack.": {
+        ru: "Урон который, в дополнение к основному урону, наносится по площади в радиусе от основной цели. Данный урон не действует на основую цель атаки.",
+    },
+    "Splash Radius (tiles)": {
+        ru: "Радиус урона по площади (в тайлах)",
+    },
+    "Radius of splash damage. Bigger readium means Splash damage will affect more enemy units.": {
+        ru: "Радиус урона по площади. При большем радиусе урон 'заденет' большее число вражеских юнитов.",
+    },
+    "Shots per min (rate-of-fire)": {
+        ru: "Выстрелов в минуту",
+    },
+    "Rate-of-fire.": {
+        ru: "Число выстрелов в минуту",
+    },
+    "Salvo reload (sec)": {
+        ru: "Время перезагрузки (сек)",
+    },
+    "Time to reload salvo weapon (seconds)": {
+        ru: "Время перезагрузки определяет время между сериями выстрелов.",
+    },
+    "Period. damage": {
+        ru: "Продолжит. урон в сек.",
+    },
+    "Additional damage per second. Note: periodical damage affects only enemy units which are stay in \'inflamed area\'": {
+        ru: "Дополнительный продолжительный урон в секунду. Данный урон применяется при условии нахожденя цели в области поражения (на подожженной земле)",
+    },
+    "Period. time (seconds)": {
+        ru: "Время продолж. урон",
+    },
+    "Duration of periodical damage.": {
+        ru: "Время в течении котоого будет наноситься продолжительный урон. Время горения.",
+    },
+    "Period. radius (tiles)": {
+        ru: "Радиус продолж. урона",
+    },
+    "Radius of periodical damage.": {
+        ru: "Радиус круга, в котором должны находиться вражеские танки, чтобы получать продолжительный урон. Радиус подожженной земли. Радиус отсчитывается от центра, которым является местоложение основной цели атаки.",
+    },
+    "Range (tiles)": {
+        ru: "Дальность (тайлов)",
+    },
+    "Maximum range of fire.": {
+        ru: "Максимальная дальность стрельбы.",
+    },
+    "Research Name": {
+        ru: "Назв. исследования",
+    },
+    "cant research(!)": {
+        ru: "нельзя исследовать",
+    },
+    "heat": {
+        ru: "огненн.",
+    },
+    "kinetic": {
+        ru: "кинетич.",
+    },
+    "Resistance": {
+        ru: "Сопротивление",
+    },
+    "Propulsion type": {
+        ru: "Тип ходовой",
+    },
+    "Weapon type": {
+        ru: "Тип орудия",
+    },
+    "modifier": {
+        ru: "модификатор",
+    },
+    "MEDIUM": {
+        ru: "Средний (MEDIUM)",
+    },
+    "HARD": {
+        ru: "Укрепленный (HARD)",
+    },
+    "BUNKER": {
+        ru: "Бункер",
+    },
+    "Research": {
+        ru: "Исследование",
+    },
+    "Research Time (min)": {
+        ru: "Время исслед. (минимум)",
+    },
+    "Summ Upgrade value": {
+        ru: "Сумма всех улучшений",
+    },
+    "Weapon class": {
+        ru: "Тип орудия",
+    },
+    "Wheeled": {
+        ru: "Колеса",
+    },
+    "Tracked": {
+        ru: "Гусеницы",
+    },
+    "Legged": {
+        ru: "Ноги (киборг)",
+    },
+    "Hover": {
+        ru: "Возд. подуш. (Hover)",
+    },
+    "Lift": {
+        ru: "СВВП (VTOL)",
+    },
+    "Propellor": {
+        ru: "Пропеллер",
+    },
+    "Half-Tracked": {
+        ru: "Полугусеницы",
+    },
+    "Structure type": {
+        ru: "Тип постройки",
+    },
+
+    /* design.html */
+
+    "Click to open Body Details": {
+        ru: "Клик для просмотра деталей по корпусу",
+    },
+    "Click to open Propulsion Details": {
+        ru: "Клик для просмотра деталей по ходовой",
+    },
+    "Click to open Turret Details": {
+        ru: "Клик для просмотра деталей по башне",
+    },
+    "Tank Design": {
+        ru: "Дизайн юнита",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+    "": {
+        ru: "",
+    },
+}
+
+
 
 /*
 var Weapons;
