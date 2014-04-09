@@ -1124,7 +1124,7 @@ function TryCalculateDesign(callback_function) {
                 last_calculated_research_time = research_time;
                 if (is_unfinished_design) {
                     if (turret1 != null) {
-                        $("#designer_abilities_container").html(Form_Weapon_Abilities_html(weapon));
+                        $("#designer_abilities_container").html(Form_Weapon_Abilities_html(turret1));
                     }
                 }else{
                     show_params_method();
