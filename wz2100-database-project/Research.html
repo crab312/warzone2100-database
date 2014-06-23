@@ -390,7 +390,7 @@ function DrawResearchDetailsParameters(research_id) {
             $('#details_description').append(res_path_button_html);
             $('#show_respath_button_span').button().click(null, function (event) {
                 event.preventDefault();
-                window.open("Research.php?tree=1&component_id=" + research_id);
+                window.open("Research.html?tree=1&component_id=" + research_id);
             }).css("font-size", "0.8em");
         }
     }
@@ -1527,7 +1527,7 @@ function show_short_res_table(container_id, grid_data)
                     To research something you have to build <b>Research Facility</b>. 
                 </p>
                Warning: Research Tree Tab is very big and can be <span style="color:red">slow</span>. 
-               Try to use 'static' non-interactive version of Research Tree: <a href="Research.php?tree_static=1">Static Tech Tree</a>
+               Try to use 'static' non-interactive version of Research Tree: <a href="Research.html?tree_static=1">Static Tech Tree</a>
             </div>
             <div id="tabs_left" >
                 <ul>

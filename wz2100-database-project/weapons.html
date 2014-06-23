@@ -19,7 +19,8 @@
 
     <script src="scripts/properties_desription.js"></script>
 
-    <title>Warzone 2100 Guide • Weapons</title>
+    <title>Warzone 2100 Guide • Weapons </title>
+    
 
 <script>
 
@@ -787,7 +788,7 @@ function DrawWeaponStaticData(weapon_id) {
         struc_weapon_descr += '<ul>';
         for (var is in armed_strucs) {
             var struc = armed_strucs[is];
-            struc_weapon_descr += '<li><a href="structure.php?details_id=' + struc.grid_id + '">' + struc.name + '</a></li>';
+            struc_weapon_descr += '<li><a href="structure.html?details_id=' + struc.grid_id + '">' + struc.name + '</a></li>';
         }
         struc_weapon_descr += '</ul>';
         auto_descr += struc_weapon_descr;
@@ -803,10 +804,10 @@ function DrawWeaponStaticData(weapon_id) {
         var res_path_button_html = '<br/> <span lang="en">Research required:</span><span lang="ru">Требуемое исследование:</span><a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span"><span lang="en">Overview research path</span><span lang="ru">Просмотр требуемых исследований</span></button>'
         $('#details_description').append(res_path_button_html);
 
-        $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
+        $('#show_resdetails_button_span').attr("href", "Research.html?details_id=" + research.grid_id)
         $('#show_respath_button_span').button().click(null, function (event) {
             event.preventDefault();
-            window.open("Research.php?tree=1&component_id=" + weapon_id);
+            window.open("Research.html?tree=1&component_id=" + weapon_id);
         }).css("font-size","0.8em").css("margin-left","50px");
     }
 

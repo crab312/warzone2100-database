@@ -757,7 +757,7 @@ function DrawStructureStaticData(structure_id) {
         var weapon = Weapons.loaded_data_hash[structure.weapons.split(',')[0]];
 
         /* Show link to armed weapon */
-        $('#details_description').html('Weapon armed on this structure: <a href="weapons.php?details_id=' + weapon.grid_id + '">' + weapon.name + '</a>');
+        $('#details_description').html('Weapon armed on this structure: <a href="weapons.html?details_id=' + weapon.grid_id + '">' + weapon.name + '</a>');
 
         $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Damage Upgrades</div>');
         $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="damage_upgrades_container"></div>');
@@ -785,10 +785,10 @@ function DrawStructureStaticData(structure_id) {
         var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
         $('#details_description').append(res_path_button_html);
 
-        $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
+        $('#show_resdetails_button_span').attr("href", "Research.html?details_id=" + research.grid_id)
         $('#show_respath_button_span').button().click(null, function (event) {
             event.preventDefault();
-            window.open("Research.php?tree=1&component_id=" + structure_id);
+            window.open("Research.html?tree=1&component_id=" + structure_id);
         }).css("font-size", "0.8em").css("margin-left", "50px");
     }
 }

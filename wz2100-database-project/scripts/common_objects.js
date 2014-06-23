@@ -54,7 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.24";
+var current_site_version = "2.25";
 
 $(function () {
 
@@ -161,7 +161,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Weapon";
-        obj.page_url = "weapons.php";
+        obj.page_url = "weapons.html";
         obj.path_ini = data_directory + "weapons.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -240,7 +240,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Body";
-        obj.page_url = "Body.php";
+        obj.page_url = "Body.html";
         obj.path_ini = data_directory + "body.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -275,7 +275,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Propulsion";
-        obj.page_url = "propulsion.php";
+        obj.page_url = "propulsion.html";
         obj.path_ini = data_directory + "propulsion.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.icon_folder = "Propulsion";
@@ -316,7 +316,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Structure";
-        obj.page_url = "structure.php";
+        obj.page_url = "structure.html";
         obj.path_ini = data_directory + "structure.ini";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
@@ -1201,35 +1201,35 @@ function DrawPageHeader() {
                                 <span lang="en">Guide index</span>\
                                 <span lang="ru">Начало</span>\
                         </a> </li>\
-        				<li><a href="weapons.php">\
+        				<li><a href="weapons.html">\
                                 <span lang="en">Weapons</span>\
                                 <span lang="ru">Орудия</span>\
                         </a> </li>\
-        				<li><a href="Body.php">\
+        				<li><a href="Body.html">\
                                 <span lang="en">Bodies</span>\
                                 <span lang="ru">Корпуса</span>\
                         </a> </li>\
-                        <li><a href="propulsion.php">\
+                        <li><a href="propulsion.html">\
                                 <span lang="en">Propulsion</span>\
                                 <span lang="ru">Ходовая</span>\
                         </a> </li>\
-                        <li><a href="cyborgs.php">\
+                        <li><a href="cyborgs.html">\
                                 <span lang="en">Cyborgs</span>\
                                 <span lang="ru">Киборги</span>\
                         </a> </li>\
-                        <li><a href="structure.php">\
+                        <li><a href="structure.html">\
                                 <span lang="en">Buildings</span>\
                                 <span lang="ru">Постройки</span>\
                         </a> </li>\
-                        <li><a href="Research.php">\
+                        <li><a href="Research.html">\
                                 <span lang="en">Research</span>\
                                 <span lang="ru">Исследования</span>\
                         </a> </li>\
-                        <li><a href="stats.php"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>\
+                        <li><a href="stats.html"><span class="ui-icon ui-icon-calculator" style="display:inline-block"></span>\
                                 <span lang="en">Database</span>\
                                 <span lang="ru">База параметров</span>\
                         </a></li>\
-                        <li><a href="design.php"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>\
+                        <li><a href="design.html"><span class="ui-icon ui-icon-star" style="display:inline-block"></span>\
                                 <span lang="en">Unit designer</span>\
                                 <span lang="ru">Дизайн танков</span>\
                             </a> </li>\
@@ -1926,7 +1926,359 @@ var MessagesTranslation = {
     },
 }
 
-
+var icon_files_hash = {
+    //Bodies: {
+        "B1BaBaPerson01.gif": 1,
+        "B2JeepBody.gif": 1,
+        "B2RKJeepBody.gif": 1,
+        "B3body-sml-buggy01.gif": 1,
+        "B3bodyRKbuggy01.gif": 1,
+        "B4body-sml-trike01.gif": 1,
+        "Body1REC.gif": 1,
+        "Body2SUP.gif": 1,
+        "Body3MBT.gif": 1,
+        "Body4ABT.gif": 1,
+        "Body5REC.gif": 1,
+        "Body6SUPP.gif": 1,
+        "Body7ABT.gif": 1,
+        "Body8MBT.gif": 1,
+        "Body9REC.gif": 1,
+        "Body10MBT.gif": 1,
+        "Body11ABT.gif": 1,
+        "Body12SUP.gif": 1,
+        "Body13SUP.gif": 1,
+        "Body14SUP.gif": 1,
+        "BusBody.gif": 1,
+        "CyborgHeavyBody.gif": 1,
+        "CyborgLightBody.gif": 1,
+        "FireBody.gif": 1,
+        "SuperTransportBody.gif": 1,
+        "TransporterBody.gif": 1,
+    //},
+    //Weapons:{
+        "AAGun2Mk1.gif": 1,
+        "AAGunLaser.gif": 1,
+        "BabaRocket.gif": 1,
+        "Bomb1-VTOL-LtHE.gif": 1,
+        "Bomb2-VTOL-HvHE.gif": 1,
+        "Bomb3-VTOL-LtINC.gif": 1,
+        "Bomb4-VTOL-HvyINC.gif": 1,
+        "Bomb5-VTOL-Plasmite.gif": 1,
+        "Bomb6-VTOL-EMP.gif": 1,
+        "BusCannon.gif": 1,
+        "Cannon1-VTOL.gif": 1,
+        "Cannon1Mk1.gif": 1,
+        "Cannon2A-TMk1.gif": 1,
+        "Cannon4AUTO-VTOL.gif": 1,
+        "Cannon4AUTOMk1.gif": 1,
+        "Cannon5Vulcan-VTOL.gif": 1,
+        "Cannon5VulcanMk1.gif": 1,
+        "Cannon6TwinAslt.gif": 1,
+        "Cannon375mmMk1.gif": 1,
+        "CannonSuper.gif": 1,
+        "CommandTurret1.gif": 1,
+        "Cyb-Hvywpn-A-T.gif": 1,
+        "Cyb-Hvywpn-Acannon.gif": 1,
+        "Cyb-Hvywpn-HPV.gif": 1,
+        "Cyb-Hvywpn-Mcannon.gif": 1,
+        "Cyb-Hvywpn-PulseLsr.gif": 1,
+        "Cyb-Hvywpn-RailGunner.gif": 1,
+        "Cyb-Hvywpn-TK.gif": 1,
+        "Cyb-Wpn-Atmiss.gif": 1,
+        "Cyb-Wpn-Grenade.gif": 1,
+        "Cyb-Wpn-Laser.gif": 1,
+        "Cyb-Wpn-Rail1.gif": 1,
+        "Cyb-Wpn-Thermite.gif": 1,
+        "CyborgCannon.gif": 1,
+        "CyborgChaingun.gif": 1,
+        "CyborgFlamer01.gif": 1,
+        "CyborgRocket.gif": 1,
+        "CyborgRotMG.gif": 1,
+        "EMP-Cannon.gif": 1,
+        "Flame1Mk1.gif": 1,
+        "Flame2.gif": 1,
+        "HeavyLaser-VTOL.gif": 1,
+        "HeavyLaser.gif": 1,
+        "Howitzer03-Rot.gif": 1,
+        "Howitzer105Mk1.gif": 1,
+        "Howitzer150Mk1.gif": 1,
+        "Howitzer-Incenediary.gif": 1,
+        "LasSat.gif": 1,
+        "Laser2PULSE-VTOL.gif": 1,
+        "Laser2PULSEMk1.gif": 1,
+        "Laser3BEAM-VTOL.gif": 1,
+        "Laser3BEAMMk1.gif": 1,
+        "Laser4-PlasmaCannon.gif": 1,
+        "MG1-VTOL.gif": 1,
+        "MG1Mk1.gif": 1,
+        "MG2-VTOL.gif": 1,
+        "MG2Mk1.gif": 1,
+        "MG3-VTOL.gif": 1,
+        "MG3Mk1.gif": 1,
+        "MG4ROTARY-VTOL.gif": 1,
+        "MG4ROTARYMk1.gif": 1,
+        "MG5TWINROTARY.gif": 1,
+        "MassDriver.gif": 1,
+        "Missile-A-T.gif": 1,
+        "Missile-HvyArt.gif": 1,
+        "Missile-HvySAM.gif": 1,
+        "Missile-LtSAM.gif": 1,
+        "Missile-MdArt.gif": 1,
+        "Missile-VTOL-AT.gif": 1,
+        "MissileSuper.gif": 1,
+        "Mortar1Mk1.gif": 1,
+        "Mortar2Mk1.gif": 1,
+        "Mortar3ROTARYMk1.gif": 1,
+        "Mortar-Incenediary.gif": 1,
+        "MortarEMP.gif": 1,
+        "PlasmaHeavy.gif": 1,
+        "PlasmiteFlamer.gif": 1,
+        "QuadMg1AAGun.gif": 1,
+        "QuadRotAAGun.gif": 1,
+        "RailGun1-VTOL.gif": 1,
+        "RailGun1Mk1.gif": 1,
+        "RailGun2-VTOL.gif": 1,
+        "RailGun2Mk1.gif": 1,
+        "RailGun3Mk1.gif": 1,
+        "Rocket-BB.gif": 1,
+        "Rocket-HvyA-T.gif": 1,
+        "Rocket-IDF.gif": 1,
+        "Rocket-LtA-T.gif": 1,
+        "Rocket-MRL.gif": 1,
+        "Rocket-Pod.gif": 1,
+        "Rocket-Sunburst.gif": 1,
+        "Rocket-VTOL-BB.gif": 1,
+        "Rocket-VTOL-HvyA-T.gif": 1,
+        "Rocket-VTOL-LtA-T.gif": 1,
+        "Rocket-VTOL-Pod.gif": 1,
+        "Rocket-VTOL-Sunburst.gif": 1,
+        "RocketSuper.gif": 1,
+        "SpyTurret01.gif": 1,
+    //},
+    //Structures: {
+        "A0ADemolishStructure.gif": 1,
+        "A0BaBaBunker.gif": 1,
+        "A0BaBaFactory.gif": 1,
+        "A0BaBaFlameTower.gif": 1,
+        "A0BaBaGunTower.gif": 1,
+        "A0BaBaGunTowerEND.gif": 1,
+        "A0BaBaHorizontalWall.gif": 1,
+        "A0BaBaMortarPit.gif": 1,
+        "A0BaBaPowerGenerator.gif": 1,
+        "A0BaBaRocketPit.gif": 1,
+        "A0BaBaRocketPitAT.gif": 1,
+        "A0BabaCornerWall.gif": 1,
+        "A0CannonTower.gif": 1,
+        "A0ComDroidControl.gif": 1,
+        "A0CommandCentre.gif": 1,
+        "A0CyborgFactory.gif": 1,
+        "A0FacMod1.gif": 1,
+        "A0HardcreteMk1CWall.gif": 1,
+        "A0HardcreteMk1Gate.gif": 1,
+        "A0HardcreteMk1Wall.gif": 1,
+        "A0LasSatCommand.gif": 1,
+        "A0LightFactory.gif": 1,
+        "A0PowMod1.gif": 1,
+        "A0PowerGenerator.gif": 1,
+        "A0RepairCentre3.gif": 1,
+        "A0ResearchFacility.gif": 1,
+        "A0ResearchModule1.gif": 1,
+        "A0ResourceExtractor.gif": 1,
+        "A0Sat-linkCentre.gif": 1,
+        "A0TankTrap.gif": 1,
+        "A0VTolFactory1.gif": 1,
+        "A0VtolPad.gif": 1,
+        "AASite-QuadBof.gif": 1,
+        "AASite-QuadMg1.gif": 1,
+        "AASite-QuadRotMg.gif": 1,
+        "CoolingTower.gif": 1,
+        "Emplacement-HPVcannon.gif": 1,
+        "Emplacement-HeavyLaser.gif": 1,
+        "Emplacement-Howitzer105.gif": 1,
+        "Emplacement-Howitzer150.gif": 1,
+        "Emplacement-Howitzer-Incenediary.gif": 1,
+        "Emplacement-HvART-pit.gif": 1,
+        "Emplacement-HvyATrocket.gif": 1,
+        "Emplacement-MRL-pit.gif": 1,
+        "Emplacement-MdART-pit.gif": 1,
+        "Emplacement-MortarEMP.gif": 1,
+        "Emplacement-MortarPit01.gif": 1,
+        "Emplacement-MortarPit02.gif": 1,
+        "Emplacement-MortarPit-Incenediary.gif": 1,
+        "Emplacement-PlasmaCannon.gif": 1,
+        "Emplacement-PrisLas.gif": 1,
+        "Emplacement-PulseLaser.gif": 1,
+        "Emplacement-Rail2.gif": 1,
+        "Emplacement-Rail3.gif": 1,
+        "Emplacement-Rocket06-IDF.gif": 1,
+        "Emplacement-RotHow.gif": 1,
+        "Emplacement-RotMor.gif": 1,
+        "GuardTower1.gif": 1,
+        "GuardTower2.gif": 1,
+        "GuardTower3.gif": 1,
+        "GuardTower4.gif": 1,
+        "GuardTower5.gif": 1,
+        "GuardTower6.gif": 1,
+        "GuardTower-ATMiss.gif": 1,
+        "GuardTower-BeamLas.gif": 1,
+        "GuardTower-Rail1.gif": 1,
+        "LookOutTower.gif": 1,
+        "NuclearReactor.gif": 1,
+        "P0-AASite-Laser.gif": 1,
+        "P0-AASite-SAM1.gif": 1,
+        "P0-AASite-SAM2.gif": 1,
+        "P0-AASite-Sunburst.gif": 1,
+        "PillBox1.gif": 1,
+        "PillBox4.gif": 1,
+        "PillBox5.gif": 1,
+        "PillBox6.gif": 1,
+        "PillBox-Cannon6.gif": 1,
+        "Pillbox-RotMG.gif": 1,
+        "Plasmite-flamer-bunker.gif": 1,
+        "Sys-CB-Tower01.gif": 1,
+        "Sys-RadarDetector01.gif": 1,
+        "Sys-SensoTower01.gif": 1,
+        "Sys-SensoTower02.gif": 1,
+        "Sys-SensoTowerWS.gif": 1,
+        "Sys-SpyTower.gif": 1,
+        "Sys-VTOL-CB-Tower01.gif": 1,
+        "Sys-VTOL-RadarTower01.gif": 1,
+        "TankTrapC.gif": 1,
+        "Tower-Projector.gif": 1,
+        "Tower-RotMg.gif": 1,
+        "Wall-RotMg.gif": 1,
+        "Wall-VulcanCan.gif": 1,
+        "WallTower01.gif": 1,
+        "WallTower02.gif": 1,
+        "WallTower03.gif": 1,
+        "WallTower04.gif": 1,
+        "WallTower05.gif": 1,
+        "WallTower06.gif": 1,
+        "WallTower-Atmiss.gif": 1,
+        "WallTower-DoubleAAGun.gif": 1,
+        "WallTower-EMP.gif": 1,
+        "WallTower-HPVcannon.gif": 1,
+        "WallTower-HvATrocket.gif": 1,
+        "WallTower-PulseLas.gif": 1,
+        "WallTower-QuadRotAAGun.gif": 1,
+        "WallTower-Rail2.gif": 1,
+        "WallTower-Rail3.gif": 1,
+        "WallTower-SamHvy.gif": 1,
+        "WallTower-SamSite.gif": 1,
+        "WallTower-TwinAssaultGun.gif": 1,
+        "WreckedTransporter.gif": 1,
+        "X-Super-Cannon.gif": 1,
+        "X-Super-MassDriver.gif": 1,
+        "X-Super-Missile.gif": 1,
+        "X-Super-Rocket.gif": 1,
+    //},
+    //Researches: {
+        "R-Cyborg-Armor-Heat01.gif": 1,
+        "R-Cyborg-Armor-Heat02.gif": 1,
+        "R-Cyborg-Armor-Heat03.gif": 1,
+        "R-Cyborg-Armor-Heat04.gif": 1,
+        "R-Cyborg-Armor-Heat05.gif": 1,
+        "R-Cyborg-Armor-Heat06.gif": 1,
+        "R-Cyborg-Armor-Heat07.gif": 1,
+        "R-Cyborg-Armor-Heat08.gif": 1,
+        "R-Cyborg-Armor-Heat09.gif": 1,
+        "R-Cyborg-Metals01.gif": 1,
+        "R-Cyborg-Metals02.gif": 1,
+        "R-Cyborg-Metals03.gif": 1,
+        "R-Cyborg-Metals04.gif": 1,
+        "R-Cyborg-Metals05.gif": 1,
+        "R-Cyborg-Metals06.gif": 1,
+        "R-Cyborg-Metals07.gif": 1,
+        "R-Cyborg-Metals08.gif": 1,
+        "R-Cyborg-Metals09.gif": 1,
+        "R-Defense-WallUpgrade01.gif": 1,
+        "R-Defense-WallUpgrade02.gif": 1,
+        "R-Defense-WallUpgrade03.gif": 1,
+        "R-Defense-WallUpgrade04.gif": 1,
+        "R-Defense-WallUpgrade05.gif": 1,
+        "R-Defense-WallUpgrade06.gif": 1,
+        "R-Defense-WallUpgrade07.gif": 1,
+        "R-Defense-WallUpgrade08.gif": 1,
+        "R-Defense-WallUpgrade09.gif": 1,
+        "R-Defense-WallUpgrade10.gif": 1,
+        "R-Defense-WallUpgrade11.gif": 1,
+        "R-Defense-WallUpgrade12.gif": 1,
+        "R-Struc-Factory-Upgrade01.gif": 1,
+        "R-Struc-Factory-Upgrade02.gif": 1,
+        "R-Struc-Factory-Upgrade04.gif": 1,
+        "R-Struc-Factory-Upgrade07.gif": 1,
+        "R-Struc-Factory-Upgrade09.gif": 1,
+        "R-Struc-Materials01.gif": 1,
+        "R-Struc-Materials02.gif": 1,
+        "R-Struc-Power-Upgrade01.gif": 1,
+        "R-Struc-Power-Upgrade01b.gif": 1,
+        "R-Struc-Power-Upgrade01c.gif": 1,
+        "R-Struc-Power-Upgrade02.gif": 1,
+        "R-Struc-Power-Upgrade03.gif": 1,
+        "R-Struc-Power-Upgrade03a.gif": 1,
+        "R-Struc-Research-Upgrade01.gif": 1,
+        "R-Struc-Research-Upgrade02.gif": 1,
+        "R-Struc-Research-Upgrade03.gif": 1,
+        "R-Struc-Research-Upgrade04.gif": 1,
+        "R-Struc-Research-Upgrade05.gif": 1,
+        "R-Struc-Research-Upgrade06.gif": 1,
+        "R-Struc-Research-Upgrade07.gif": 1,
+        "R-Struc-Research-Upgrade08.gif": 1,
+        "R-Struc-Research-Upgrade09.gif": 1,
+        "R-Sys-Autorepair-General.gif": 1,
+        "R-Sys-Engineering01.gif": 1,
+        "R-Sys-Engineering02.gif": 1,
+        "R-Sys-Engineering03.gif": 1,
+        "R-Sys-Resistance-Circuits.gif": 1,
+        "R-Vehicle-Armor-Heat01.gif": 1,
+        "R-Vehicle-Armor-Heat02.gif": 1,
+        "R-Vehicle-Armor-Heat03.gif": 1,
+        "R-Vehicle-Armor-Heat04.gif": 1,
+        "R-Vehicle-Armor-Heat05.gif": 1,
+        "R-Vehicle-Armor-Heat06.gif": 1,
+        "R-Vehicle-Armor-Heat07.gif": 1,
+        "R-Vehicle-Armor-Heat08.gif": 1,
+        "R-Vehicle-Armor-Heat09.gif": 1,
+        "R-Vehicle-Engine01.gif": 1,
+        "R-Vehicle-Engine02.gif": 1,
+        "R-Vehicle-Engine03.gif": 1,
+        "R-Vehicle-Engine04.gif": 1,
+        "R-Vehicle-Engine05.gif": 1,
+        "R-Vehicle-Metals01.gif": 1,
+        "R-Vehicle-Metals02.gif": 1,
+        "R-Vehicle-Metals03.gif": 1,
+        "R-Vehicle-Metals04.gif": 1,
+        "R-Vehicle-Metals05.gif": 1,
+        "R-Vehicle-Metals06.gif": 1,
+        "R-Vehicle-Metals07.gif": 1,
+        "R-Vehicle-Metals08.gif": 1,
+        "R-Vehicle-Metals09.gif": 1,
+    //},
+    //Propulsion: {
+        "CyborgLegs.gif": 1,
+        "HalfTrack.gif": 1,
+        "Naval.gif": 1,
+        "V-Tol.gif": 1,
+        "hover01.gif": 1,
+        "tracked01.gif": 1,
+        "wheeled01.gif": 1,
+    //},
+    //SupportTurrets:{
+        "CyborgRepair.gif": 1,
+        "CyborgSpade.gif": 1,
+        "HeavyRepair.gif": 1,
+        "LightRepair1.gif": 1,
+        "RadarDetector.gif": 1,
+        "Sensor-WideSpec.gif": 1,
+        "SensorTurret1Mk1.gif": 1,
+        "Spade1Mk1.gif": 1,
+        "Sys-CBTurret01.gif": 1,
+        "Sys-VTOLCBTower01.gif": 1,
+        "Sys-VTOLCBTurret01.gif": 1,
+        "Sys-VTOLRadarTower01.gif": 1,
+        "Sys-VstrikeTurret01.gif": 1,
+    //},
+}
 
 /*
 var Weapons;

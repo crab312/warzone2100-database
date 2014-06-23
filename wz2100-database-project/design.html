@@ -106,7 +106,7 @@ function attachOpenDetailEvents() {
           if (Bodies.loaded_data_hash[tmp_id] == undefined) {
               return;
           }
-          window.open("Body.php?details_id=" + $(this).attr('data-value'));
+          window.open("Body.html?details_id=" + $(this).attr('data-value'));
       });
 
     /* PROPULSION */
@@ -138,7 +138,7 @@ function attachOpenDetailEvents() {
           if (Propulsion.loaded_data_hash[tmp_id] == undefined) {
               return;
           }
-          window.open("propulsion.php?details_id=" + $(this).attr('data-value'));
+          window.open("propulsion.html?details_id=" + $(this).attr('data-value'));
       });
 
     /* WEAPON 1 */
@@ -170,7 +170,7 @@ function attachOpenDetailEvents() {
           if (Weapons.loaded_data_hash[tmp_id] == undefined) {
               return;
           }
-          window.open("weapons.php?details_id=" + $(this).attr('data-value'));
+          window.open("weapons.html?details_id=" + $(this).attr('data-value'));
       });
 
     /* WEAPON 2 */
@@ -202,7 +202,7 @@ function attachOpenDetailEvents() {
           if (Weapons.loaded_data_hash[tmp_id] == undefined) {
               return;
           }
-          window.open("weapons.php?details_id=" + $(this).attr('data-value'));
+          window.open("weapons.html?details_id=" + $(this).attr('data-value'));
       });
 
 }

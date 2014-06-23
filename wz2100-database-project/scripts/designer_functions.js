@@ -724,8 +724,8 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
 
     for (var i = 0; i < turrets_ids.length; i++) {
         var resComp_i = resComp[turrets_ids[i]];
-        var res_path_href = "Research.php?tree=1&component_id=" + turrets_ids[i];
-        var res_href =  resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
+        var res_path_href = "Research.html?tree=1&component_id=" + turrets_ids[i];
+        var res_href = resComp_i == undefined ? '' : "Research.html?details_id=" + resComp_i.research_id;
         var turret = FindTurretById(turrets_ids[i]);
         var res_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
         var comp_name = turret == null ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : turret.name;
@@ -736,8 +736,8 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
 
     {
         var resComp_i = resComp[body_id];
-        var res_path_href = "Research.php?tree=1&component_id=" + body_id;
-        var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
+        var res_path_href = "Research.html?tree=1&component_id=" + body_id;
+        var res_href = resComp_i == undefined ? '' : "Research.html?details_id=" + resComp_i.research_id;
         var bod_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
         var bod_name = Bodies.loaded_data_hash[body_id] == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : Bodies.loaded_data_hash[body_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
@@ -747,8 +747,8 @@ function Form_ResearchRequirements_Html(turrets_ids, body_id, propulsion_id) {
 
     {
         var resComp_i = resComp[body_id];
-        var res_path_href = "Research.php?tree=1&component_id=" + propulsion_id;
-        var res_href = resComp_i == undefined ? '' : "Research.php?details_id=" + resComp_i.research_id;
+        var res_path_href = "Research.html?tree=1&component_id=" + propulsion_id;
+        var res_href = resComp_i == undefined ? '' : "Research.html?details_id=" + resComp_i.research_id;
         var prop_time = resComp_i == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : resComp_i.time_seconds.toHHMMSS();
         var prop_name = Propulsion.loaded_data_hash[propulsion_id] == undefined ? "<span lang='en'>unknown</span><span lang='ru'>не известно</span>" : Propulsion.loaded_data_hash[propulsion_id].name;
         res += '<div class="ui-widget-content ui-corner-all" style="padding:5px;">';
@@ -1437,7 +1437,7 @@ function DrawResearchPath_Tree(container_id, data_research_path) {
             {
                 label: Translate("Research Name"), name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    var res_html = '<span class="span_button"><a style="text-decoration:none" href="Research.php?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/></span>';
+                    var res_html = '<span class="span_button"><a style="text-decoration:none" href="Research.html?details_id=' + rowObject.research_id + '">' + cellvalue + '<a/></span>';
                     if (rowObject.level == 0) {
                         res_html = '<b>' + res_html +'</b>';
                     }

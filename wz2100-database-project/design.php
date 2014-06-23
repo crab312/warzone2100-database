@@ -1,4 +1,7 @@
 <?php
+header('Location: '.str_replace(".php",".html",basename($_SERVER['REQUEST_URI']))); //redirect to .html version of this page (to keep old links working)
+exit;
+
 include("design.html");
 ob_start('ob_gzhandler'); //enables compression 
 ?>

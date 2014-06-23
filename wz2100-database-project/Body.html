@@ -345,10 +345,10 @@ function DrawBodyDetailsParameters(body_id) {
         var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
         $('#description_container').append(res_path_button_html);
 
-        $('#show_resdetails_button_span').attr("href", "Research.php?details_id=" + research.grid_id)
+        $('#show_resdetails_button_span').attr("href", "Research.html?details_id=" + research.grid_id)
         $('#show_respath_button_span').button().click(null, function (event) {
             event.preventDefault();
-            window.open("Research.php?tree=1&component_id=" + body_id);
+            window.open("Research.html?tree=1&component_id=" + body_id);
         }).css("font-size", "0.8em").css("margin-left", "50px");
     }
 
