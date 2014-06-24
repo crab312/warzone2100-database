@@ -72,6 +72,12 @@ $(function () {
     //    });
     //}
 
+    /* Update localStorage, in case if site data structures was changed */
+    if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
+        localStorage.clear();
+        localStorage["site_version"] = current_site_version;
+    }
+
     /* multi-language stuff*/
     $('head').append('<style type="text/css" id="lang_css"></style>');
     SetSiteLanguage();
@@ -82,15 +88,7 @@ $(function () {
 });
 
 function InitDataObjects() {
-    /* Update localStorage, in case if site data structures was changed */
-
     InitResearchObjects();
-
-    if (localStorage["site_version"] == undefined || localStorage["site_version"] != current_site_version) {
-        localStorage.clear();
-        localStorage["site_version"] = current_site_version;
-    }
-
     {
         var obj = new Object;
         obj.sysid = "Design";
@@ -1623,6 +1621,28 @@ function Translate(str) {
     }
     return str;
 }
+
+function AddDiscuss(elem_selector, component_url)
+{
+    var disqus_url_str = component_url ? ' \'' + component_url + '\';' : '';
+    var html = '\
+    <div id="disqus_thread"></div>\
+    <script type="text/javascript">\
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */\
+        var disqus_shortname = "warzone2100guide"; /* required: replace example with your forum shortname*/\
+        ' + disqus_url_str + '\
+    /* * * DON\'T EDIT BELOW THIS LINE * * */\
+    (function () {\
+        var dsq = document.createElement(\'script\'); dsq.type = \'text/javascript\'; dsq.async = true;\
+        dsq.src = \'//\' + disqus_shortname + \'.disqus.com/embed.js\';\
+        (document.getElementsByTagName(\'head\')[0] || document.getElementsByTagName(\'body\')[0]).appendChild(dsq);\
+    })();\
+    </script>\
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>\
+    ';
+    elem_selector.html(html);
+}
+
 
 var MessagesTranslation = {
 

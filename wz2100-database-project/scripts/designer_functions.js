@@ -1149,6 +1149,8 @@ function TryCalculateDesign(callback_function) {
         if (!is_unfinished_design) {
             $('#designer_all_data_container').show(); //design finished, can show parameters
             UpdateDesignurl(body_id, propulsion_id, turrets_ids);
+            /* Draw comments area */
+            AddDiscuss($('#comments_area'));
         }
 
         if (callback_function != undefined) {

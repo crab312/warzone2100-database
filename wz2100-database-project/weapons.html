@@ -103,8 +103,6 @@ function SelectContentByURLData() {
     }
 }
 
-
-
 function OpenDamageModifiers() {
 
     if (getUrlVars()["damageModifiers"] == undefined) {
@@ -758,6 +756,9 @@ function DrawWeaponDetailsParameters(weap_id) {
     DrawComponentDetailsGrid(grid_data, "weapon_details_details_container");
 
     Designer_Draw_DPSTable("dps_table_container", [weapon_upgraded], player);
+
+    /* Draw comments area */
+    AddDiscuss($('#comments_area'));
 }
 
 function DrawWeaponStaticData(weapon_id) {
@@ -984,6 +985,11 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
 
                             </td>
                         </tr>
+                        <tr>
+                            <td id="comments_area" colspan="2">
+
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -994,7 +1000,6 @@ Each weapon can have two damage types: <span style="color:blue">kinetic</span> o
     <div id="modifiers_container" style="display:none">
 
     </div>
-
-        <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
+    <label style="float:right; margin-right:100px; color:gray">made by crab_ ©</label>
 </body>
 </html>

@@ -397,7 +397,7 @@ html, body {
     padding-top:6px;
 }
 
-body > :first-child{
+body > :first-child, .main_content_container{
     background-color: rgba(255,255,255,0.8);
     padding: 15px;
     border: solid 4px #232F46;
