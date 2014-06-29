@@ -2497,6 +2497,7 @@
     <Content Include="scripts\MyCustomScripts2.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\MyLocalization.js" />
     <Content Include="scripts\properties_desription.js">
       <SubType>Content</SubType>
     </Content>
@@ -2523,6 +2524,7 @@
     <Content Include="Styles\MyCustomStyles.css">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Styles\MyLocalization.css" />
     <Content Include="Styles\search-icon.png">
       <SubType>Content</SubType>
     </Content>

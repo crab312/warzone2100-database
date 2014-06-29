@@ -54,7 +54,12 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.25";
+var current_site_version = "2.26";
+
+var language_urls = {
+    en: 'http://en.wzone2100.ru',
+    ru: 'http://wzone2100.ru',
+}
 
 $(function () {
 
@@ -79,12 +84,38 @@ $(function () {
     }
 
     /* multi-language stuff*/
-    $('head').append('<style type="text/css" id="lang_css"></style>');
-    SetSiteLanguage();
+    //if (false)
+    //{
+    //    $('head').append('<style type="text/css" id="lang_css"></style>');
+    //    SetSiteLanguage();
+    //}
+
+    //if (localStorage["lang"] == undefined) {
+    //    localStorage["lang"] = "en";
+    //}
+    //$('#lang_select').val(localStorage["lang"]);
 
     $('head').append('<link href="./Styles/icon1.ico" rel="shortcut icon" type="image/x-icon" />');
     DrawPageHeader();
     DrawPageCaption();
+
+    if ($('#lang_select').length > 0) {
+        $('#lang_select').val(site_language());
+    }
+
+    if (site_language() != "en") {
+        require('/data_master/namestxt_translated.js');
+    }
+
+    var comments_area = $('#page_comments_area');
+    if (comments_area.length > 0) {
+        comments_area.css("margin-top", "20px");
+        var comments_area_content = DrawSection_type2_html("page_comments_area", "<span lang='en'>Comments</span><span lang='ru'>Комментарии</span>");
+        comments_area_content.css({
+            "padding": "20px",
+        });
+        AddDiscuss($('#' + comments_area_content.attr('id')), window.location.href.split('?')[0]);
+    }
 });
 
 function InitDataObjects() {
@@ -1259,20 +1290,38 @@ function DrawPageHeader() {
     if (elm.length > 0) {
         elm.html(html);
     }
-
-    if (localStorage["lang"] == undefined) {
-        localStorage["lang"] = "en";
-    }
-    $('#lang_select').val(localStorage["lang"]);
 }
 
 function languageChange(lang_tag) {
-    var keep_site_version = localStorage["site_version"];
-    localStorage.clear(); //stats should be reloaded with translated names
-    localStorage["lang"] = lang_tag;
-    localStorage["site_version"] = keep_site_version;
-    location.reload();
+    var new_loc = language_urls[lang_tag];
+    window.location.href = new_loc;
+    //var keep_site_version = localStorage["site_version"];
+    //localStorage.clear(); //stats should be reloaded with translated names
+    //localStorage["lang"] = lang_tag;
+    //localStorage["site_version"] = keep_site_version;
+    //location.reload();
 }
+
+/* dynamically load script */
+function require(url) {
+    var ajax = new XMLHttpRequest();
+    ajax.open('GET', url, false); // <-- the 'false' makes it synchronous
+    ajax.onreadystatechange = function () {
+        var script = ajax.response || ajax.responseText;
+        if (ajax.readyState === 4) {
+            switch (ajax.status) {
+                case 200:
+                    eval.apply(window, [script]);
+                    console.log("script loaded: ", url);
+                    break;
+                default:
+                    console.log("ERROR: script not loaded: ", url);
+            }
+        }
+    };
+    ajax.send(null);
+}
+
 
 function SetSiteLanguage()
 {
@@ -1281,7 +1330,8 @@ function SetSiteLanguage()
         localStorage["lang"] = "en";
     }
     if (localStorage["lang"] != "en") {
-        $('head').append('<script type="text/javascript" src="data_master/namestxt_translated.js"></script>');
+        require('/data_master/namestxt_translated.js');
+        //$('head').append('<script type="text/javascript" src="data_master/namestxt_translated.js"></script>');
     }
     var lang_tag = localStorage["lang"];
 
@@ -1610,7 +1660,7 @@ function can_research(comp_id) {
 
 
 function Translate(str) {
-    var lang_tag = localStorage["lang"];
+    var lang_tag = site_language();
     var str_langs = MessagesTranslation[str];
     if (str_langs)
     {
@@ -1622,9 +1672,13 @@ function Translate(str) {
     return str;
 }
 
+var disqus_config = function () {
+    this.language = site_language();
+};
+
 function AddDiscuss(elem_selector, component_url)
 {
-    var disqus_url_str = component_url ? ' \'' + component_url + '\';' : '';
+    var disqus_url_str = component_url ? ' disqus_url = \'' + component_url + '\';' : '';
     var html = '\
     <div id="disqus_thread"></div>\
     <script type="text/javascript">\
