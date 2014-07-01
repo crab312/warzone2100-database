@@ -1,9 +1,9 @@
 ﻿span[lang = "en"]
 {
-        display: none !important; 
+        display: inline; 
 }
 span[lang = "ru"]
 {
- display: inline;
-    
+ 
+    display: none !important;
 }   

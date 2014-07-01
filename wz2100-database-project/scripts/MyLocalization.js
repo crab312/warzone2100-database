@@ -1,6 +1,11 @@
-﻿
+﻿var language_urls = {
+    en: 'http://en.wzone2100.ru',
+    ru: 'http://wzone2100.ru',
+}
+
+
 function site_language() {
-    return 'ru';
+    return 'en';
 }
 
 /* How to change language

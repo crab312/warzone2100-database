@@ -54,12 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.26";
-
-var language_urls = {
-    en: 'http://en.wzone2100.ru',
-    ru: 'http://wzone2100.ru',
-}
+var current_site_version = "2.27";
 
 $(function () {
 
