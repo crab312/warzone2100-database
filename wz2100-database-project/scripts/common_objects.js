@@ -1425,6 +1425,7 @@ function DrawSection_type1_html(container_id, caption) {
     ' + caption + '\
     </h3>\
     <div id="' + sub_container_name + '" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" style="display: block; text-align:left">\
+    </div>\
     </div>';
     $('#' + container_id).append(html);
     return $('#' + sub_container_name);

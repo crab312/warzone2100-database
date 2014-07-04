@@ -94,6 +94,8 @@ body.loading .modal {
     display: block;
 }
 
+
+
 .ui-jqgrid tr.jqgrow td {
     /*white-space: normal !important;*/
 
@@ -281,16 +283,18 @@ input:-moz-placeholder, textarea:-moz-placeholder {
     border-left: 3px solid #E0E0E0;
     border-right: 3px solid #B6B6B6;
     background: #D4D4D4 none;
+    font-weight: bold;
 }
 .lkey
 {
     padding: 0 2px;
-    margin: 0 1px;
+    margin: 0 1px ;
     border-top: 1px solid #EEEEEE;
     border-bottom: 1px solid #A0A0A0;
     border-left: 3px solid #E4E4E4;
     border-right: 3px solid #C4C4C4;
     background: #DDDDDD none;
+    font-weight: bold;
 }
 
 .click {
@@ -480,4 +484,15 @@ ul {
     display:none
 
 
+}
+
+td
+{
+    vertical-align: top;
+}
+
+h4
+{
+    margin-top: 7px;
+    margin-bottom: 1px;
 }
