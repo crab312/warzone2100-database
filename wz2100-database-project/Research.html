@@ -283,6 +283,18 @@ function ShowResearchTree(options_type2) {
         }
     }
 
+    function SaveClientFile(name, content) {
+        window.URL = window.webkitURL || window.URL;
+        window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+        var file = new Blob([content], { type: 'text/plain' });
+
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(file);
+        a.download = name;
+        a.textContent = 'Download file!';
+        a.click();
+    }
+
     DrawResearchTree("restree_container", 2, tree_options, options_type2, function (canvas) {
         var container = $('#load_as_image_btn_container');
         if (container.length > 0)
@@ -294,9 +306,36 @@ function ShowResearchTree(options_type2) {
         }
         $('#load_as_image_btn_container').append('<button type="button" id="load_as_image_btn">Load Research Tree As Image</button>');
         $('#load_as_image_btn').button().click(canvas, function (event) {
-            //var canvas_ = event.data;
+            var canvas_ = event.data;
+
+            //var image = canvas_.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+            //window.location.href = image;
+
+            //var image = canvas_.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            var img_b64 = canvas_.toDataURL("image/png", { format: "png" });
+
+            //var blob = new Blob([img_b64.substr(img_b64.indexOf("base64") + 7)]);
+
+            //SaveClientFile('res_tree.png', blob);
+
+
+
+            var html = '<!DOCTYPE html>\
+<html xmlns="http://www.w3.org/1999/xhtml">\
+    <head>\
+    <title>Отчет</title>\
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\
+    </head>\
+    <body>\
+    <img src="' + img_b64 + '"><img>\
+    </body>\
+</html>';
+
+            SaveClientFile('res_tree.html', html);
+
             //var imgdata = canvas_.toDataURL("image/png", { format: "png" });
-            ////window.location.href = data;
+            //SaveClientFile('res_tree.png', imgdata);
+            //window.location.href = data;
             //ShowLoading('tabs_left');
             //$.ajax({
             //    url: "saveme.php",
