@@ -1,0 +1,84 @@
+#!/bin/bash
+echo -e "\e[93mCreating directory \e[97m'wz2100 XXX separated'\e[93m in your home directory."
+mkdir "$HOME/wz2100 XXX separated"
+echo -e "\e[93mExtracting images using ImageMagick to the folder previously created."
+
+
+
+convert " Base.png" -crop 60x46+3+30\!   -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+78\!   -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+126\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+174\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+222\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+convert " Base.png" -crop 60x46+65+30\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+78\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+126\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+174\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+222\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+
+
+
+echo -e "\e[97m25% Done..."
+echo -e "\e[97m50% Done..."
+echo -e "\e[97m75% Done..."
+
+
+
+convert " Base.png" -crop 60x46+3+52\!   -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+100\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+148\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+3+196\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+convert " Base.png" -crop 60x46+65+52\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+100\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+148\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+convert " Base.png" -crop 60x46+65+196\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 XXX separated/"
+
+
+
+echo -e "\e[93mCoping script \e[97m'wz2100 rename XXX.sh'\e[93m to the folder previously created."
+cp "wz2100 rename XXX.sh" "$HOME/wz2100 XXX separated"
+echo -e "\e[92mBatch process completed!"
+
+
+
+echo -e "\e[92mConvert these files with GIMP Plugin - David's Batch Processor."
+echo -e "\e[92mUse GIF format and 255 indexed colors for the output files."
+
+
+
+ L-A.png
+ L-B.png
+ L-C.png
+ L-D.png
+ L-E.png
+
+ R-A.png
+ R-B.png
+ R-C.png
+ R-D.png
+ R-E.png
+
+
+
+ L-A
+ L-B
+ L-C
+ L-D
+ L-E
+
+ R-A
+ R-B
+ R-C
+ R-D
+ R-E
+
+
+
+wz2100 rename XXX.sh
+wz2100 separate XXX.sh
+
+convert "" -filter Mitchell -resize 36x28 ""
+convert "" -scale 36x28 ""
+convert "" -adaptive-resize 36x28 ""

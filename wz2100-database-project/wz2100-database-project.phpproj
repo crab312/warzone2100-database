@@ -162,6 +162,7 @@
     <Content Include="scripts\Fight.js">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="scripts\icons_files_list.js" />
     <Content Include="scripts\jquery-2.0.3.js">
       <SubType>Content</SubType>
     </Content>

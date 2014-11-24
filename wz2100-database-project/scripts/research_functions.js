@@ -1291,7 +1291,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2, a
         var research = res_svg_item.research_stat_obj;
         var width = icon_width * scale;
         var height = icon_height * scale;
-        var icon_src = GetResearchIcon_src(research.grid_id);
+        var icon_src = GetResearchIcon_src(research.grid_id, research.nameKey);
         var elm_icon;
         var res_text = "";
         var res_text_items = research.name.split(' ');
@@ -2123,43 +2123,6 @@ function is_defense_upgrade(res)
             }
         }
     }
-}
-
-function GetResearchIcon_src(research_id) {
-    var has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(research_id));
-    if (has_icon) {
-        return GetIcon_src(Researches.icon_folder, research_id);
-    } else {
-        /* Try find icon for Research */
-        var research = Researches.loaded_data_hash[research_id];
-        if (research.statID != undefined) {
-            has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(research.statID));
-            if (has_icon) {
-                StatID_DataObject = FindDataObject(research.statID);
-                if (StatID_DataObject != null) {
-                    return GetIcon_src(StatID_DataObject.icon_folder, research.statID);
-                }
-            }
-        }
-        if (!has_icon)
-        {
-            /* enumerate research result components */
-            if (research.resultComponents != undefined) {
-                var comps_ids = research.resultComponents.split(',');
-                for (var p in comps_ids) {
-                    var comp_id = comps_ids[p];
-                    has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id));
-                    if (has_icon) {
-                        DataObject = FindDataObject(comp_id);
-                        if (DataObject != null) {
-                            return GetIcon_src(DataObject.icon_folder, comp_id);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return null;
 }
 
 function connectionPath(bb1, bb2, child_conn_number)

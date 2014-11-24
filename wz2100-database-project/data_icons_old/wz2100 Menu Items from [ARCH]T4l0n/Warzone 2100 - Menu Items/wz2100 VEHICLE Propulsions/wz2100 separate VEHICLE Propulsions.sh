@@ -1,0 +1,13 @@
+#!/bin/bash
+echo -e "\e[93mCreating directory \e[97m'wz2100 VEHICLE Propulsions separated'\e[93m in your home directory."
+mkdir "$HOME/wz2100 VEHICLE Propulsions separated"
+echo -e "\e[93mExtracting images using ImageMagick to the folder previously created."
+convert "p1 Base.png" -crop 60x46+3+52\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 L-A Wheels.tif"
+convert "p1 Base.png" -crop 60x46+3+100\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 L-B Tracks.tif"
+convert "p1 Base.png" -crop 60x46+3+148\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 L-C Half-tracks.tif"
+convert "p1 Base.png" -crop 60x46+65+52\!  -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 R-A VTOL.tif"
+convert "p1 Base.png" -crop 60x46+65+100\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 R-B Hover.tif"
+convert "p1 Base.png" -crop 60x46+65+148\! -channel rgba -fill none -opaque "#080840" "$HOME/wz2100 VEHICLE Propulsions separated/p1 R-C Naval.tif"
+echo -e "\e[93mCoping script \e[97m'wz2100 rename VEHICLE Propulsions.sh'\e[93m to the folder previously created."
+cp "wz2100 rename VEHICLE Propulsions.sh" "$HOME/wz2100 VEHICLE Propulsions separated"
+echo -e "\e[92mBatch process completed!"

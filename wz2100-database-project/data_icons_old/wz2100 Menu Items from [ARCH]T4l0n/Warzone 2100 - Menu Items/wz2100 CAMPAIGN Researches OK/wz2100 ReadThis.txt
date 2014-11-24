@@ -1,0 +1,18 @@
+Assault Gun mounted on tower is called in game "Assault Gun Guard Tower".
+That's different compared to other towers.
+
+
+
+
+THESE RESEARCHES HAVE SAME ICON:
+
+1.
+a) Missile Targeting Codes
+b) Second Level Missile Targeting Codes
+c) Third Level Missile Targeting Codes
+
+
+2.
+a) NEXUS Resistance Circuits
+b) NEXUS Resistance Circuits Mk2
+c) NEXUS Resistance Circuits Mk3

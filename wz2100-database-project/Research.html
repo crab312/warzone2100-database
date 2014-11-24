@@ -15,15 +15,15 @@
     <script src="scripts/raphael-min.js"></script>
     <script src="scripts/fabric.js/all.js"></script>
 
+    <script src="scripts/icons_files_list.js?v=1"></script>
     <script src="scripts/MyCustomScripts2.js"></script>
     <link href="Styles/MyLocalization.css" rel="stylesheet" />
     <script src="scripts/MyLocalization.js"></script>
-    <script src="scripts/common_objects.js"></script>
+    <script src="scripts/common_objects.js?v=1"></script>
     <script src="scripts/designer_functions.js"></script>
     <script src="scripts/research_functions.js"></script>
     <script src="scripts/properties_desription.js"></script>
     
-
     <title>Warzone 2100 Guide • Research</title>
 
 <script>
@@ -1133,7 +1133,7 @@ function DrawCompTimeTable(container_id, scale, options) {
         var icon_x = res_time * sec_per_pixel + x_offset;
         var icon_y = line.pos_y;//+ line.height / 2;
         var drawn_elems = [];
-        var has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_id));
+        var has_icon = GetIcon_CheckIconFilenameHashed(Researches.icon_folder, GetIcon_filename(comp_id));
         var icon_src;
         if (has_icon)
         {
@@ -1143,7 +1143,7 @@ function DrawCompTimeTable(container_id, scale, options) {
             /* Try find icon for Research */
             var comp_res = Researches.loaded_data_hash[comp_id];
             if (comp_res.statID != undefined) {
-                has_icon = GetIcon_CheckIconFilenameHashed(GetIcon_filename(comp_res.statID));
+                has_icon = GetIcon_CheckIconFilenameHashed(Researches.icon_folder, GetIcon_filename(comp_res.nameKey));
                 if(has_icon)
                 {
                     StatID_DataObject = FindDataObject(comp_res.statID);
