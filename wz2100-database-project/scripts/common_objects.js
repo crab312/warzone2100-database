@@ -54,7 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.27";
+var current_site_version = "2.29";
 
 $(function () {
 
@@ -995,15 +995,14 @@ function LoadDataObject(DataObject, callback_function) {
                 }
                 DataObject.loaded_data_hash[key] = data_row;
                 
+                if (data_row.name) {
+                    data_row.nameKey = data_row.name;
+                }
                 if (do_translate_names && data_row.name != undefined)
                 {
                     if (po_Translate[data_row.name] != undefined) {
                         data_row.name = po_Translate[data_row.name][0];
                     }
-                }
-                if (data_row.name)
-                {
-                    data_row.nameKey = data_row.name;
                 }
             }
             DataObject.all_columns = grid_columns;
