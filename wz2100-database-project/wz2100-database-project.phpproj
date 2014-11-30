@@ -2499,6 +2499,7 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="scripts\MyLocalization.js" />
+    <Content Include="scripts\page\Research.html.js" />
     <Content Include="scripts\properties_desription.js">
       <SubType>Content</SubType>
     </Content>
@@ -2606,6 +2607,7 @@
     <Folder Include="scripts\jquery.jqGrid-4.5.2\src\" />
     <Folder Include="scripts\jquery.jqGrid-4.5.2\src\css\" />
     <Folder Include="scripts\jquery.jqGrid-4.5.2\src\i18n\" />
+    <Folder Include="scripts\page\" />
     <Folder Include="Styles\" />
   </ItemGroup>
 </Project>
