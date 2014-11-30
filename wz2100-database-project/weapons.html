@@ -43,6 +43,7 @@ $(function () {
     });
 
     $('#tabs_left ul:first li:eq(1) a').click(null, function (event) {
+        url_pushState('?details_id=none');
         DrawDetailsTab_Init();
     });
 
@@ -408,13 +409,13 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
                 sortable: false,
                 search: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openWeaponDetails(\'' + rowObject.grid_id + '\')">' + Weapons.GetIconHtml_Function(rowObject) + '</a>';
+                    return '<a href="weapons.html?details_id=' + rowObject.grid_id + '" onclick="openWeaponDetails(\'' + rowObject.grid_id + '\'); return false;">' + Weapons.GetIconHtml_Function(rowObject) + '</a>';
                 },
             },
             {
                 label: " ", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openWeaponDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    return '<a href="weapons.html?details_id=' + rowObject.grid_id + '" onclick="openWeaponDetails(\'' + rowObject.grid_id + '\'); return false;">' + cellvalue + '</a>';
                 },
             },
             {
@@ -467,7 +468,7 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
                 width: 70,
                 name: "weaponEffect",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:OpenDamageModifiers()" style="font-size:0.8em;" title="' + weap_modifiers_str[cellvalue] + '" >' + cellvalue + '</a>';//<span class="ui-icon ui-icon-extlink" style="display:inline-block"></span>
+                    return '<a href="weapons.html?damageModifiers=1" onclick="OpenDamageModifiers(); return false;" style="font-size:0.8em;" title="' + weap_modifiers_str[cellvalue] + '" >' + cellvalue + '</a>';//<span class="ui-icon ui-icon-extlink" style="display:inline-block"></span>
                 },
             },
         ].concat(additional_columns).concat([
@@ -497,7 +498,6 @@ function DrawWeapons(container_id, weap_id_list, weapon_filter_function, additio
 
 
 }
-
 
 function show_nonres() {
     if ($('#nonres_weaps').length == 0) {
@@ -622,7 +622,7 @@ function showOverpowred() {
                 DrawWeapons(low_sect.attr('id'), op_list1);
 
                 var hi_sect = DrawSection_type1_html(weap_sect.attr('id'), "<span lang='en'>Overpowered weapons at high-oil games</span><span lang='ru'>Несбалансированные орудия в играх high-oil</span>");
-                var op_list2 = ["Bomb4-VTOL-HvyINC", "Bomb5-VTOL-Plasmite", "Howitzer150Mk1", "Mortar-Incenediary"];
+                var op_list2 = ["Howitzer150Mk1", "Mortar-Incenediary"];
                 DrawWeapons(hi_sect.attr('id'), op_list2);
             }
         });
@@ -696,7 +696,7 @@ function DrawWeaponDetailsParameters(weap_id) {
         });
     });
 
-    $("#weapon_icon").html(Weapons.GetIconHtml_Function(weapon));
+    $("#weapon_icon").html(Weapons.GetIconHtml_Function(weapon,72));
     $("#weapon_name_label").text(weapon.name);
     $("#abilities_container").html(Form_Weapon_Abilities_html(weapon));
     
@@ -786,14 +786,15 @@ function DrawWeaponStaticData(weapon_id) {
             struc_weapon_descr += '<p><span lang="en">This weapon can not be researched, but you can get <b>defensive structures</b> armed with this weapon.</span><span lang="ru">Данное Орудие не может быть исследовано, но при этом оно используется на следующих защитных постройках:</span></p>';
         }
         
-        struc_weapon_descr += '<ul>';
+        struc_weapon_descr += '<ul style="list-style: none">';
         for (var is in armed_strucs) {
             var struc = armed_strucs[is];
-            struc_weapon_descr += '<li><a href="structure.html?details_id=' + struc.grid_id + '">' + struc.name + '</a></li>';
+            struc_weapon_descr += '<li style="margin-top:5px;"><a href="structure.html?details_id=' + struc.grid_id + '">' + Structures.GetIconHtml_Function(struc, 48) + '<span style="margin-left:10px">' + struc.name + '</span>' + '</a></li>';
         }
         struc_weapon_descr += '</ul>';
         auto_descr += struc_weapon_descr;
     }
+
 
 
     $('#details_description').html(auto_descr);
@@ -802,7 +803,10 @@ function DrawWeaponStaticData(weapon_id) {
     var res_comp_row = ResearchedComponents[player_all_researched][weapon_id];
     if (res_comp_row != undefined) {
         var research = Researches.loaded_data_hash[res_comp_row.research_id];
-        var res_path_button_html = '<br/> <span lang="en">Research required:</span><span lang="ru">Требуемое исследование:</span><a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span"><span lang="en">Overview research path</span><span lang="ru">Просмотр требуемых исследований</span></button>'
+        var res_path_button_html = '<br/> \
+            <span lang="en">Research required:</span><span lang="ru">Требуемое исследование:</span>\
+            <a href="#" id="show_resdetails_button_span">' + '<span style="margin-right:10px;">' + research.name +'</span>'+ Researches.GetIconHtml_Function(research, 48) + '</a>\
+            <button type="button" id="show_respath_button_span"><span lang="en">Overview research path</span><span lang="ru">Просмотр требуемых исследований</span></button>'
         $('#details_description').append(res_path_button_html);
 
         $('#show_resdetails_button_span').attr("href", "Research.html?details_id=" + research.grid_id)
@@ -810,6 +814,23 @@ function DrawWeaponStaticData(weapon_id) {
             event.preventDefault();
             window.open("Research.html?tree=1&component_id=" + weapon_id);
         }).css("font-size","0.8em").css("margin-left","50px");
+    }
+
+    var abils = Weapon_GetAbilities(weapon);
+    if (abils.CyborgWeapon) {
+        var templates = Templates.loaded_data;
+        var cyborg_weapon_descr = "<p>Cyborg armed with this weapon:</p>";
+        cyborg_weapon_descr += '<ul style="list-style: none">';
+        for (var i = 0; i < templates.length; i++) {
+            var tmpl = templates[i];
+            if (tmpl.weapons && tmpl.available == 1) {
+                if (tmpl.weapons == weapon_id) {
+                    cyborg_weapon_descr += '<li style="margin-top:5px;"><a href="cyborgs.html">' + Templates.GetIconHtml_Function(tmpl, 48) + '<span style="margin-left:10px">' + tmpl.name + '</span>' + '</a></li>';
+                }
+            }
+        }
+        cyborg_weapon_descr += '</ul>';
+        $('#details_description').append(cyborg_weapon_descr);
     }
 
 

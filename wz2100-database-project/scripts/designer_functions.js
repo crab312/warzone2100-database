@@ -1350,6 +1350,19 @@ function CalcWeaponRelatedParameters(weapon_base, weapon_upgraded) {
         row.descr = Translate('Maximum range of fire.');
         grid_data.push(row);
     }
+    /* VTOL Related parameters */
+    if (CalcVTOL_numshots(weapon_base)) //check if weapon is vtol-weapon
+    {
+        //var vtol_ammo = CalcVTOL_numshots(weapon_base);
+        var row = new Object;
+        row.name = Translate('Ammo');
+        row.base = PropDescr("vtol_numShots").format_str(CalcVTOL_numshots(weapon_base));
+        row.upgraded = PropDescr("vtol_numShots").format_str(CalcVTOL_numshots(turret_upgraded));
+        row.upgrade_change = (row.upgraded - row.base) / row.base;
+        row.group = damage1_label;
+        row.descr = Translate('Ammo of VTOL-weapon.');
+        grid_data.push(row);
+    }
     return grid_data;
 }
 

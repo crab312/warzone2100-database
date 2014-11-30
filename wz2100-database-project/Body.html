@@ -214,13 +214,13 @@ function DrawBodies(container_id, body_filter_function) {
                 sortable: false,
                 search: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + Bodies.GetIconHtml_Function(rowObject) + '</a>';
+                    return '<a href="Body.html?details_id=' + rowObject.grid_id + '" onclick="openBodyDetails(\'' + rowObject.grid_id + '\'); return false;">' + Bodies.GetIconHtml_Function(rowObject) + '</a>';
                 },
             },
             {
                 label: " ", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openBodyDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    return '<a href="Body.html?details_id=' + rowObject.grid_id + '" onclick="openBodyDetails(\'' + rowObject.grid_id + '\'); return false;">' + cellvalue + '</a>';
                 },
             },
             {

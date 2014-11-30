@@ -1667,9 +1667,9 @@ function GetIcon_element(folder, rowObject, size) {
 function GetIcon_useSrc(img_src, rowObject, size)
 {
     if (size == undefined) {
-        return '<img src="' + img_src + '" onerror="$(this).hide();" title="' + rowObject.name + '"/>';
+        return '<img src="' + img_src + '" onerror="$(this).hide();" title="' + rowObject.name + '" style="vertical-align:middle"/>';
     } else {
-        return '<img src="' + img_src + '" onerror="$(this).hide();" width="' + size + '" title="' + rowObject.name + '"/>';
+        return '<img src="' + img_src + '" onerror="$(this).hide();" width="' + size + '" title="' + rowObject.name + '" style="vertical-align:middle"/>';
     }
 }
 
@@ -1927,6 +1927,12 @@ var MessagesTranslation = {
     },
     "Maximum range of fire.": {
         ru: "Максимальная дальность стрельбы.",
+    },
+    "Ammo": {
+        ru: "Количество зарядов",
+    },
+    "Ammo of VTOL-weapon.": {
+        ru: "Количество зарядов. Боевая единица выстреливает все заряды, после чего возвращается на перезярядку.",
     },
     "Research Name": {
         ru: "Назв. исследования",

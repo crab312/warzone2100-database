@@ -133,13 +133,13 @@ function DrawPropulsion(container_id, show_enabled) {
                 sortable: false,
                 search: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openpropulsionDetails(\'' + rowObject.grid_id + '\')">' + Propulsion.GetIconHtml_Function(rowObject) + '</a>';
+                    return '<a href="propulsion.html?details_id=' + rowObject.grid_id + '" onclick="openpropulsionDetails(\'' + rowObject.grid_id + '\'); return false;">' + Propulsion.GetIconHtml_Function(rowObject) + '</a>';
                 },
             },
             {
                 label: " ", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openpropulsionDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    return '<a href="propulsion.html?details_id=' + rowObject.grid_id + '" onclick="openpropulsionDetails(\'' + rowObject.grid_id + '\'); return false;">' + cellvalue + '</a>';
                 },
             },
             {

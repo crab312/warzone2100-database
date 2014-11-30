@@ -492,13 +492,13 @@ function DrawStructures(container_id, struc_id_list, structure_filter_function, 
                 sortable: false,
                 search: false,
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + Structures.GetIconHtml_Function(rowObject) + '</a>';
+                    return '<a href="structure.html?details_id=' + rowObject.grid_id + '" onclick="openStructureDetails(\'' + rowObject.grid_id + '\'); return false;">' + Structures.GetIconHtml_Function(rowObject) + '</a>';
                 },
             },
             {
                 label: " ", name: "name",
                 formatter: function (cellvalue, options, rowObject) {
-                    return '<a href="javascript:openStructureDetails(\'' + rowObject.grid_id + '\')">' + cellvalue + '</a>';
+                    return '<a href="structure.html?details_id=' + rowObject.grid_id + '" onclick="openStructureDetails(\'' + rowObject.grid_id + '\'); return false;">' + cellvalue + '</a>';
                 },
             },
             {
@@ -785,7 +785,7 @@ function DrawStructureStaticData(structure_id) {
     var res_comp_row = ResearchedComponents[player_all_researched][structure_id];
     if (res_comp_row != undefined) {
         var research = Researches.loaded_data_hash[res_comp_row.research_id];
-        var res_path_button_html = '<br/>Research required: <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span">Overview research path</button>'
+        var res_path_button_html = '<br/><span lang="en">Research required:</span><span lang="ru">Требуемое исследование:</span> <a href="#" id="show_resdetails_button_span">' + research.name + '</a><button type="button" id="show_respath_button_span"><span lang="en">Overview research path</span><span lang="ru">Просмотр требуемых исследований</span></button>'
         $('#details_description').append(res_path_button_html);
 
         $('#show_resdetails_button_span').attr("href", "Research.html?details_id=" + research.grid_id)
