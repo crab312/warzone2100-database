@@ -102,15 +102,15 @@ $(function () {
         require('/data_master/namestxt_translated.js');
     }
 
-    var comments_area = $('#page_comments_area');
-    if (comments_area.length > 0) {
-        comments_area.css("margin-top", "20px");
-        var comments_area_content = DrawSection_type2_html("page_comments_area", "<span lang='en'>Comments</span><span lang='ru'>Комментарии</span>");
-        comments_area_content.css({
-            "padding": "20px",
-        });
-        AddDiscuss($('#' + comments_area_content.attr('id')), window.location.href.split('?')[0]);
-    }
+    //var comments_area = $('#page_comments_area');
+    //if (comments_area.length > 0) {
+    //    comments_area.css("margin-top", "20px");
+    //    var comments_area_content = DrawSection_type2_html("page_comments_area", "<span lang='en'>Comments</span><span lang='ru'>Комментарии</span>");
+    //    comments_area_content.css({
+    //        "padding": "20px",
+    //    });
+    //    AddDiscuss($('#' + comments_area_content.attr('id')), window.location.href.split('?')[0]);
+    //}
 });
 
 function InitDataObjects() {
