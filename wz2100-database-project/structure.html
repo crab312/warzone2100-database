@@ -717,7 +717,7 @@ function DrawStructureDetailsParameters(structure_id) {
         $('#abilities_container').hide();
     }else
     {
-        var weapon = Weapons.loaded_data_hash[structure.weapons.split(',')[0]];
+        var weapon = Weapons.loaded_data_hash[structure.weapons[0]];
         var weapon_upgraded = GetTurretUpgrade(player, weapon.grid_id, false)[weapon.index_of_datarow];
         grid_data = grid_data.concat(CalcWeaponRelatedParameters(weapon, weapon_upgraded));
         $('#structure_details_damage_modifier_container_weapon1').show();
@@ -757,7 +757,7 @@ function DrawStructureStaticData(structure_id) {
     $('#upgrades_container').html('');
     if(structure.weapons != undefined)
     {
-        var weapon = Weapons.loaded_data_hash[structure.weapons.split(',')[0]];
+        var weapon = Weapons.loaded_data_hash[structure.weapons[0]];
 
         /* Show link to armed weapon */
         $('#details_description').html('Weapon armed on this structure: <a href="weapons.html?details_id=' + weapon.grid_id + '">' + weapon.name + '</a>');

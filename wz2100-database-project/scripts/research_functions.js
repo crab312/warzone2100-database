@@ -59,8 +59,107 @@ var techlist = new Array(
     "R-Defense-WallTower01",
     "R-Defense-Tower06");
 
-
 function eventResearched(research, player) {
+    //debug("RESEARCH : " + research.fullname + "(" + research.name + ") for " + player);
+    // iterate over all results
+    for (var i = 0; i < research.results.length; i++) {
+        var v = research.results[i];
+        //debug("    RESULT : class=" + v['class'] + " parameter=" + v['parameter'] + " value=" + v['value'] + " filter=" + v['filterParameter'] + " filterparam=" + v['filterParameter']);
+        var parameter = v['parameter'].charAt(0).toLowerCase() + v['parameter'].slice(1); //lower case first char
+        var ctype = v['class'];
+        var filterparam = v['filterParameter'];
+        var usage_structure_hadcoded_types = false;
+        var filterValue = v['filterValue'];
+        if (filterparam)
+        {
+            filterparam = filterparam.charAt(0).toLowerCase() + filterparam.slice(1); //lower case first char
+            if (filterparam == "impactClass") {
+                filterparam = "weaponSubClass";
+            }else if(filterparam == "bodyClass")
+            {
+                filterparam = "class";
+            } else if (ctype == "Building" && filterparam == "type") {
+                usage_structure_hadcoded_types = true;
+            }
+
+        }
+        if (ctype == "Body" && parameter == "power") {
+            parameter = "powerOutput";
+        } else if (ctype == "Body" && parameter == "thermal") {
+            parameter = "armourHeat";
+        } else if (ctype == "Body" && parameter == "armour") {
+            parameter = "armourKinetic";
+        } else if (ctype == "Body" && parameter == "hitPoints") {
+            parameter = "hitpoints";
+        } else if (ctype == "Construct" && parameter == "constructorPoints") {
+            parameter = "constructPoints";
+        } else if (ctype == "Building" && parameter == "hitPoints") {
+            parameter = "hitpoints";
+        }
+
+        
+        if(filterparam)
+        {
+            if(ctype == "Body" && filterparam=="class" && filterValue=="Cyborgs")
+            {
+                if(filterValue=="Cyborgs")
+                {
+                    if(parameter == "armourHeat")
+                        research["is_cyborg_thermal_upgrade"] = true;
+                    else if(parameter == "hitpoints")
+                        research["is_cyborg_hitpoints_upgrade"] = true;
+                    else if(parameter == "armourKinetic")
+                        research["is_cyborg_armor_upgrade"] = true;
+                }else if(filterValue=="Droids")
+                {
+                    if(parameter == "armourHeat")
+                        research["is_tank_thermal_upgrade"] = true;
+                    else if(parameter == "hitpoints")
+                        research["is_tank_hitpoints_upgrade"] = true;
+                    else if(parameter == "armourKinetic")
+                        research["is_tank_armor_upgrade"] = true;
+                }
+            }
+        }
+
+        for (var c in Upgrades[player][v['class']]) // iterate over all components of this type
+        {
+            var cname = Upgrades[player][v['class']][c].grid_id;
+            if (filterparam) {
+                var stats_param_value;
+                if (usage_structure_hadcoded_types) {
+                    if (Stats[ctype][c][filterparam] == "DEFENSE" || Stats[ctype][c][filterparam] == "GENERIC") {
+                        stats_param_value = "Wall";
+                    } else {
+                        stats_param_value = "Structure";
+                    }
+                } else{
+                    stats_param_value = Stats[ctype][c][filterparam];
+                }
+                if ('filterParameter' in v && stats_param_value != filterValue) // more specific filter
+                {
+                    continue;
+                }
+            }
+            if (Stats[ctype][c][parameter] > 0) // only applies if stat has above zero value already
+            {
+                var upgr_obj = Upgrades[player][ctype][c];
+                upgr_obj[parameter] += Math.ceil(Stats[ctype][c][parameter] * v['value'] / 100);
+
+                log_upgrade(Upgrades[player][ctype][c], research.grid_id, parameter, v['value']);
+                //debug("      upgraded " + cname + " to " + Upgrades[player][ctype][cname][parameter] + " by " + Math.ceil(Stats[ctype][cname][parameter] * v['value'] / 100));
+
+                if (Upgrades[player][ctype][c][parameter + "_percentage"] == undefined) {
+                    Upgrades[player][ctype][c][parameter + "_percentage"] = 0;
+                }
+                Upgrades[player][ctype][c][parameter + "_percentage"] += v['value'];
+            }
+        }
+    }
+}
+
+
+function eventResearched_old(research, player) {
     //debug("RESEARCH : " + research.fullname + "(" + research.name + ") for " + player + " results=" + research.results);
     if (research.results == undefined) {
         return;
@@ -355,7 +454,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
             }
             all_research[res_id].Res_Data = Researches.loaded_data[i];
             var requredResearch = Researches.loaded_data[i].requiredResearch;
-            all_research[res_id].PreRes_Array = requredResearch == undefined ? [] : Researches.loaded_data[i].requiredResearch.split(',');
+            all_research[res_id].PreRes_Array = requredResearch == undefined ? [] : Researches.loaded_data[i].requiredResearch;
             for (var j = 0; j < all_research[res_id].PreRes_Array.length; j++) {
                 var pre_res_id = all_research[res_id].PreRes_Array[j];
                 if (all_research[pre_res_id] == undefined) {
@@ -394,7 +493,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
 
             if (res_row.Res_Data.resultComponents != undefined)
             {
-                var result_components = res_row.Res_Data.resultComponents.split(',');
+                var result_components = res_row.Res_Data.resultComponents;
                 for(var e=0; e<result_components.length; e++)
                 {
                     ResearchedComponents[player_number][result_components[e]] = {};
@@ -404,7 +503,7 @@ function DoResearch(time_seconds, player, callback_function, do_set_research_tim
             }
 
             if (res_row.Res_Data.resultStructures != undefined) {
-                var resultStructures = res_row.Res_Data.resultStructures.split(',');
+                var resultStructures = res_row.Res_Data.resultStructures;
                 for (var e = 0; e < resultStructures.length; e++) {
                     ResearchedComponents[player_number][resultStructures[e]] = {};
                     ResearchedComponents[player_number][resultStructures[e]].time_seconds = current_time;
@@ -568,6 +667,66 @@ Research Groups
 'ResearchPoints', 'ProductionPoints', 'PowerPoints', 'RepairPoints', 'RearmPoints'].indexOf(s[0]) >= 0) {
 */
 
+function IsResResult(res, param, _class, filters)
+{
+    if (res.results)
+    {
+        for (var i = 0; i < res.results.length; i++)
+        {
+            var filter_passed = filters == undefined;
+            if (_class)
+            {
+                if (res.results[i].class != _class)
+                    continue;
+            }
+            if (filters) {
+                for (var f = 0; f < filters.length && !filter_passed; f++) {
+                    var flt = filters[f];
+                    if (res.results[i].filterParameter == flt[0]) {
+                        if (flt[1]) {
+                            filter_passed = res.results[i].filterValue == flt[1];
+                        } else
+                            filter_passed = true;
+                    }
+                }
+            }
+            if (filter_passed) {
+                if (param) {
+                    for (var p = 0; p < param.length; p++) {
+                        if (res.results[i].parameter == param[p]) {
+                            return true;
+                        }
+                    }
+                } else
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function RevealResComponents(res, data_objects)
+{
+    var result = [];
+    if (research.resultComponents) {
+        var comp_list = research.resultComponents;
+        for (var i = 0; i < comp_list.length; i++) {
+            var comp_id = comp_list[i];
+            var comp_obj = null;
+            for (var d = 0; d < data_objects.length; d++)
+            {
+                if (data_objects[d].loaded_data_hash[comp_id])
+                {
+                    comp_obj = data_objects[d].loaded_data_hash[comp_id];
+                }
+            }
+            result.push(comp_obj);
+        }
+    }
+    return result;
+}
 
 function CreateResearchLines() {
     var res_lines = [];
@@ -580,21 +739,32 @@ function CreateResearchLines() {
         line.line_color = "darkblue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
-                return research.results_string.indexOf("ProductionPoints") >= 0 || research.results_string.indexOf("ConstructorPoints") >= 0;
+                //return research.results_string.indexOf("ProductionPoints") >= 0 || research.results_string.indexOf("ConstructorPoints") >= 0;
+                return IsResResult(research, ["ConstructorPoints", "ProductionPoints"]);
             }
             return false;
         }
         res_lines.push(line);
     }
 
-    /* Research upgrades */
+    /* Research upgrades + Research Module*/
     {
         var line = {};
         line.height_em = 0.9;
         line.line_color = "blue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
-                return research.results_string.indexOf("ResearchPoints") >= 0;
+                if (research.results_string.indexOf("ResearchPoints") >= 0)
+                {
+                    return true;
+                }
+            }
+            if (research.resultStructures) {
+                var struc_list = research.resultStructures;
+                for (var is in struc_list) {
+                    var struc = Structures.loaded_data_hash[struc_list[is]];
+                    return struc.type == "RESEARCH MODULE" || struc.type == "COMMAND RELAY";
+                }
             }
             return false;
         }
@@ -610,10 +780,14 @@ function CreateResearchLines() {
         line.line_color = "darkorange";
         line.filterResearch_func = function (research) {
             if (research.resultStructures != undefined) {
-                var struc_list = research.resultStructures.split(',');
+                var struc_list = research.resultStructures;
                 for (var is in struc_list) {
                     var struc = Structures.loaded_data_hash[struc_list[is]];
-                    if (struc.type != "DEFENSE" && !(struc.type == "GENERIC" && struc.strength=="HARD")) {
+                    if (struc.type != "DEFENSE" && !(struc.type == "GENERIC" && struc.strength == "HARD")
+                        && !struc.repairPoints
+                        && struc.type != "VTOL FACTORY" && struc.type != "REARM PAD" && struc.type != "GATE" && struc.type != "WALL" && struc.type != "CORNER WALL"
+                        && struc.type != "RESEARCH MODULE" && struc.type != "COMMAND RELAY")
+                    {
                         return true;
                     }
                 }
@@ -629,8 +803,8 @@ function CreateResearchLines() {
         line.height_em = 0.7;
         line.line_color = "gray";
         line.filterResearch_func = function (research) {
-            if (research.results.length > 0) {
-                return research.name.indexOf("Base Structure Materials") >= 0;
+            if (research.results) {
+                return IsResResult(research, ["Armour", "HitPoints"], "Building", [["Type", "Structure"]]);
             }
             return false;
         }
@@ -642,13 +816,14 @@ function CreateResearchLines() {
     {
         var line = {};
         line.height_em = 0.7;
-        line.line_color = "blue";
+        line.line_color = "darkcyan";
         line.filterResearch_func = function (research) {
-            if (research.results.length > 0) {
-                return research.results_string.indexOf("RepairPoints") >= 0;
+            if (research.results) {
+                if (IsResResult(research, ["RepairPoints"]))
+                    return true;
             }
-            if (research.resultComponents != undefined) {
-                var comp_list = research.resultComponents.split(',');
+            if (research.resultComponents) {
+                var comp_list = research.resultComponents;
                 for (var ic in comp_list) {
                     var comp_id = comp_list[ic];
                     if (Repair.loaded_data_hash[comp_id] != undefined) {
@@ -656,35 +831,11 @@ function CreateResearchLines() {
                     }
                 }
             }
-            if (research.resultStructures != undefined) {
-                var struc_list = research.resultStructures.split(',');
+            if (research.resultStructures) {
+                var struc_list = research.resultStructures;
                 for (var is in struc_list) {
                     var struc = Structures.loaded_data_hash[struc_list[is]];
-                    if (struc.repairPoints != undefined && struc.rearmPoints == undefined) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        struc_line.child_lines.push(line);
-        res_sublines.push(line);
-    }
-
-    /* VTOL Rearming Upgrades */
-    {
-        var line = {};
-        line.height_em = 0.7;
-        line.line_color = "blue";
-        line.filterResearch_func = function (research) {
-            if (research.results.length > 0) {
-                return research.results_string.indexOf("RearmPoints") >= 0;
-            }
-            if (research.resultStructures != undefined) {
-                var struc_list = research.resultStructures.split(',');
-                for (var is in struc_list) {
-                    var struc = Structures.loaded_data_hash[struc_list[is]];
-                    if (struc.rearmPoints != undefined) {
+                    if (struc.repairPoints && struc.type != "REARM PAD") {
                         return true;
                     }
                 }
@@ -704,11 +855,11 @@ function CreateResearchLines() {
         line.line_color = "green";
         line.filterResearch_func = function (research) {
             if (research.resultComponents != undefined) {
-                var comp_list = research.resultComponents.split(',');
+                var comp_list = research.resultComponents;
                 for (var ic in comp_list) {
                     var comp_id = comp_list[ic];
                     if (Bodies.loaded_data_hash[comp_id] != undefined) {
-                        return true;
+                        return Bodies.loaded_data_hash[comp_id].class != "Transports";
                     }
                 }
             }
@@ -748,7 +899,7 @@ function CreateResearchLines() {
         line.line_color = "green";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
-                return research.results_string.indexOf(":Power:") >= 0;
+                return IsResResult(research, ["Power"], "Body" );
             }
             return false;
         }
@@ -756,19 +907,35 @@ function CreateResearchLines() {
         res_sublines.push(line);
     }
 
-    /* Propulsion */
+    /* Propulsion + Transporters + Vtol Factory */
+    var propulsion_line;
+    var propulsion_line = {
+        child_lines: [],
+    };
     {
-        var line = {};
+        var line = propulsion_line;
         line.height_em = 1;
         line.line_color = "blue";
         line.filterResearch_func = function (research) {
-            if (research.resultComponents != undefined) {
-                var comp_list = research.resultComponents.split(',');
+            if (research.resultComponents) {
+                var comp_list = research.resultComponents;
                 for (var ic in comp_list) {
                     var comp_id = comp_list[ic];
                     if (Propulsion.loaded_data_hash[comp_id] != undefined) {
                         return true;
                     }
+                    if (Bodies.loaded_data_hash[comp_id] != undefined)
+                    {
+                        var body = Bodies.loaded_data_hash[comp_id];
+                        return body.class == "Transports";
+                    }
+                }
+            }
+            if (research.resultStructures) {
+                var struc_list = research.resultStructures;
+                for (var is in struc_list) {
+                    var struc = Structures.loaded_data_hash[struc_list[is]];
+                    return struc.type == "VTOL FACTORY" ;//|| struc.type == "REARM PAD";
                 }
             }
             return false;
@@ -776,14 +943,46 @@ function CreateResearchLines() {
         res_lines.push(line);
     }
 
-    /* Hardcrete upgrades */
+    /* Subline - VTOL Rearming Pad + Upgrades */
     {
         var line = {};
         line.height_em = 0.75;
-        line.line_color = "green";
+        line.line_color = "blue";
         line.filterResearch_func = function (research) {
             if (research.results.length > 0) {
-                return research.results_string.indexOf("Wall:Armour:") >= 0 || research.results_string.indexOf("Wall:HitPoints:") >= 0;
+                return IsResResult(research, ["RearmPoints"], "Building");
+            }
+            if (research.resultStructures) {
+                var struc_list = research.resultStructures;
+                for (var is in struc_list) {
+                    var struc = Structures.loaded_data_hash[struc_list[is]];
+                    if (struc.rearmPoints) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        propulsion_line.child_lines.push(line);
+        res_sublines.push(line);
+    }
+
+    /* Hardcrete, Gate, Hadrcrete upgrades */
+    {
+        var line = {};
+        line.height_em = 0.8;
+        line.line_color = "green";
+        line.filterResearch_func = function (research) {
+            if (research.results) {
+                if (IsResResult(research, ["Armour", "HitPoints"], "Building", [["Type", "Wall"], ]))
+                    return true;
+            }
+            if (research.resultStructures) {
+                var struc_list = research.resultStructures;
+                for (var is in struc_list) {
+                    var struc = Structures.loaded_data_hash[struc_list[is]];
+                    return struc.type == "WALL" || struc.type == "GATE" || struc.type == "CORNER WALL";
+                }
             }
             return false;
         }
@@ -796,15 +995,14 @@ function CreateResearchLines() {
         line.height_em = 0.9;
         line.line_color = "blue";
         line.filterResearch_func = function (research) {
+
             if (research.results.length > 0) {
-                if (research.results_string.indexOf("Sensor:Range") >= 0)
-                {
-                    return true;
-                }
+                return IsResResult(research,null, "Sensor", null);
             }
+
             if (research.resultComponents != undefined)
             {
-                var comp_list = research.resultComponents.split(',');
+                var comp_list = research.resultComponents;
                 for (var ic in comp_list) {
                     var comp_id = comp_list[ic];
                     if (Sensor.loaded_data_hash[comp_id] != undefined) {
@@ -813,7 +1011,7 @@ function CreateResearchLines() {
                 }
             }
             if (research.resultStructures != undefined) {
-                var struc_list = research.resultStructures.split(',');
+                var struc_list = research.resultStructures;
                 for (var ic in struc_list) {
                     var struc = Structures.loaded_data_hash[struc_list[ic]];
                     if (struc != undefined) {
@@ -913,7 +1111,7 @@ function CreateResearchLines() {
                 line.weapons_ids = weap_res_classes_array[i].weapons_ids;
                 line.filterResearch_func = function (research) {
                     if (research.resultComponents != undefined) {
-                        var comp_list = research.resultComponents.split(',');
+                        var comp_list = research.resultComponents;
                         for (var ic in comp_list) {
                             var comp_id = comp_list[ic];
                             return Weapons.loaded_data_hash[comp_id] != undefined && line.weapons_ids[comp_id] != undefined;
@@ -929,7 +1127,7 @@ function CreateResearchLines() {
                     var parent_res_included_in_line = false;
                     if (research.requiredResearch != undefined)
                     {
-                        var res_list = research.requiredResearch.split(',');
+                        var res_list = research.requiredResearch;
                         for (var ir in res_list)
                         {
                             var parent_res = Researches.loaded_data_hash[res_list[ir]];
@@ -957,7 +1155,7 @@ function CreateResearchLines() {
                     var do_we_have_defense_as_result = false;
                     var defense_belongs_to_weapon_line = false;
                     if (research.resultStructures != undefined) {
-                        var struc_list = research.resultStructures.split(',');
+                        var struc_list = research.resultStructures;
                         for (var is in struc_list) {
                             var struc = Structures.loaded_data_hash[struc_list[is]];
                             if (struc != undefined)
@@ -968,7 +1166,7 @@ function CreateResearchLines() {
 
                                     if (struc.weapons)
                                     {
-                                        var weap_id = struc.weapons.split(',')[0];//check first weapon
+                                        var weap_id = struc.weapons[0];//check first weapon
                                         var weap = Weapons.loaded_data_hash[weap_id];
                                         if (weap)
                                         {
@@ -994,12 +1192,18 @@ function CreateResearchLines() {
                 line.child_lines.push(upgr_line);
                 upgr_line.weap_subclass = weap_res_classes_array[i].res_classes;
                 upgr_line.filterResearch_func = function (research) {
-                    var res_id = research.grid_id;
-                    if (Upgrades[player_all_researched].research_data != undefined)
-                        if (Upgrades[player_all_researched].research_data[res_id] != undefined)
-                            if (Upgrades[player_all_researched].research_data[res_id].weapon_res_class == this.weap_subclass) {
-                                return true;
-                            }
+
+                    if (research.results.length > 0) {
+                        return IsResResult(research, null, "Weapon", [["ImpactClass", this.weap_subclass], ]);
+                    }
+
+
+                    //var res_id = research.grid_id;
+                    //if (Upgrades[player_all_researched].research_data != undefined)
+                    //    if (Upgrades[player_all_researched].research_data[res_id] != undefined)
+                    //        if (Upgrades[player_all_researched].research_data[res_id].weapon_res_class == this.weap_subclass) {
+                    //            return true;
+                    //        }
                     return false;
                 };
                 res_sublines.push(upgr_line);
@@ -1530,7 +1734,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2, a
                     continue;
                 }
                 if (research.requiredResearch != undefined) {
-                    var pre_res_array = research.requiredResearch.split(',');
+                    var pre_res_array = research.requiredResearch;
                     for (var pi in pre_res_array) {
                         var pre_res_id = pre_res_array[pi];
                         var pre_research = Researches.loaded_data_hash[pre_res_id];
@@ -1915,7 +2119,7 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2, a
                     {
                         $('#' + results_container_id).html('');
                         if (research.results_string != undefined && research.results_string != '') {
-                            var results_array = research.results_string.split(',');
+                            var results_array = research.results;
                             var html = '';
                             for (var e in results_array) {
                                 html += results_array[e] + '</br>';
@@ -2080,34 +2284,19 @@ function DrawResearchTimeLine()
 }
 
 function is_tank_body_upgrade(res) {
-    if (Upgrades[player_all_researched].research_data != undefined)
-        if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
-            if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == "Droids") {
-                var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
-                if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
-                    return true;
-                }
-            }
-    return false;
+    return res["is_tank_hitpoints_upgrade"] || res["is_tank_armor_upgrade"] || res["is_tank_thermal_upgrade"];
 }
 
 function is_cyborg_body_upgrade(res) {
-    if (Upgrades[player_all_researched].research_data != undefined)
-        if (Upgrades[player_all_researched].research_data[res.grid_id] != undefined)
-            if (Upgrades[player_all_researched].research_data[res.grid_id].body_res_class == "Cyborgs") {
-                var changed_field = Upgrades[player_all_researched].research_data[res.grid_id].body_res_changed_field;
-                if (changed_field == "armourKinetic" || changed_field == "armourHeat" || changed_field == "hitpoints") {
-                    return true;
-                }
-            }
-    return false;
+
+    return res["is_cyborg_hitpoints_upgrade"] || res["is_cyborg_armor_upgrade"]  || res["is_cyborg_thermal_upgrade"];
 }
 
 function is_defense_upgrade(res)
 {
     if (res.resultStructures != undefined)
     {
-        var strucs = res.resultStructures.split(',');
+        var strucs = res.resultStructures;
         for (var i in strucs)
         {
             var struc = Structures.loaded_data_hash[strucs[i]];
@@ -2187,7 +2376,7 @@ function DrawResultComponents(research, container_id, use_short_form)
 {
     var grid_data = [];
     if (research.resultComponents != undefined) {
-        var comps_ids = research.resultComponents.split(',');
+        var comps_ids = research.resultComponents;
         for (var p in comps_ids) {
             var comp_id = comps_ids[p];
             var DataObject = FindDataObject(comp_id);
@@ -2203,7 +2392,7 @@ function DrawResultComponents(research, container_id, use_short_form)
         }
     }
     if (research.resultStructures != undefined) {
-        var comps_ids = research.resultStructures.split(',');
+        var comps_ids = research.resultStructures;
         for (var p in comps_ids) {
             var comp_id = comps_ids[p];
             var DataObject = FindDataObject(comp_id);

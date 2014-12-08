@@ -23,22 +23,6 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Body.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="cyborgs.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="design.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="propulsion.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Research.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="saveme.php" />
     <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\autocomplete\search.php">
       <SubType>Code</SubType>
     </Compile>
@@ -48,19 +32,7 @@
     <Compile Include="scripts\jquery-ui-1.10.3.custom\development-bundle\demos\tabs\ajax\content4-broken.php">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="stats.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="structure.php">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="stuff.php" />
-    <Compile Include="SensorGuide.php">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="weapons.php">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Body.html">
@@ -72,61 +44,6 @@
     <Content Include="data_master\rules.js">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="data_master\stats\body.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\bodypropulsionimd.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\brain.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\construction.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\ecm.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\features.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\propulsion.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\propulsionsounds.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\propulsiontype.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\repair.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\research.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\sensor.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\structure.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\structuremodifier.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\templates.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\terraintable.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\weaponmodifier.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\weapons.ini">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="data_master\stats\weapons.json" />
     <Content Include="data_master\namestxt_translated.js" />
     <Content Include="design.html">
       <SubType>Content</SubType>
@@ -2539,10 +2456,10 @@
     <Content Include="weapons.html">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="data_master\" />
-    <Folder Include="data_master\stats\" />
     <Folder Include="scripts\" />
     <Folder Include="scripts\fabric.js\" />
     <Folder Include="scripts\jquery-ui-1.10.3.custom\" />

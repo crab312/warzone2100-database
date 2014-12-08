@@ -367,7 +367,7 @@ function DrawPropulsionTerrainModifiers(container_id, propulsion_id) {
     var propulsion = Propulsion.loaded_data_hash[propulsion_id];
     var grid_data = [];
     for (var terrainIndex in TerrainTable.loaded_data_hash) {
-        var modifiers_array = TerrainTable.loaded_data_hash[terrainIndex].speedFactor.split(',');
+        var modifiers_array = TerrainTable.loaded_data_hash[terrainIndex].speedFactor;
         var prop_type_index = PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow;
         grid_data.push({
             terran_name: TerrainTypesIndexes[terrainIndex],

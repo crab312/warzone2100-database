@@ -54,7 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.29";
+var current_site_version = "2.30";
 
 $(function () {
 
@@ -135,7 +135,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "PropulsionType";
-        obj.path_ini = data_directory + "propulsiontype.ini";
+        obj.path_json = data_directory + "propulsiontype.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () { };
         obj.non_researchable = true;
@@ -146,7 +146,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "TerrainTable";
-        obj.path_ini = data_directory + "terraintable.ini";
+        obj.path_json = data_directory + "terraintable.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -154,7 +154,7 @@ function InitDataObjects() {
                 /* Make terrain table more readable */
                 for (var terrainIndex in data_obj.loaded_data_hash) {
                     data_obj.loaded_data_hash[terrainIndex].terrain_name = TerrainTypesIndexes[terrainIndex];
-                    var vect = data_obj.loaded_data_hash[terrainIndex].speedFactor.split(',');
+                    var vect = data_obj.loaded_data_hash[terrainIndex].speedFactor;
                     for (var prop_index in vect) {
                         var prop_type = PropulsionType.loaded_data[prop_index].grid_id;
                         data_obj.loaded_data_hash[terrainIndex][prop_type] = vect[prop_index];
@@ -183,165 +183,165 @@ function InitDataObjects() {
     }
 
     {
-        var obj = new Object;
-        obj.sysid = "Weapon";
-        obj.page_url = "weapons.html";
-        obj.path_ini = data_directory + "weapons.ini";
-        obj.LoadDataFunction = LoadDataObject;
-        obj.LoadLeftGridFunction = function () {
-            var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
-        };
-        obj.icon_folder = "Weapon";
-        obj.GetIconHtml_Function = function (rowObject, size) {
-            return GetIcon_element(this.icon_folder, rowObject, size);
-        };
-        obj.grid_colModel = [
-            { label: "ID", name: "grid_id", key: true, width: "80px", hidden:true },
-            { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
+        Weapons = {
+            sysid: "Weapon",
+            page_url: "weapons.html",
+            path_json: data_directory + "weapons.json",
+            LoadDataFunction: LoadDataObject,
+            LoadLeftGridFunction: function () {
+                var data_obj = this;
+                data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+            },
+            icon_folder: "Weapon",
+            GetIconHtml_Function: function (rowObject, size) {
+                return GetIcon_element(this.icon_folder, rowObject, size);
+            },
+            grid_colModel: [
+                { label: "ID", name: "grid_id", key: true, width: "80px", hidden:true },
+                { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
             
-            { label: '<span lang="en">Research Line</span><span lang="ru">Линия исследований</span>', name: "weaponSubClass" },
-            { label: '<span lang="en">Price</span><span lang="ru">Цена</span>', name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
-            { label: '<span lang="en">Range (tiles)</span><span lang="ru">Дальность (в тайлах)</span>', name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue / 128).toFixed(1) }, width: 40 },
-            {
-                label: '<span lang="en">Damage *</span><span lang="ru">Урон *</span>', sortable: false,
-                formatter: function (cellvalue, options, rowObject) {
-                    var html_res = "";
-                    if (rowObject.damage != undefined) {
+                { label: '<span lang="en">Research Line</span><span lang="ru">Линия исследований</span>', name: "weaponSubClass" },
+                { label: '<span lang="en">Price</span><span lang="ru">Цена</span>', name: "buildPower", width: 45, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+                { label: '<span lang="en">Range (tiles)</span><span lang="ru">Дальность (в тайлах)</span>', name: "longRange", sorttype: "int", formatter: function (cellvalue, options, rowObject) { return (cellvalue / 128).toFixed(1) }, width: 40 },
+                {
+                    label: '<span lang="en">Damage *</span><span lang="ru">Урон *</span>', sortable: false,
+                    formatter: function (cellvalue, options, rowObject) {
+                        var html_res = "";
+                        if (rowObject.damage != undefined) {
 
-                        if (rowObject.weaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
-                            html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
-                        } else {
-                            html_res += "<b>" + rowObject.damage + '</b> <span lang="en">(kinetic)</span><span lang="ru">(кинетич.)</span>';
+                            if (rowObject.weaponClass == "HEAT") {
+                                html_res += "<label style='color: darkred'><b>" + rowObject.damage + "</b></label>";
+                                html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
+                            } else {
+                                html_res += "<b>" + rowObject.damage + '</b> <span lang="en">(kinetic)</span><span lang="ru">(кинетич.)</span>';
+                            }
                         }
-                    }
                     
-                    if (rowObject.radiusDamage != undefined && rowObject.radius != undefined) {
-                        html_res += "</br>";
+                        if (rowObject.radiusDamage != undefined && rowObject.radius != undefined) {
+                            html_res += "</br>";
                         
-                        if (rowObject.weaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
-                            html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
-                        } else {
-                            html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + ' <span lang="en">tiles</span><span lang="ru">тайлов</span></b>';
+                            if (rowObject.weaponClass == "HEAT") {
+                                html_res += "<label style='color: darkred'><b>" + rowObject.radiusDamage + "</b></label> /" + (rowObject.radius / 128).toFixed(1) + " tiles";
+                                html_res += " (" + '<span lang="en">heat</span><span lang="ru">огнен.</span>' + ")";
+                            } else {
+                                html_res += "<b>" + rowObject.radiusDamage + " /" + (rowObject.radius / 128).toFixed(1) + ' <span lang="en">tiles</span><span lang="ru">тайлов</span></b>';
+                            }
                         }
-                    }
                     
-                    if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
-                        html_res += "</br>";
-                        if (rowObject.periodicalDamageWeaponClass == "HEAT") {
-                            html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + '</label></b> <span lang="en">/sec</span><span lang="ru">/сек</span>' + "";
-                            html_res += " (" + rowObject.periodicalDamageWeaponClass.toLowerCase() + ")";
-                        } else {
-                            html_res += "<b>" + rowObject.periodicalDamage + ' <span lang="en">/sec</span><span lang="ru">/сек</span>' + "</b>";
+                        if (rowObject.periodicalDamage != undefined && rowObject.periodicalDamageRadius != undefined && rowObject.periodicalDamageTime != undefined) {
+                            html_res += "</br>";
+                            if (rowObject.periodicalDamageWeaponClass == "HEAT") {
+                                html_res += "<label style='color: darkred'><b>" + rowObject.periodicalDamage + '</label></b> <span lang="en">/sec</span><span lang="ru">/сек</span>' + "";
+                                html_res += " (" + rowObject.periodicalDamageWeaponClass.toLowerCase() + ")";
+                            } else {
+                                html_res += "<b>" + rowObject.periodicalDamage + ' <span lang="en">/sec</span><span lang="ru">/сек</span>' + "</b>";
+                            }
                         }
-                    }
-                    return html_res;
-                }, width: 130
-            },
-            {
-                label: '<span lang="en">Rate of Fire</span><span lang="ru">Скорострельность</span>', sortable: false,
-                formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + ' <span lang="en">/min</span><span lang="ru">/мин</span>';}, width: 70,//
-                sorttype: function (cell,rowObject) {
-                    return parseInt(cell);//Math.ceil(Weapon_ShotsPerMinute(rowObject));
-                }
-            },
-            { label: '<span lang="en">Damage</br>modifier</span><span lang="ru">Тип урона</br>(модификатор урона)</span>', name: "weaponEffect", width: 50, formatter: function (cellvalue, options, rowObject) { return "<label style='font-size:0.7em'>" + cellvalue + "</label>" }, },
-        ];
-        //obj.groupField = "weaponEffect";
-        obj.groupingView = {
-            groupField: ['weaponSubClass'],
-            groupColumnShow: [false],
-            groupText: ['<b>{0}</b>'],
-            groupCollapse: false,
-            groupOrder: ['asc'],
-        };
-        Weapons = obj;
-        Objects.push(obj);
-    }
-
-    {
-        var obj = new Object;
-        obj.sysid = "Body";
-        obj.page_url = "Body.html";
-        obj.path_ini = data_directory + "body.ini";
-        obj.LoadDataFunction = LoadDataObject;
-        obj.LoadLeftGridFunction = function () {
-            var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
-        };
-        obj.icon_folder = "Body";
-        obj.GetIconHtml_Function = function (rowObject, size) {
-            return GetIcon_element(this.icon_folder, rowObject, size);
-        };
-        obj.grid_colModel = [
-            { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
-            { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
-            { label: "<span lang='en'>Size</span><span lang='ru'>Размер</span>", name: "size", width: 60 },
-            { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower", width: 60, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
-            { label: "<span lang='en'>Hit Points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 60 },
-            { label: "<span lang='en'>Armor Kineric</span><span lang='ru'>Броня кинетич.</span>", name: "armourKinetic", width: 60 },
-            { label: "<span lang='en'>Armor Thermal</span><span lang='ru'>Броня огнен.</span>", name: "armourHeat", width: 60 },
-        ];
-        obj.groupingView = {
-            groupField: ['size'],
-            groupColumnShow: [false],
-            groupText: ['<div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top:16px; font-size:1.1em" ><b>{0}</b></div>'],
-            groupCollapse: false,
-            groupOrder: ['asc'],
-            groupDataSorted: true,
-        };
-        Bodies = obj;
-        Objects.push(obj);
-    }
-
-    {
-        var obj = new Object;
-        obj.sysid = "Propulsion";
-        obj.page_url = "propulsion.html";
-        obj.path_ini = data_directory + "propulsion.ini";
-        obj.LoadDataFunction = LoadDataObject;
-        obj.icon_folder = "Propulsion";
-        obj.GetIconHtml_Function = function (rowObject, size) {
-            return GetIcon_element(this.icon_folder, rowObject, size);
-        };
-        obj.LoadLeftGridFunction = function () {
-            var data_obj = this;
-            data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
-        };
-        obj.grid_colModel = [
-            { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
-            { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", width: 90, formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>' }, },
-            {
-                label: "<span lang='en'>Max Speed</span><span lang='ru'>Макс. скорость</span>", name: "speed", sorttype: "int",
-                formatter: function (cellvalue, options, rowObject) {
-                    return (cellvalue / 128).toFixed(2)
-                }, width: 60
-            },
-            {
-                label: "Engine power %", name: "buildPower",
-                formatter: function (cellvalue, options, rowObject) {
-                    if (PropulsionType.loaded_data != undefined) {
-                        return PropulsionType.loaded_data_hash[rowObject.type].multiplier + '%';
+                        return html_res;
+                    }, width: 130
+                },
+                {
+                    label: '<span lang="en">Rate of Fire</span><span lang="ru">Скорострельность</span>', sortable: false,
+                    formatter: function (cellvalue, options, rowObject) { return Weapon_ShotsPerMinute(rowObject).toFixed(1) + ' <span lang="en">/min</span><span lang="ru">/мин</span>';}, width: 70,//
+                    sorttype: function (cell,rowObject) {
+                        return parseInt(cell);//Math.ceil(Weapon_ShotsPerMinute(rowObject));
                     }
                 },
-                sorttype: "int", width:60
+                { label: '<span lang="en">Damage</br>modifier</span><span lang="ru">Тип урона</br>(модификатор урона)</span>', name: "weaponEffect", width: 50, formatter: function (cellvalue, options, rowObject) { return "<label style='font-size:0.7em'>" + cellvalue + "</label>" }, },
+            ],
+            //obj.groupField = "weaponEffect";
+            groupingView: {
+                groupField: ['weaponSubClass'],
+                groupColumnShow: [false],
+                groupText: ['<b>{0}</b>'],
+                groupCollapse: false,
+                groupOrder: ['asc'],
             },
-            { label: "<span lang='en'>Price %</span><span lang='ru'>Стоимость %</span>", name: "buildPower", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-            { label: "<span lang='en'>Build time %</span><span lang='ru'>Время производства %</span>", name: "buildPoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-            { label: "<span lang='en'>Hit Points %</span><span lang='ru'>Очки жизни (HP) %</span>", name: "hitpoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-            { label: "<span lang='en'>Weight %</span><span lang='ru'>Вес %</span>", name: "weight", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
-        ];
-        Propulsion = obj;
-        Objects.push(obj);
+        };
+        Objects.push(Weapons);
+    }
+
+    {
+        Bodies = {
+            sysid: "Body",
+            page_url: "Body.html",
+            path_json: data_directory + "body.json",
+            LoadDataFunction: LoadDataObject,
+            LoadLeftGridFunction: function () {
+                var data_obj = this;
+                data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+            },
+            icon_folder: "Body",
+            GetIconHtml_Function: function (rowObject, size) {
+                return GetIcon_element(this.icon_folder, rowObject, size);
+            },
+            grid_colModel: [
+                { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
+                { label: '<span lang="en">Name</span><span lang="ru">Название</span>', name: "name", formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>'}, },
+                { label: "<span lang='en'>Size</span><span lang='ru'>Размер</span>", name: "size", width: 60 },
+                { label: "<span lang='en'>Price</span><span lang='ru'>Цена</span>", name: "buildPower", width: 60, formatter: function (cellvalue, options, rowObject) { return '$' + cellvalue }, sorttype: "int" },
+                { label: "<span lang='en'>Hit Points</span><span lang='ru'>Очки жизни (HP)</span>", name: "hitpoints", width: 60 },
+                { label: "<span lang='en'>Armor Kineric</span><span lang='ru'>Броня кинетич.</span>", name: "armourKinetic", width: 60 },
+                { label: "<span lang='en'>Armor Thermal</span><span lang='ru'>Броня огнен.</span>", name: "armourHeat", width: 60 },
+            ],
+            groupingView: {
+                groupField: ['size'],
+                groupColumnShow: [false],
+                groupText: ['<div class="ui-widget-header ui-corner-top" style="padding:2px; margin-top:16px; font-size:1.1em" ><b>{0}</b></div>'],
+                groupCollapse: false,
+                groupOrder: ['asc'],
+                groupDataSorted: true,
+            },
+        }
+        Objects.push(Bodies);
+    }
+
+    {
+        Propulsion = {
+            sysid: "Propulsion",
+            page_url: "propulsion.html",
+            path_json: data_directory + "propulsion.json",
+            LoadDataFunction: LoadDataObject,
+            icon_folder: "Propulsion",
+            GetIconHtml_Function: function (rowObject, size) {
+                return GetIcon_element(this.icon_folder, rowObject, size);
+            },
+            LoadLeftGridFunction: function () {
+                var data_obj = this;
+                data_obj.LoadDataFunction(data_obj, function () { DrawLeftGrid(data_obj); });
+            },
+            grid_colModel: [
+                { label: "ID", name: "grid_id", key: true, width: "80px", hidden: true },
+                { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", width: 90, formatter: function (cellvalue, options, rowObject) { return '<b>' + cellvalue + '</b>' }, },
+                {
+                    label: "<span lang='en'>Max Speed</span><span lang='ru'>Макс. скорость</span>", name: "speed", sorttype: "int",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return (cellvalue / 128).toFixed(2)
+                    }, width: 60
+                },
+                {
+                    label: "Engine power %", name: "buildPower",
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (PropulsionType.loaded_data != undefined) {
+                            return PropulsionType.loaded_data_hash[rowObject.type].multiplier + '%';
+                        }
+                    },
+                    sorttype: "int", width:60
+                },
+                { label: "<span lang='en'>Price %</span><span lang='ru'>Стоимость %</span>", name: "buildPower", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+                { label: "<span lang='en'>Build time %</span><span lang='ru'>Время производства %</span>", name: "buildPoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+                { label: "<span lang='en'>Hit Points %</span><span lang='ru'>Очки жизни (HP) %</span>", name: "hitpoints", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+                { label: "<span lang='en'>Weight %</span><span lang='ru'>Вес %</span>", name: "weight", formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' }, sorttype: "int", width: 60 },
+            ],
+        };
+        Objects.push(Propulsion);
     }
 
     {
         var obj = new Object;
         obj.sysid = "Structure";
         obj.page_url = "structure.html";
-        obj.path_ini = data_directory + "structure.ini";
+        obj.path_json = data_directory + "structure.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -375,7 +375,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "WeaponPropulsionModifiers";
-        obj.path_ini = data_directory + "weaponmodifier.ini";
+        obj.path_json = data_directory + "weaponmodifier.json";
         obj.LoadDataFunction = function (DataObject, callback_function) {
             LoadDataObject(DataObject, function () {
                 if (DataObject.loaded_data_hash["ALL ROUNDER"] != undefined) {
@@ -476,7 +476,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "WeaponStructureModifiers";
-        obj.path_ini = data_directory + "structuremodifier.ini";
+        obj.path_json = data_directory + "structuremodifier.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -521,7 +521,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Research";
-        obj.path_ini = data_directory + "research.ini";
+        obj.path_json = data_directory + "research.json";
         obj.LoadDataFunction = LoadResearch;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -561,7 +561,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Repair";
-        obj.path_ini = data_directory + "repair.ini";
+        obj.path_json = data_directory + "repair.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -584,7 +584,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Construction";
-        obj.path_ini = data_directory + "construction.ini";
+        obj.path_json = data_directory + "construction.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -609,7 +609,7 @@ function InitDataObjects() {
     {
         Sensor = {
             sysid: "Sensor",
-            path_ini: data_directory + "sensor.ini",
+            path_json: data_directory + "sensor.json",
             LoadDataFunction: LoadDataObject,
             LoadLeftGridFunction: function () {
                 var data_obj = this;
@@ -633,7 +633,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "ECM";
-        obj.path_ini = data_directory + "ecm.ini";
+        obj.path_json = data_directory + "ecm.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -655,7 +655,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Features";
-        obj.path_ini = data_directory + "features.ini";
+        obj.path_json = data_directory + "features.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -675,7 +675,7 @@ function InitDataObjects() {
     {
         var obj = new Object;
         obj.sysid = "Templates";
-        obj.path_ini = data_directory + "templates.ini";
+        obj.path_json = data_directory + "templates.json";
         obj.LoadDataFunction = LoadDataObject;
         obj.LoadLeftGridFunction = function () {
             var data_obj = this;
@@ -686,7 +686,7 @@ function InitDataObjects() {
             { label: "<span lang='en'>Name</span><span lang='ru'>Название</span>", name: "name", width: 160, fixed: true },
             //{ label: "Type", name: "type", width: 50, fixed: true },
             {
-                label: "<span lang='en'>Body</span><span lang='ru'>Корпус</span>", name: "compBody", width: 80, fixed: true,
+                label: "<span lang='en'>Body</span><span lang='ru'>Корпус</span>", name: "body", width: 80, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Bodies.loaded_data_hash[cellvalue] != undefined) {
                         return Bodies.loaded_data_hash[cellvalue].name;
@@ -696,7 +696,7 @@ function InitDataObjects() {
                 },
             },
             {
-                label: "<span lang='en'>Propulsion</span><span lang='ru'>Ходовая</span>", name: "compPropulsion", width: 100, fixed: true,
+                label: "<span lang='en'>Propulsion</span><span lang='ru'>Ходовая</span>", name: "propulsion", width: 100, fixed: true,
                 formatter: function (cellvalue, options, rowObject) {
                     if (Propulsion.loaded_data_hash[cellvalue] != undefined) {
                         return Propulsion.loaded_data_hash[cellvalue].name;
@@ -712,7 +712,7 @@ function InitDataObjects() {
                     if (cellvalue == undefined) {
                         return '';
                     }
-                    var weaps = cellvalue.split(',');
+                    var weaps = cellvalue;
                     var result = [];
                     for (var i in weaps) {
                         if (Weapons.loaded_data_hash[cellvalue] != undefined) {
@@ -735,20 +735,20 @@ function InitDataObjects() {
             else 
             {
                 if (rowObject.type == "CYBORG" || rowObject.type == "CYBORG_SUPER") {
-                    var weap_id = rowObject.weapons.split(',')[0];
+                    var weap_id = rowObject.weapons[0];
                     if (Weapons.loaded_data_hash[weap_id])
                     {
                         return GetIcon_element(Weapons.icon_folder, Weapons.loaded_data_hash[weap_id], size);
                     }
                 } else if (rowObject.type == "CYBORG_CONSTRUCT") {
-                    var constr_id = rowObject.compConstruct;
+                    var constr_id = rowObject.construct;
                     var comp = Construction.loaded_data_hash[constr_id];
                     if (comp)
                     {
                         return GetIcon_element(Construction.icon_folder, comp, size);
                     }
                 }else if (rowObject.type == "CYBORG_REPAIR") {
-                    var repair_id = rowObject.compRepair;
+                    var repair_id = rowObject.repair;
                     var comp = Repair.loaded_data_hash[repair_id];
                     if (comp) {
                         return GetIcon_element(Repair.icon_folder, comp, size);
@@ -924,8 +924,8 @@ function LoadResearch(DataObject, callback_function) {
                     DataObject.loaded_data[i].results = [];
                     DataObject.loaded_data[i].results_string = "";
                 } else {
-                    DataObject.loaded_data[i].results_string = DataObject.loaded_data[i].results;
-                    DataObject.loaded_data[i].results = DataObject.loaded_data[i].results.split(',');
+                    DataObject.loaded_data[i].results_string = JSON.stringify(DataObject.loaded_data[i].results);
+                    DataObject.loaded_data[i].results = DataObject.loaded_data[i].results;
                 }
 
             }
@@ -937,33 +937,11 @@ function LoadResearch(DataObject, callback_function) {
 
 var readfile;
 function LoadDataObject(DataObject, callback_function) {
-    //if (localStorage["translation"] == undefined)
-    //{
-    //    /* retrievind data from server */
-    //    ShowLoading('tabs_left');
-    //    $.ajax({
-    //        url: "data_master/translations.js",
-    //        //data: { url: DataObject.path_ini },
-    //        datatype: "text",
-    //        success: function (msg) {
-    //            alert('11');
-    //            readfile = msg;
-    //            HideLoading('tabs_left');
-    //        },
-    //        error: function (msg) {
-    //            HideLoading('tabs_left');
-    //            readfile = msg;
-    //            alert("Error happened. Please try to reload page");
-    //        }
-    //    });
-    //}
-
     var do_translate_names = typeof po_Translate != "undefined";
 
     if (DataObject.loaded_data == undefined) {
 
-        var method_process_loaded_data = function (DataObject, loaded_data, callback_function) {
-            var readfile = jQuery.parseJSON(loaded_data);
+        var method_process_loaded_data = function (DataObject, readfile, callback_function) {
             var grid_data = [];
             var fields_dict = new Array();
             var grid_columns = new Array();
@@ -1013,18 +991,36 @@ function LoadDataObject(DataObject, callback_function) {
         }
 
         if (localStorage[DataObject.sysid + "_loaded_data"] != undefined) {
-            method_process_loaded_data(DataObject, localStorage[DataObject.sysid + "_loaded_data"], callback_function);
+            var stats_data = JSON.parse(localStorage[DataObject.sysid + "_loaded_data"]);
+            method_process_loaded_data(DataObject, stats_data, callback_function);
         }
         else {
             /* retrievind data from server */
+            var get_data_url;
+            if (DataObject.path_ini)
+            {
+                get_data_url = "stuff.php";
+            } else
+            {
+                get_data_url = DataObject.path_json;
+            }
             ShowLoading('tabs_left');
             $.ajax({
-                url: "stuff.php",
+                url: get_data_url,
                 data: { url: DataObject.path_ini },
-                datatype: "text",
+                datatype: "json",
                 success: function (msg) {
-                    localStorage[DataObject.sysid + "_loaded_data"] = msg;
-                    method_process_loaded_data(DataObject, msg, callback_function);
+                    var stats_data;
+                    if (typeof msg == "string") //temporary solution. TODO: remove this after full porting to json stats
+                    {
+                        stats_data = JSON.parse(msg);
+                        localStorage[DataObject.sysid + "_loaded_data"] = msg;
+                    } else
+                    {
+                        stats_data = msg;
+                        localStorage[DataObject.sysid + "_loaded_data"] = JSON.stringify(msg); 
+                    }
+                    method_process_loaded_data(DataObject, stats_data, callback_function);
                     HideLoading('tabs_left');
                 },
                 error: function (msg) {
@@ -1700,7 +1696,7 @@ function GetResearchIcon_src(research_id, research_name) {
         }
         if (res_row.resultComponents) {
             /* Try get icon by enum results of research */
-            var comps_ids = res_row.resultComponents.split(',');
+            var comps_ids = res_row.resultComponents;
             for (var p in comps_ids) {
                 var comp_id = comps_ids[p];
                 var found_obj = FindObjectById(comp_id);

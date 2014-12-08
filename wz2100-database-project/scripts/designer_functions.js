@@ -1414,7 +1414,7 @@ function GetResearchPath_SubTree(component_id, player,expand_level) {
         if (res_row.requiredResearch == undefined) {
             return;
         } else {
-            var pre_res = res_row.requiredResearch.split(',');
+            var pre_res = res_row.requiredResearch;
             if (pre_res.length > 0) {
                 data_row.isLeaf = false;
             }
@@ -1621,8 +1621,8 @@ function CalculateTankDesign(player, turrets, body, propulsion, non_weapon_desig
             vtol_speed_modifier = 0.75;
         }
     }
-    var terrain_modifier_road = TerrainTable.loaded_data_hash["6"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
-    var terrain_modifier_sandybush = TerrainTable.loaded_data_hash["1"].speedFactor.split(',')[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
+    var terrain_modifier_road = TerrainTable.loaded_data_hash["6"].speedFactor[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
+    var terrain_modifier_sandybush = TerrainTable.loaded_data_hash["1"].speedFactor[PropulsionType.loaded_data_hash[propulsion.type].index_of_datarow];
 
     var engine_base = (body.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
     var engine_upgraded = (body_upgraded.powerOutput * prop_modifier) / 100 * vtol_speed_modifier * speed_bonus;
@@ -1683,8 +1683,8 @@ function CalculateBuilding(player, structure) {
     StructureDesign.baseStats = {};
 
     if (structure.weapons != undefined) {
-        var weapons = structure.weapons.split(',');
-        if (weapons.length > 0) {
+        var weapons = structure.weapons;
+        if (weapons) {
             var weapon = Weapons.loaded_data_hash[weapons[0]];
             //var weapon_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player].Weapon[weapon.index_of_datarow])); //deep copy
             //add weapon stats to TankDesign object

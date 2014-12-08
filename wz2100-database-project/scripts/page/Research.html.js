@@ -1,4 +1,22 @@
-﻿var player = 0;
+﻿/*
+	This file is part of 'Warzone 2100 Guide by crab'.
+
+	'Warzone 2100 Guide by crab' is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	'Warzone 2100 Guide by crab' is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with 'Warzone 2100 Guide by crab'; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
+var player = 0;
 
 timeline_options = {
     tanks: {
@@ -485,7 +503,7 @@ function DrawResearchDetailsParameters(research_id) {
     {
         var grid_data = [];
         if (research.requiredResearch != undefined) {
-            var pre_res_ids = research.requiredResearch.split(',');
+            var pre_res_ids = research.requiredResearch;
             for(var p in pre_res_ids)
             {
                 grid_data.push(Researches.loaded_data_hash[pre_res_ids[p]]);
@@ -503,7 +521,7 @@ function DrawResearchDetailsParameters(research_id) {
             var res_n = Researches.loaded_data_hash[i];
             if(res_n.requiredResearch != undefined)
             {
-                var pre_res_ids = res_n.requiredResearch.split(',');
+                var pre_res_ids = res_n.requiredResearch;
                 for (var p in pre_res_ids) {
                     if(pre_res_ids[p] == research.grid_id)
                     {
@@ -1194,10 +1212,10 @@ function DrawCompTimeTable(container_id, scale, options) {
         var result_comps = [];
         /* prepare array of research results */
         if (research.resultComponents != undefined) {
-            result_comps = result_comps.concat(research.resultComponents.split(','));
+            result_comps = result_comps.concat(research.resultComponents);
         }
         if (research.resultStructures != undefined) {
-            result_comps = result_comps.concat(research.resultStructures.split(','));
+            result_comps = result_comps.concat(research.resultStructures);
         }
         if (result_comps.length == 0 && (research.results == undefined || research.results=="")) {
             continue;
