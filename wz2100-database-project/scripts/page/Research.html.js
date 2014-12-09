@@ -50,7 +50,6 @@ tree_options = {
         value: true,
         label: "Defenses",
     },
-
 }
 
 $(function () {

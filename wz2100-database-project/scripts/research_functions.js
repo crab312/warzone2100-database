@@ -100,7 +100,7 @@ function eventResearched(research, player) {
         
         if(filterparam)
         {
-            if(ctype == "Body" && filterparam=="class" && filterValue=="Cyborgs")
+            if(ctype == "Body" && filterparam=="class")
             {
                 if(filterValue=="Cyborgs")
                 {
@@ -2118,11 +2118,10 @@ function DrawResearchTree(container_id, sec_per_pixel, options, options_type2, a
                     /* Show results of research */
                     {
                         $('#' + results_container_id).html('');
-                        if (research.results_string != undefined && research.results_string != '') {
-                            var results_array = research.results;
+                        if (research.results) {
                             var html = '';
-                            for (var e in results_array) {
-                                html += results_array[e] + '</br>';
+                            for (var e in research.results) {
+                                html += research.results[e].parameter + ": " + research.results[e].value + '</br>';
                             }
                             $('#' + results_container_id).append(html);
                         }
@@ -2283,13 +2282,15 @@ function DrawResearchTimeLine()
 
 }
 
-function is_tank_body_upgrade(res) {
-    return res["is_tank_hitpoints_upgrade"] || res["is_tank_armor_upgrade"] || res["is_tank_thermal_upgrade"];
+function is_tank_body_upgrade(research) {
+    //return res["is_tank_hitpoints_upgrade"] || res["is_tank_armor_upgrade"] || res["is_tank_thermal_upgrade"];
+    return IsResResult(research, ["Thermal", "Armour", "HitPoints"], "Body", [["BodyClass", "Droids"], ]);
 }
 
-function is_cyborg_body_upgrade(res) {
+function is_cyborg_body_upgrade(research) {
 
-    return res["is_cyborg_hitpoints_upgrade"] || res["is_cyborg_armor_upgrade"]  || res["is_cyborg_thermal_upgrade"];
+    //return res["is_cyborg_hitpoints_upgrade"] || res["is_cyborg_armor_upgrade"] || res["is_cyborg_thermal_upgrade"];
+    return IsResResult(research, ["Thermal", "Armour", "HitPoints"], "Body", [["BodyClass", "Cyborgs"], ]);
 }
 
 function is_defense_upgrade(res)

@@ -54,7 +54,7 @@ var TerrainTypesIndexes = [
     'TER_SLUSH',
 ];
 
-var current_site_version = "2.30";
+var current_site_version = "2.32";
 
 $(function () {
 
@@ -1045,6 +1045,10 @@ function ShowProps(RowData) {
     var grid_data = $.map(RowData, function (value, key) {
         var res = new Object;
         res.id = key;
+        if (typeof value == "object")
+        {
+            value = JSON.stringify(value);
+        }
         res.value = value;
         return res;
     });
