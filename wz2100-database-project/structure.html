@@ -12,13 +12,13 @@
     <script type="text/javascript" src="scripts/jquery.jqGrid-4.5.2/js/i18n/grid.locale-en.js"></script>
     <script src="scripts/jquery.blockUI.js"></script>
 
-    <script src="scripts/icons_files_list.js?v=2"></script>
-    <script src="scripts/MyCustomScripts2.js?v=2"></script>
+    <script src="scripts/icons_files_list.js?v=3"></script>
+    <script src="scripts/MyCustomScripts2.js?v=3"></script>
     <link href="Styles/MyLocalization.css" rel="stylesheet" />
-    <script src="scripts/MyLocalization.js?v=2"></script>
-    <script src="scripts/common_objects.js?v=2"></script>
-    <script src="scripts/designer_functions.js?v=2"></script>
-    <script src="scripts/research_functions.js?v=2"></script>
+    <script src="scripts/MyLocalization.js?v=3"></script>
+    <script src="scripts/common_objects.js?v=3"></script>
+    <script src="scripts/designer_functions.js?v=3"></script>
+    <script src="scripts/research_functions.js?v=3"></script>
 
     <script src="scripts/properties_desription.js"></script>
 
@@ -781,6 +781,10 @@ function DrawStructureStaticData(structure_id) {
     $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="construction_upgrades_container"></div>');
     DrawConstructionTimeUpgradesTable("construction_upgrades_container");
 
+    $('#upgrades_container').append('<div class="ui-widget-header ui-corner-top" style="padding:2px">Other upgrades</div>');
+    $('#upgrades_container').append('<div class="ui-widget-content ui-corner-bottom" style="padding:2px" id="other_upgrades_container"></div>');
+    DrawOtherUpgrades("other_upgrades_container", structure_id);
+
     /* Show button "Overview research path" */
     var res_comp_row = ResearchedComponents[player_all_researched][structure_id];
     if (res_comp_row != undefined) {
@@ -805,6 +809,7 @@ function DrawStructureUpgradesTable(container_id, structure_id) {
     var summ = {};
     summ["armour"] = 0;
     summ["hitpoints"] = 0;
+    summ["hitpoints2"] = 100;
     for (var i in upgrade_log) {
         var log_rec = upgrade_log[i];
         if (summ[log_rec.hint] == undefined) {
@@ -864,6 +869,69 @@ function DrawStructureUpgradesTable(container_id, structure_id) {
         loadonce: true,
     });
 }
+
+function DrawOtherUpgrades(container_id, structure_id) {
+    var structure = Structures.loaded_data_hash[structure_id];
+    var structure_upgraded = jQuery.parseJSON(JSON.stringify(Upgrades[player_all_researched].Building[structure.index_of_datarow])); //deep copy
+    var upgrade_log = structure_upgraded.upgrade_history;
+    var grid_data = [];
+    var summ = {};
+    for (var i in upgrade_log) {
+        var log_rec = upgrade_log[i];
+        if (log_rec.hint == "armour" || log_rec.hint == "hitpoints") {
+            continue;
+        }
+        if (summ[log_rec.hint] == undefined) {
+            summ[log_rec.hint] = 0;
+        }
+        summ[log_rec.hint] = summ[log_rec.hint] + log_rec.value;
+        var research = Researches.loaded_data_hash[log_rec.research_id];
+        var row = {
+                name: research.name,
+                time_int: ResearchTime[player_all_researched][log_rec.research_id],
+                parameter: log_rec.hint,
+                value: log_rec.value,
+                summ: summ[log_rec.hint],
+            };
+        grid_data.push(row);
+        row[log_rec.hint] = summ[log_rec.hint];
+    }
+
+    var grid_element_id = ResetGridContainer(container_id);
+    var grid = $(grid_element_id);
+    grid.jqGrid
+    ({
+        datatype: "local",
+        data: grid_data,
+        rowNum: grid_data.length,
+        height: '100%',
+        colModel:
+            [
+                { name: "name", label: "Research", width: '200px', fixed: true },
+                { name: "time_int", width: '50px', fixed: true, hidden: true, sorttype: "int", },
+                {
+                    label: "Research Time (min)",
+                    width: 80,
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (rowObject.time_int == undefined) {
+                            return '<label style="color:gray;font-size:0.9em;">cant research(!)</label>';
+                        }
+                        if (rowObject.time_int < 3600) {
+                            return rowObject.time_int.toMMSS();
+                        } else {
+                            return rowObject.time_int.toHHMMSS();
+                        }
+                    },
+                },
+                //{ name: "value", label: "Upgrade value", width: '100px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+                { name: "parameter", label: "Parameter", width: '120px', fixed: true },
+                { name: "summ", label: "Value", width: '50px', fixed: true, formatter: function (cellvalue, options, rowObject) { return cellvalue + '%' } },
+            ],
+        sortname: "time_int",
+        loadonce: true,
+    });
+}
+
 
 function DrawConstructionTimeUpgradesTable(container_id) {
     var truck_id = "Spade1Mk1";

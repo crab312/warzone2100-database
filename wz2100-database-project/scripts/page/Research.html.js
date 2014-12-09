@@ -547,7 +547,7 @@ function DrawResearchDetailsParameters(research_id) {
             for (var i in obj_type) {
                 var comp_upgraded = obj_type[i];
                 var comp_id = comp_upgraded.grid_id;
-                if (!can_research(comp_id)) {
+                if (!can_research(comp_id) && !startSrtuctures[comp_id]) {
                     continue;
                 }
                 if (comp_upgraded.upgrade_history) {

@@ -2064,6 +2064,14 @@ var MessagesTranslation = {
     },
 }
 
+var startSrtuctures = {
+    "A0CommandCentre": 1,
+    "A0LightFactory": 1,
+    "A0ResourceExtractor": 1,
+    "A0PowerGenerator": 1,
+    "A0ResearchFacility": 1,
+}
+
 /*
 var Weapons;
 var Bodies;
